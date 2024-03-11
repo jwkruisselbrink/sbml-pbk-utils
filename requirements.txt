@@ -1,0 +1,6 @@
+antimony>=2.15.0
+python-libsbml>=5.20.2
+sbmlutils>=0.9.0
+tellurium>=2.2.10
+numpy>=1.26.4
+setuptools
