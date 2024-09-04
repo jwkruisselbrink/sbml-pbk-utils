@@ -5,15 +5,15 @@ import libsbml as ls
 from sbmlpbkutils import AnnotationsTemplateGenerator
 sys.path.append('../sbmlpbkutils/')
 
-class TestElementInfosExporter(unittest.TestCase):
+class AnnotationsTemplateGeneratorTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
         cls.sbml_files = []
-        files = os.listdir('./test/models/')
+        files = os.listdir('./tests/models/')
         for file in files:
             if file.endswith('.sbml'):
-                cls.sbml_files.append('./test/models/' + file)
+                cls.sbml_files.append('./tests/models/' + file)
 
     def test_export_terms(self):
         infosExporter = AnnotationsTemplateGenerator()
