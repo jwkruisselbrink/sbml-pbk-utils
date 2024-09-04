@@ -1,10 +1,11 @@
 import os.path
 import libsbml as ls
 from sbmlutils.log import get_logger
+from . import TermDefinitions
 
 logger = get_logger(__name__)
 
-class SbmlValidator:
+class PbkModelValidator:
 
   def __init__(self, ucheck):
     self.ucheck = ucheck

@@ -1,13 +1,14 @@
 import libsbml as ls
 import numpy as np
+from . import UnitDefinitions
 from sbmlutils.metadata.annotator import ModelAnnotator, ExternalAnnotation, annotate_sbml_doc
 from sbmlutils.log import get_logger
 
 logger = get_logger(__name__)
 
-class SbmlModelAnnotator:
+class PbkModelAnnotator:
 
-    def annotateUnits(
+    def annotate(
         self,
         sbml_file,
         annotations_file,
@@ -35,7 +36,7 @@ class SbmlModelAnnotator:
             if (elementId):
                 # If unit field is not empty, try set element unit
                 if (row["unit"] is not None):
-                    self.setElementUnit(
+                    self.set_element_unit(
                         document,
                         row["element_id"],
                         row["sbml_type"],
@@ -47,7 +48,7 @@ class SbmlModelAnnotator:
                     and row["element_name"] is not None
                     and row["sbml_type"] != "document"):
                     # If description field is not empty, try set element name
-                    self.setElementName(
+                    self.set_element_name(
                         document,
                         row["element_id"],
                         row["sbml_type"],
@@ -86,7 +87,7 @@ class SbmlModelAnnotator:
         logger.info(f"Writing SBML to file [{out_file}].")
         ls.writeSBML(document, out_file)
 
-    def findUnitDefinition(self, str):
+    def find_unit_definition(self, str):
         """Find unit definition matching the provided string."""
         res = None
         for index, value in enumerate(UnitDefinitions):
@@ -95,7 +96,7 @@ class SbmlModelAnnotator:
                 break
         return res
 
-    def setElementUnit(
+    def set_element_unit(
         self,
         doc,
         elementId,
@@ -106,7 +107,7 @@ class SbmlModelAnnotator:
         """Set element unit of element with specified id and type to the specfied unit."""
         if (elementType == "document"):
             model = doc.getModel()
-            uDef = self.getOrAddUnitDefinition(doc, unitId, unitsDictionary)
+            uDef = self.get_or_add_unit_definition(doc, unitId, unitsDictionary)
             if (elementId == "timeUnits" and not model.isSetTimeUnits()):
                 model.setTimeUnits(uDef.getId())
             elif (elementId == "substanceUnits" and not model.isSetSubstanceUnits()):
@@ -119,12 +120,12 @@ class SbmlModelAnnotator:
                 logger.error(f"Cannot set unit [{unitId}] for {elementType} [{elementId}]: element not found!")
                 return
             if (not el.isSetUnits()):
-                uDef = self.getOrAddUnitDefinition(doc, unitId, unitsDictionary)
+                uDef = self.get_or_add_unit_definition(doc, unitId, unitsDictionary)
                 if (uDef):
                     logger.info(f"Setting unit [{unitId}] for {elementType} [{elementId}].")
                     el.setUnits(uDef.getId())
 
-    def setElementName(
+    def set_element_name(
         self,
         doc,
         elementId,
@@ -140,12 +141,12 @@ class SbmlModelAnnotator:
         if not el.isSetName() or overwrite:
             el.setName(name)
 
-    def getOrAddUnitDefinition(self, doc, unitId, unitsDictionary):
+    def get_or_add_unit_definition(self, doc, unitId, unitsDictionary):
         """Tries to get the unit definition for the specified unit id from the SBML document.
         The unit definition will be created and added to the document if it does not yet exist.
         """
         if (unitId not in unitsDictionary):
-            unitDef = self.findUnitDefinition(unitId)
+            unitDef = self.find_unit_definition(unitId)
             if (unitDef is None):
                 logger.error(f"Cannot set unit [{unitId}]: unknown unit definition!")
                 return

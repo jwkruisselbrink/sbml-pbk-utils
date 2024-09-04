@@ -3,32 +3,32 @@ import pandas as pd
 from . import TermDefinitions
 from . import UnitDefinitions
 
-class SbmlElementInfosExporter:
+class AnnotationsTemplateGenerator:
 
-    def exportTerms(self, model):
+    def generate(self, model):
         dt = []
-        dt_model = self.getDocumentTerms(model)
+        dt_model = self.get_document_level_terms(model)
         dt.extend(dt_model)
-        dt_compartments = self.getCompartmentTerms(model)
+        dt_compartments = self.get_compartment_terms(model)
         dt.extend(dt_compartments)
-        dt_species = self.getSpeciesTerms(model)
+        dt_species = self.get_species_terms(model)
         dt.extend(dt_species)
-        dt_parameters = self.getParameterTerms(model)
+        dt_parameters = self.get_parameter_terms(model)
         dt.extend(dt_parameters)
         terms = pd.DataFrame(
             dt,
             columns=["element_id", "sbml_type", "element_name", "unit", "URI", "description", "remark"]
         )
         return terms
-    
-    def getDocumentTerms(self, model):
+
+    def get_document_level_terms(self, model):
         element_type="document"
         dt = []
         dt.append([
             "substanceUnits",
             element_type,
             "model substances unit",
-            self.getUnitString(model.getSubstanceUnits()),
+            self.get_unit_string(model.getSubstanceUnits()),
             "",
             "Model substances unit.",
             ""
@@ -37,7 +37,7 @@ class SbmlElementInfosExporter:
             "timeUnits",
             element_type,
             "model time unit",
-            self.getUnitString(model.getTimeUnits()),
+            self.get_unit_string(model.getTimeUnits()),
             "",
             "Model time unit.",
             ""
@@ -46,14 +46,14 @@ class SbmlElementInfosExporter:
             "volumeUnits",
             element_type,
             "model volume unit",
-            self.getUnitString(model.getVolumeUnits()),
+            self.get_unit_string(model.getVolumeUnits()),
             "",
             "Model volume unit.",
             ""
         ])
         return dt
 
-    def getCompartmentTerms(self, model):
+    def get_compartment_terms(self, model):
         element_type="compartment"
         dt = []
         for i in range(0,model.getNumCompartments()):
@@ -61,10 +61,10 @@ class SbmlElementInfosExporter:
 
             name = element.getName()
             description = ''
-            uri = self.getTerm(element)
+            uri = self.get_term(element)
 
             # Try to find resource definition for element
-            resource = self.getResourceDefinition(element, element_type)
+            resource = self.get_resource_definition(element, element_type)
             if (resource is not None):
                 if 'resources' in resource.keys() and len(resource['resources']) > 0:
                     uri = resource['resources'][0]['URI']
@@ -77,14 +77,14 @@ class SbmlElementInfosExporter:
                 element.getId(),
                 element_type,
                 name,
-                self.getUnitString(element.getUnits()),
+                self.get_unit_string(element.getUnits()),
                 uri,
                 description,
                 ""
             ])
         return dt
 
-    def getSpeciesTerms(self, model):
+    def get_species_terms(self, model):
         element_type="species"
         dt = []
         for i in range(0,model.getNumSpecies()):
@@ -92,10 +92,10 @@ class SbmlElementInfosExporter:
 
             name = element.getName()
             description = ''
-            uri = self.getTerm(element)
+            uri = self.get_term(element)
 
             # Try to find resource definition for element
-            resource = self.getResourceDefinition(element, element_type)
+            resource = self.get_resource_definition(element, element_type)
             if (resource is not None):
                 if 'resources' in resource.keys() and len(resource['resources']) > 0:
                     uri = resource['resources'][0]['URI']
@@ -108,14 +108,14 @@ class SbmlElementInfosExporter:
                 element.getId(),
                 element_type,
                 name,
-                self.getUnitString(element.getUnits()),
+                self.get_unit_string(element.getUnits()),
                 uri,
                 description,
                 ""
             ])
         return dt
 
-    def getParameterTerms(self, model):
+    def get_parameter_terms(self, model):
         element_type="parameter"
         dt = []
         for i in range(0,model.getNumParameters()):
@@ -123,10 +123,10 @@ class SbmlElementInfosExporter:
 
             name = element.getName()
             description = ''
-            uri = self.getTerm(element)
+            uri = self.get_term(element)
 
             # Try to find resource definition for element
-            resource = self.getResourceDefinition(element, element_type)
+            resource = self.get_resource_definition(element, element_type)
             if (resource is not None):
                 if 'resources' in resource.keys() and len(resource['resources']) > 0:
                     uri = resource['resources'][0]['URI']
@@ -139,14 +139,14 @@ class SbmlElementInfosExporter:
                 element.getId(),
                 element_type,
                 name,
-                self.getUnitString(element.getUnits()),
+                self.get_unit_string(element.getUnits()),
                 uri,
                 description,
                 ""
             ])
         return dt
 
-    def getResourceDefinition(self, element, element_type):
+    def get_resource_definition(self, element, element_type):
         """Tries to find a resource definition for the specified element."""
         element_id = element.getId()
         for index, value in enumerate(TermDefinitions):
@@ -159,7 +159,7 @@ class SbmlElementInfosExporter:
                     return value
         return None
 
-    def getUnitString(self, unit):
+    def get_unit_string(self, unit):
         """Tries to get the (UCUM formated) unit string of the specified element."""
         if (unit):
             for index, value in enumerate(UnitDefinitions):
@@ -168,7 +168,7 @@ class SbmlElementInfosExporter:
                     return value['UCUM'] if value['UCUM'] else value['id']
         return ""
 
-    def getTerm(self, element):
+    def get_term(self, element):
         """Helper function to extract is-a resource URI."""
         cvTerms = element.getCVTerms()
         if cvTerms:

@@ -1,6 +1,6 @@
 # SBML PBK Utils
 
-Python utils for FAIR PBK model development using SBML.
+A small Python package containing utility functions for FAIR PBK model development using SBML.
 
 ## Install from GitHub
 

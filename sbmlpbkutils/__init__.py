@@ -1,6 +1,7 @@
 from .unit_definitions import UnitDefinitions
 from .term_definitions import TermDefinitions
-from .sbml_element_infos_exporter import SbmlElementInfosExporter
-from .sbml_model_annotator import SbmlModelAnnotator
-from .sbml_validator import SbmlValidator
+from .parametrisations_template_generator import ParametrisationsTemplateGenerator
+from .annotations_template_generator import AnnotationsTemplateGenerator
+from .pbk_model_annotator import PbkModelAnnotator
+from .pbk_model_validator import PbkModelValidator
 
