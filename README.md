@@ -12,11 +12,17 @@ To install the latest version available on the main GitHub branch type:
 pip install git+https://github.com/jwkruisselbrink/sbml-pbk-utils.git@main
 ````
 
+To install a specific version, use the version tag. For instance, for version `v0.1.0`, use:
+
+````
+pip install git+https://github.com/jwkruisselbrink/sbml-pbk-utils.git@v0.1.0
+````
+
 ## Using this package
 
 ### SBML model annotation
 
-The [PbkModelAnnotator](sbmlpbkutils/pbk_model_annotator.py) class can be used to annotate the elements and units of a PBK model implementation in SBML using a separate CSV file.
+The [PbkModelAnnotator](sbmlpbkutils/pbk_model_annotator.py) class can be used to annotate the elements and units of a PBK model implementation in SBML using a separate CSV file. This class is based on, and uses parts of, the annotation script of [SBMLutils](https://sbmlutils.readthedocs.io/en/latest/notebooks/sbml_annotator.html#Annotate-existing-model). However, in addition to annotation of the model using RDF triples, it also sets the model units and element names. 
 
 ```python
 from sbmlpbkutils import PbkModelAnnotator
@@ -33,7 +39,7 @@ annotator.annotate(
 )
 ```
 
-This class is based on, and uses parts of, the annotation script of [SBMLutils](https://sbmlutils.readthedocs.io/en/latest/notebooks/sbml_annotator.html#Annotate-existing-model). However, in addition to annotation of the model using RDF triples, it also sets the model units and element names. The structure of the CSV file is also based on the external annotations file format of [SBMLutils](https://sbmlutils.readthedocs.io/en/latest/notebooks/sbml_annotator.html#Annotate-existing-model), but again with some changes to also allow for annotation of units.
+The structure of the CSV file is also based on the external annotations file format of [SBMLutils](https://sbmlutils.readthedocs.io/en/latest/notebooks/sbml_annotator.html#Annotate-existing-model), but again with some changes to also allow for annotation of units.
 
 | Field           | Description                                              |
 |-----------------|----------------------------------------------------------|
@@ -76,8 +82,9 @@ As mentioned, this pacakage is currently being developed in an explorative manne
 At present, the following elements are considered essential elements for building up a standard for FAIR PBK modelling:
 
 - Use of the [Systems Biology Markup Language (SBML)](https://sbml.org/) as a harmonized publication and exchange format for PBK models, which should bridge the gap between the various different model implementation languages that are currently used by PBK model developers.
-- Ontologies:
+- This package is much inspired by, and (re-)uses much functionality of, the [SBMLutils](https://github.com/matthiaskoenig/sbmlutils) Python package. The reason for creating a package specifically for PBK models is that for this specific sub-domain, specific tools can be created that are more tailored to it.
+- The [libSBML](https://github.com/sbmlteam/python-libsbml) python package provides the essential functionality for manipulating SBML models. For instance, for enriching SBML model implementations with annotations, units and descriptions of the model elements.
+- For (semantic) annotation of PBK models, the controlled vocabularies of the following ontologies are considered relevant:
   - Use of the (currently being developed) [PBPK ontology](https://github.com/Crispae/pbpko/tree/main) for annotation of all model elements (e.g., compartments, species, parameters).
   - Alignment with the [Unified Code for Units of Measure (UCUM)](https://ucum.org/) and the [QUDT Ontologies](https://qudt.org/) for annotation of units, combined with the facilities for specification of units available in SBML.
-  - Use of the UBERON ontology for relating PBK model compartments to the biological entities they represent.
-- The [SBMLutils](https://github.com/matthiaskoenig/sbmlutils) Python package serves as inspiration of this pacakge. The reason for creating a package specifically for PBK models is that for this specific sub-domain, specific tools can be created that are more tailored to it.
+  - Use of the [UBERON](https://obophenotype.github.io/uberon/about/) ontology for relating PBK model compartments to the biological entities they represent.
