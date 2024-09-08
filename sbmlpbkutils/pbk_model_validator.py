@@ -53,15 +53,15 @@ class PbkModelValidator:
       return
 
     # Run unit consistency checks
-    self.validateUnits(sbmlDoc)
+    self.validate_units(sbmlDoc)
 
     # Check compartment annotations
-    self.validateCompartmentAnnotations(sbmlDoc)
+    self.validate_compartment_annotations(sbmlDoc)
 
     # Check compartment annotations
-    self.validateParameterAnnotations(sbmlDoc)
+    self.validate_parameter_annotations(sbmlDoc)
 
-  def validateUnits(self, sbmlDoc):
+  def validate_units(self, sbmlDoc):
     """Runs consistency checks on the units."""
     sbmlDoc.setConsistencyChecks(ls.LIBSBML_CAT_UNITS_CONSISTENCY, self.ucheck)
     failures = sbmlDoc.checkConsistency()
@@ -73,7 +73,7 @@ class PbkModelValidator:
         else:
           logger.warning(sbmlDoc.getError(i).getMessage())
 
-  def validateCompartmentAnnotations(self, sbmlDoc):
+  def validate_compartment_annotations(self, sbmlDoc):
     """Check compartment annotations. Each compartment should have a BQM_IS
     relation referring to a term of the PBPK ontology."""
     for i in range(0, sbmlDoc.model.getNumCompartments()):
@@ -96,7 +96,7 @@ class PbkModelValidator:
             if bqm_is_uri not in self.compartments_bqm_is_resources.keys():
               logger.error(f"Invalid BQM resource [{bqm_is_uri}] found for compartment [{c.getId()}].")
 
-  def validateParameterAnnotations(self, sbmlDoc):
+  def validate_parameter_annotations(self, sbmlDoc):
     """Check parameter annotations. Each parameter should have a BQM_IS
     relation referring to a term of the PBPK ontology."""
     for i in range(0, sbmlDoc.model.getNumParameters()):
