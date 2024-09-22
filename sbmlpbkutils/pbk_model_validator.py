@@ -1,14 +1,12 @@
 import os.path
 import libsbml as ls
-from sbmlutils.log import get_logger
+from logging import Logger
 from . import TermDefinitions
-
-logger = get_logger(__name__)
 
 class PbkModelValidator:
 
-  def __init__(self, ucheck):
-    self.ucheck = ucheck
+  def __init__(self):
+    self.ucheck = True
     self.compartments_bqm_is_resources = {}
     self.compartments_bqb_is_uris = {}
     self.parameters_bqm_is_resources = {}
@@ -27,7 +25,7 @@ class PbkModelValidator:
               if resource['qualifier'] == "bqmodel:is":
                 self.parameters_bqm_is_resources[resource['URI']] = termDefinition
 
-  def validate(self, file):
+  def validate(self, file: str, logger: Logger):
     """Runs all validation checks."""
     if not os.path.exists(file):
       logger.error(f'File [{file}] not found.')
@@ -53,15 +51,15 @@ class PbkModelValidator:
       return
 
     # Run unit consistency checks
-    self.validate_units(sbmlDoc)
+    self.validate_units(sbmlDoc, logger)
 
     # Check compartment annotations
-    self.validate_compartment_annotations(sbmlDoc)
+    self.validate_compartment_annotations(sbmlDoc, logger)
 
     # Check compartment annotations
-    self.validate_parameter_annotations(sbmlDoc)
+    self.validate_parameter_annotations(sbmlDoc, logger)
 
-  def validate_units(self, sbmlDoc):
+  def validate_units(self, sbmlDoc: ls.SBMLDocument, logger: Logger):
     """Runs consistency checks on the units."""
     sbmlDoc.setConsistencyChecks(ls.LIBSBML_CAT_UNITS_CONSISTENCY, self.ucheck)
     failures = sbmlDoc.checkConsistency()
@@ -73,7 +71,7 @@ class PbkModelValidator:
         else:
           logger.warning(sbmlDoc.getError(i).getMessage())
 
-  def validate_compartment_annotations(self, sbmlDoc):
+  def validate_compartment_annotations(self, sbmlDoc: ls.SBMLDocument, logger: Logger):
     """Check compartment annotations. Each compartment should have a BQM_IS
     relation referring to a term of the PBPK ontology."""
     for i in range(0, sbmlDoc.model.getNumCompartments()):
@@ -96,7 +94,7 @@ class PbkModelValidator:
             if bqm_is_uri not in self.compartments_bqm_is_resources.keys():
               logger.error(f"Invalid BQM resource [{bqm_is_uri}] found for compartment [{c.getId()}].")
 
-  def validate_parameter_annotations(self, sbmlDoc):
+  def validate_parameter_annotations(self, sbmlDoc: ls.SBMLDocument, logger: Logger):
     """Check parameter annotations. Each parameter should have a BQM_IS
     relation referring to a term of the PBPK ontology."""
     for i in range(0, sbmlDoc.model.getNumParameters()):
