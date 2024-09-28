@@ -17,7 +17,7 @@ class AnnotationsTemplateGenerator:
         dt.extend(dt_parameters)
         terms = pd.DataFrame(
             dt,
-            columns=["element_id", "sbml_type", "element_name", "unit", "URI", "description", "remark"]
+            columns=["element_id", "sbml_type", "element_name", "unit", "annotation_type", "qualifier", "URI", "description", "remark"]
         )
         return terms
 
@@ -30,6 +30,8 @@ class AnnotationsTemplateGenerator:
             "model substances unit",
             self.get_unit_string(model.getSubstanceUnits()),
             "",
+            "",
+            "",
             "Model substances unit.",
             ""
         ])
@@ -39,6 +41,8 @@ class AnnotationsTemplateGenerator:
             "model time unit",
             self.get_unit_string(model.getTimeUnits()),
             "",
+            "",
+            "",
             "Model time unit.",
             ""
         ])
@@ -47,6 +51,8 @@ class AnnotationsTemplateGenerator:
             element_type,
             "model volume unit",
             self.get_unit_string(model.getVolumeUnits()),
+            "",
+            "",
             "",
             "Model volume unit.",
             ""
@@ -61,23 +67,27 @@ class AnnotationsTemplateGenerator:
 
             name = element.getName()
             description = ''
+            qualifier = ''
             uri = self.get_term(element)
 
             # Try to find resource definition for element
             resource = self.get_resource_definition(element, element_type)
             if (resource is not None):
-                if 'resources' in resource.keys() and len(resource['resources']) > 0:
-                    uri = resource['resources'][0]['URI']
                 if 'name' in resource.keys():
                     name = resource['name']
                 if 'description' in resource.keys():
                     description = resource['description']
+                if 'resources' in resource.keys() and len(resource['resources']) > 0:
+                    qualifier = resource['resources'][0]['qualifier']
+                    uri = resource['resources'][0]['URI']
 
             dt.append([
                 element.getId(),
                 element_type,
                 name,
                 self.get_unit_string(element.getUnits()),
+                "rdf",
+                qualifier,
                 uri,
                 description,
                 ""
@@ -92,23 +102,27 @@ class AnnotationsTemplateGenerator:
 
             name = element.getName()
             description = ''
+            qualifier = ''
             uri = self.get_term(element)
 
             # Try to find resource definition for element
             resource = self.get_resource_definition(element, element_type)
             if (resource is not None):
-                if 'resources' in resource.keys() and len(resource['resources']) > 0:
-                    uri = resource['resources'][0]['URI']
                 if 'name' in resource.keys():
                     name = resource['name']
                 if 'description' in resource.keys():
                     description = resource['description']
+                if 'resources' in resource.keys() and len(resource['resources']) > 0:
+                    qualifier = resource['resources'][0]['qualifier']
+                    uri = resource['resources'][0]['URI']
 
             dt.append([
                 element.getId(),
                 element_type,
                 name,
                 self.get_unit_string(element.getUnits()),
+                "rdf",
+                qualifier,
                 uri,
                 description,
                 ""
@@ -123,23 +137,27 @@ class AnnotationsTemplateGenerator:
 
             name = element.getName()
             description = ''
+            qualifier = ''
             uri = self.get_term(element)
 
             # Try to find resource definition for element
             resource = self.get_resource_definition(element, element_type)
             if (resource is not None):
-                if 'resources' in resource.keys() and len(resource['resources']) > 0:
-                    uri = resource['resources'][0]['URI']
                 if 'name' in resource.keys():
                     name = resource['name']
                 if 'description' in resource.keys():
                     description = resource['description']
+                if 'resources' in resource.keys() and len(resource['resources']) > 0:
+                    qualifier = resource['resources'][0]['qualifier']
+                    uri = resource['resources'][0]['URI']
 
             dt.append([
                 element.getId(),
                 element_type,
                 name,
                 self.get_unit_string(element.getUnits()),
+                "rdf",
+                qualifier,
                 uri,
                 description,
                 ""
