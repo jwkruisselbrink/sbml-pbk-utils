@@ -16,13 +16,13 @@ class PbkModelValidator:
           resources = termDefinition['resources']
           if termDefinition['element_type'] == "compartment":
             for index, resource in enumerate(resources):
-              if resource['qualifier'] == "bqmodel:is":
+              if resource['qualifier'] == "BQM_IS":
                 self.compartments_bqm_is_resources[resource['URI']] = termDefinition
-              elif resource['qualifier'] == "bqbiol:is":
+              elif resource['qualifier'] == "BQB_IS":
                 self.compartments_bqb_is_uris[resource['URI']] = termDefinition
           elif termDefinition['element_type'] == "parameter":
             for index, resource in enumerate(resources):
-              if resource['qualifier'] == "bqmodel:is":
+              if resource['qualifier'] == "BQM_IS":
                 self.parameters_bqm_is_resources[resource['URI']] = termDefinition
 
   def validate(self, file: str, logger: Logger):
