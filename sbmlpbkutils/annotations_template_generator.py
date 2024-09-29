@@ -6,15 +6,17 @@ from . import QualifierDefinitions
 
 class AnnotationsTemplateGenerator:
 
-    def generate(self, model):
+    def generate(self, model, try_fill=True):
+        """Generates an annotations data table 
+        file and write results to the specified out file."""
         dt = []
         dt_model = self.get_document_level_terms(model)
         dt.extend(dt_model)
-        dt_compartments = self.get_compartment_terms(model)
+        dt_compartments = self.get_compartment_terms(model, try_fill)
         dt.extend(dt_compartments)
-        dt_species = self.get_species_terms(model)
+        dt_species = self.get_species_terms(model, try_fill)
         dt.extend(dt_species)
-        dt_parameters = self.get_parameter_terms(model)
+        dt_parameters = self.get_parameter_terms(model, try_fill)
         dt.extend(dt_parameters)
         terms = pd.DataFrame(
             dt,
@@ -60,37 +62,37 @@ class AnnotationsTemplateGenerator:
         ])
         return dt
 
-    def get_compartment_terms(self, model):
+    def get_compartment_terms(self, model, try_fill):
         element_type="compartment"
         required_qualifiers = ['BQM_IS', 'BQB_IS']
         dt = []
         for i in range(0,model.getNumCompartments()):
             element = model.getCompartment(i)
-            element_terms = self.get_element_terms(element, element_type, required_qualifiers)
+            element_terms = self.get_element_terms(element, element_type, required_qualifiers, try_fill)
             dt.extend(element_terms)
         return dt
 
-    def get_species_terms(self, model):
+    def get_species_terms(self, model, try_fill):
         element_type="species"
         required_qualifiers = ['BQM_IS']
         dt = []
         for i in range(0,model.getNumSpecies()):
             element = model.getSpecies(i)
-            element_terms = self.get_element_terms(element, element_type, required_qualifiers)
+            element_terms = self.get_element_terms(element, element_type, required_qualifiers, try_fill)
             dt.extend(element_terms)
         return dt
 
-    def get_parameter_terms(self, model):
+    def get_parameter_terms(self, model, try_fill):
         element_type="parameter"
         required_qualifiers = ['BQM_IS']
         dt = []
         for i in range(0,model.getNumParameters()):
             element = model.getParameter(i)
-            element_terms = self.get_element_terms(element, element_type, required_qualifiers)
+            element_terms = self.get_element_terms(element, element_type, required_qualifiers, try_fill)
             dt.extend(element_terms)
         return dt
 
-    def get_element_terms(self, element, element_type, required_qualifiers):
+    def get_element_terms(self, element, element_type, required_qualifiers, try_fill):
         dt = []
         name = element.getName()
         description = ''
@@ -99,9 +101,9 @@ class AnnotationsTemplateGenerator:
         matched_term = self.find_term_definition(element, element_type)
         matched_term_resources = None
         if (matched_term is not None):
-            if 'name' in matched_term.keys():
+            if try_fill and 'name' in matched_term.keys():
                 name = matched_term['name']
-            if 'description' in matched_term.keys():
+            if try_fill and'description' in matched_term.keys():
                 description = matched_term['description']
             if 'resources' in matched_term.keys() and len(matched_term['resources']) > 0:
                 matched_term_resources = matched_term['resources']
@@ -117,7 +119,7 @@ class AnnotationsTemplateGenerator:
             uris = self.get_cv_terms(element, qualifier_type, qualifier)
 
             # Add URIs from matched term-definition
-            if (matched_term_resources is not None):
+            if (try_fill and matched_term_resources is not None):
                 for resource in matched_term_resources:
                     if (resource['qualifier'] == qualifier_id):
                         uri = resource['URI']

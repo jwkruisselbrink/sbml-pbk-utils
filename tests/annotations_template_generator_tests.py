@@ -22,15 +22,28 @@ class AnnotationsTemplateGeneratorTests(unittest.TestCase):
             if file.endswith('.sbml'):
                 cls.sbml_files.append('./tests/models/' + file)
 
-    def test_export_terms(self):
+    def test_generate_no_fill(self):
         infosExporter = AnnotationsTemplateGenerator()
         for sbml_file in self.sbml_files:
             document = ls.readSBML(sbml_file)
             model = document.getModel()
-            df = infosExporter.generate(model)
+            df = infosExporter.generate(model, False)
             self.assertEqual(df.ndim, 2)
             sbml_basename = os.path.basename(sbml_file)
-            csv_file = os.path.join(__test_outputs_path__, Path(sbml_basename).with_suffix('.csv'))
+            stem = Path(sbml_basename).stem
+            csv_file = os.path.join(__test_outputs_path__, f'{stem}_no_fill.csv')
+            df.to_csv(csv_file, index=False)
+
+    def test_generate_try_fill(self):
+        infosExporter = AnnotationsTemplateGenerator()
+        for sbml_file in self.sbml_files:
+            document = ls.readSBML(sbml_file)
+            model = document.getModel()
+            df = infosExporter.generate(model, True)
+            self.assertEqual(df.ndim, 2)
+            sbml_basename = os.path.basename(sbml_file)
+            stem = Path(sbml_basename).stem
+            csv_file = os.path.join(__test_outputs_path__, f'{stem}_try_fill.csv')
             df.to_csv(csv_file, index=False)
 
 if __name__ == '__main__':
