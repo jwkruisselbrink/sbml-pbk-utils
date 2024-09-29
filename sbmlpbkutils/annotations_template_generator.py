@@ -151,9 +151,13 @@ class AnnotationsTemplateGenerator:
         for term in cvTerms:
             num_resources = term.getNumResources()
             for j in range(num_resources):
-                if term.getQualifierType() == qualifier_type and \
-                    term.getModelQualifierType() == qualifier:
-                    uris.append(term.getResourceURI(j))
+                if term.getQualifierType() == qualifier_type:
+                    if qualifier_type == ls.BIOLOGICAL_QUALIFIER \
+                        and term.getBiologicalQualifierType() == qualifier:
+                        uris.append(term.getResourceURI(j))
+                    elif qualifier_type == ls.MODEL_QUALIFIER \
+                        and term.getModelQualifierType() == qualifier:
+                        uris.append(term.getResourceURI(j))
         return uris
 
     def find_term_definition(self, element, element_type):
