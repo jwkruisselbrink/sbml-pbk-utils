@@ -2,6 +2,7 @@ import libsbml as ls
 import pandas as pd
 from . import TermDefinitions
 from . import UnitDefinitions
+from . import QualifierDefinitions
 
 class AnnotationsTemplateGenerator:
 
@@ -61,110 +62,101 @@ class AnnotationsTemplateGenerator:
 
     def get_compartment_terms(self, model):
         element_type="compartment"
+        required_qualifiers = ['BQM_IS', 'BQB_IS']
         dt = []
         for i in range(0,model.getNumCompartments()):
             element = model.getCompartment(i)
-
-            name = element.getName()
-            description = ''
-            qualifier = ''
-            uri = self.get_term(element)
-
-            # Try to find resource definition for element
-            resource = self.get_resource_definition(element, element_type)
-            if (resource is not None):
-                if 'name' in resource.keys():
-                    name = resource['name']
-                if 'description' in resource.keys():
-                    description = resource['description']
-                if 'resources' in resource.keys() and len(resource['resources']) > 0:
-                    qualifier = resource['resources'][0]['qualifier']
-                    uri = resource['resources'][0]['URI']
-
-            dt.append([
-                element.getId(),
-                element_type,
-                name,
-                self.get_unit_string(element.getUnits()),
-                "rdf",
-                qualifier,
-                uri,
-                description,
-                ""
-            ])
+            element_terms = self.get_element_terms(element, element_type, required_qualifiers)
+            dt.extend(element_terms)
         return dt
 
     def get_species_terms(self, model):
         element_type="species"
+        required_qualifiers = ['BQM_IS']
         dt = []
         for i in range(0,model.getNumSpecies()):
             element = model.getSpecies(i)
-
-            name = element.getName()
-            description = ''
-            qualifier = ''
-            uri = self.get_term(element)
-
-            # Try to find resource definition for element
-            resource = self.get_resource_definition(element, element_type)
-            if (resource is not None):
-                if 'name' in resource.keys():
-                    name = resource['name']
-                if 'description' in resource.keys():
-                    description = resource['description']
-                if 'resources' in resource.keys() and len(resource['resources']) > 0:
-                    qualifier = resource['resources'][0]['qualifier']
-                    uri = resource['resources'][0]['URI']
-
-            dt.append([
-                element.getId(),
-                element_type,
-                name,
-                self.get_unit_string(element.getUnits()),
-                "rdf",
-                qualifier,
-                uri,
-                description,
-                ""
-            ])
+            element_terms = self.get_element_terms(element, element_type, required_qualifiers)
+            dt.extend(element_terms)
         return dt
 
     def get_parameter_terms(self, model):
         element_type="parameter"
+        required_qualifiers = ['BQM_IS']
         dt = []
         for i in range(0,model.getNumParameters()):
             element = model.getParameter(i)
-
-            name = element.getName()
-            description = ''
-            qualifier = ''
-            uri = self.get_term(element)
-
-            # Try to find resource definition for element
-            resource = self.get_resource_definition(element, element_type)
-            if (resource is not None):
-                if 'name' in resource.keys():
-                    name = resource['name']
-                if 'description' in resource.keys():
-                    description = resource['description']
-                if 'resources' in resource.keys() and len(resource['resources']) > 0:
-                    qualifier = resource['resources'][0]['qualifier']
-                    uri = resource['resources'][0]['URI']
-
-            dt.append([
-                element.getId(),
-                element_type,
-                name,
-                self.get_unit_string(element.getUnits()),
-                "rdf",
-                qualifier,
-                uri,
-                description,
-                ""
-            ])
+            element_terms = self.get_element_terms(element, element_type, required_qualifiers)
+            dt.extend(element_terms)
         return dt
 
-    def get_resource_definition(self, element, element_type):
+    def get_element_terms(self, element, element_type, required_qualifiers):
+        dt = []
+        name = element.getName()
+        description = ''
+
+        # Try to find matching term definition for element
+        matched_term = self.find_term_definition(element, element_type)
+        matched_term_resources = None
+        if (matched_term is not None):
+            if 'name' in matched_term.keys():
+                name = matched_term['name']
+            if 'description' in matched_term.keys():
+                description = matched_term['description']
+            if 'resources' in matched_term.keys() and len(matched_term['resources']) > 0:
+                matched_term_resources = matched_term['resources']
+
+        rows = 0
+
+        for qualifierDefinition in QualifierDefinitions:
+            qualifier = qualifierDefinition['qualifier']
+            qualifier_type = qualifierDefinition['type']
+            qualifier_id = qualifierDefinition['id']
+
+            # Get current URIs defined in the model for this qualifier
+            uris = self.get_cv_terms(element, qualifier_type, qualifier)
+
+            # Add URIs from matched term-definition
+            if (matched_term_resources is not None):
+                for resource in matched_term_resources:
+                    if (resource['qualifier'] == qualifier_id):
+                        uri = resource['URI']
+                        if (uri not in uris):
+                            uris.append(uri)
+
+            # If no resource URIs were found for this qualifier, but it is a required
+            # qualifier, then add an empty record
+            if (len(uris) == 0 and qualifier_id in required_qualifiers):
+                uris = ['']
+
+            for uri in uris:
+                dt.append([
+                    element.getId(),
+                    element_type,
+                    (name if rows == 0 else ''),
+                    (self.get_unit_string(element.getUnits()) if rows == 0 else ''),
+                    "rdf",
+                    qualifier_id,
+                    uri,
+                    (description if rows == 0 else ''),
+                    ""
+                ])
+                rows += 1
+
+        return dt
+
+    def get_cv_terms(self, element, qualifier_type, qualifier):
+        uris = []
+        cvTerms = element.getCVTerms()
+        for term in cvTerms:
+            num_resources = term.getNumResources()
+            for j in range(num_resources):
+                if term.getQualifierType() == qualifier_type and \
+                    term.getModelQualifierType() == qualifier:
+                    uris.append(term.getResourceURI(j))
+        return uris
+
+    def find_term_definition(self, element, element_type):
         """Tries to find a resource definition for the specified element."""
         element_id = element.getId()
         for index, value in enumerate(TermDefinitions):

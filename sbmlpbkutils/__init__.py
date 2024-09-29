@@ -1,5 +1,6 @@
 from .unit_definitions import UnitDefinitions
 from .term_definitions import TermDefinitions
+from .qualifier_definitions import QualifierDefinitions
 from .parametrisations_template_generator import ParametrisationsTemplateGenerator
 from .annotations_template_generator import AnnotationsTemplateGenerator
 from .pbk_model_annotator import PbkModelAnnotator
