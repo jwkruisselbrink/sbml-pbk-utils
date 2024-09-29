@@ -1,6 +1,6 @@
 # SBML PBK Utils
 
-The `sbmlpbkutils` package is a small Python package that contains utility functions for FAIR PBK model implementation in SBML. It provides functions for annotating, validating and running SBML PBK models. It is currently being developed in an explorative manner to evaluate the use of SBML as a harmonized exchange format for FAIR PBK models, and to develop and test a strategy/standard for annotation of terms and units specifically for PBK models. In its current state it should therefore be regarded as an experimental toolset.
+The `sbmlpbkutils` package is a small Python package that contains utility functions for FAIR PBK model implementation in SBML. It provides a number of utility functions and classes for annotating, validating and running SBML PBK models. It is currently being developed in an explorative manner to evaluate the use of SBML as a harmonized exchange format for FAIR PBK models, and to develop and test a strategy/standard for annotation of terms and units specifically for PBK models. In its current state it should therefore be regarded as an experimental toolset.
 
 ## Installation
 
@@ -12,11 +12,13 @@ To install the latest version available on the main GitHub branch type:
 pip install git+https://github.com/jwkruisselbrink/sbml-pbk-utils.git@main
 ````
 
-To install a specific version, use the version tag. For instance, for version `v0.1.0`, use:
+To install a specific version, use the version tag. For instance, for version `v0.2.0`, use:
 
 ````
-pip install git+https://github.com/jwkruisselbrink/sbml-pbk-utils.git@v0.1.0
+pip install git+https://github.com/jwkruisselbrink/sbml-pbk-utils.git@v0.2.0
 ````
+
+Given the experimental nature of this package, there currently no plans to publish it on PyPI.
 
 ## Using this package
 
@@ -82,7 +84,7 @@ As mentioned, this pacakage is currently being developed in an explorative manne
 At present, the following elements are considered essential elements for building up a standard for FAIR PBK modelling:
 
 - Use of the [Systems Biology Markup Language (SBML)](https://sbml.org/) as a harmonized publication and exchange format for PBK models, which should bridge the gap between the various different model implementation languages that are currently used by PBK model developers.
-- This package is much inspired by, and (re-)uses much functionality of, the [SBMLutils](https://github.com/matthiaskoenig/sbmlutils) Python package. The reason for creating a package specifically for PBK models is that for this specific sub-domain, specific tools can be created that are more tailored to it.
+- The [SBMLutils](https://github.com/matthiaskoenig/sbmlutils) Python package provides convenient utilities for manipulation and annotation of SBML models. It also serves as a major source of inspiration for this PBK utils package. The reason for creating a package specifically for PBK models is to include also tooling that is specifically tailored to the sub-domain of PBK models.
 - The [libSBML](https://github.com/sbmlteam/python-libsbml) python package provides the essential functionality for manipulating SBML models. For instance, for enriching SBML model implementations with annotations, units and descriptions of the model elements.
 - For (semantic) annotation of PBK models, the controlled vocabularies of the following ontologies are considered relevant:
   - Use of the (currently being developed) [PBPK ontology](https://github.com/Crispae/pbpko/tree/main) for annotation of all model elements (e.g., compartments, species, parameters).
