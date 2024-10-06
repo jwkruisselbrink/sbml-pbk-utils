@@ -183,17 +183,3 @@ class AnnotationsTemplateGenerator:
                     or any(val.lower() == unit.lower() for val in value['synonyms']):
                     return value['UCUM'] if value['UCUM'] else value['id']
         return ""
-
-    def get_term(self, element):
-        """Helper function to extract is-a resource URI."""
-        cvTerms = element.getCVTerms()
-        if cvTerms:
-            # Check if there already is an annotation for the element
-            for term in cvTerms:
-                num_resources = term.getNumResources()
-                for j in range(num_resources):
-                    if term.getQualifierType() == ls.BIOLOGICAL_QUALIFIER and \
-                        term.getBiologicalQualifierType() == ls.BQB_IS:
-                        return term.getResourceURI(j)
-
-        return None 

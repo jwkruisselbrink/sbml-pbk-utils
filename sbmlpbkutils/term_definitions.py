@@ -46,7 +46,7 @@ TermDefinitions = [
         "resources": [
             {
                 "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON:0001013"
+                "URI": "http://purl.obolibrary.org/obo/UBERON_0001013"
             }
         ]
     },
@@ -55,6 +55,7 @@ TermDefinitions = [
         "element_type": "compartment",
         "description": "Alveolar air compartment.",
         "synonyms": [],
+        "exposure_route": "inhalation",
         "recommended_id": "Air",
         "common_ids": [
             "Air",
@@ -86,7 +87,7 @@ TermDefinitions = [
             },
             {
                 "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON:0013755"
+                "URI": "http://purl.obolibrary.org/obo/UBERON_0013755"
             }
         ]
     },
@@ -113,7 +114,7 @@ TermDefinitions = [
         "resources": [
             {
                 "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON:0000178"
+                "URI": "http://purl.obolibrary.org/obo/UBERON_0000178"
             }
         ]
     },
@@ -130,7 +131,7 @@ TermDefinitions = [
         "resources": [
             {
                 "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON:0001969"
+                "URI": "http://purl.obolibrary.org/obo/UBERON_0001969"
             }
         ]
     },
@@ -151,13 +152,14 @@ TermDefinitions = [
         "description": "Gut (digestive tract) compartment.",
         "synonyms": [],
         "recommended_id": "Gut",
+        "exposure_route": "oral",
         "common_ids": [
             "gut"
         ],
         "resources": [
             {
                 "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON:0001555"
+                "URI": "http://purl.obolibrary.org/obo/UBERON_0001555"
             }
         ]
     },
@@ -174,7 +176,7 @@ TermDefinitions = [
         "resources": [
             {
                 "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON:0002113"
+                "URI": "http://purl.obolibrary.org/obo/UBERON_0002113"
             }
         ]
     },
@@ -191,7 +193,7 @@ TermDefinitions = [
         "resources": [
             {
                 "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON:0002107"
+                "URI": "http://purl.obolibrary.org/obo/UBERON_0002107"
             }
         ]
     },
@@ -208,7 +210,7 @@ TermDefinitions = [
         "resources": [
             {
                 "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON:0000479"
+                "URI": "http://purl.obolibrary.org/obo/UBERON_0000479"
             }
         ]
     },
@@ -274,7 +276,7 @@ TermDefinitions = [
         "resources": [
             {
                 "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON:0002097"
+                "URI": "http://purl.obolibrary.org/obo/UBERON_0002097"
             }
         ]
     },
@@ -283,6 +285,7 @@ TermDefinitions = [
         "element_type": "compartment",
         "description": "Exposed skin compartment.",
         "synonyms": [],
+        "exposure_route": "dermal",
         "recommended_id": "Skin_e",
         "common_ids": [
             "Skin_e"
@@ -313,7 +316,7 @@ TermDefinitions = [
         "resources": [
             {
                 "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON:0002027"
+                "URI": "http://purl.obolibrary.org/obo/UBERON_0002027"
             }
         ]
     },
@@ -322,6 +325,7 @@ TermDefinitions = [
         "element_type": "compartment",
         "description": "Stratum corneum of exposed skin compartment.",
         "synonyms": [],
+        "exposure_route": "dermal",
         "recommended_id": "SC_e",
         "common_ids": [
             "SC_e",
@@ -363,7 +367,7 @@ TermDefinitions = [
         "resources": [
             {
                 "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON:0001088"
+                "URI": "http://purl.obolibrary.org/obo/UBERON_0001088"
             }
         ]
     },
@@ -383,7 +387,7 @@ TermDefinitions = [
             },
             {
                 "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON:0013756"
+                "URI": "http://purl.obolibrary.org/obo/UBERON_0013756"
             }
         ]
     },

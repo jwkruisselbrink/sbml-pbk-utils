@@ -1,8 +1,8 @@
 from .unit_definitions import UnitDefinitions
 from .term_definitions import TermDefinitions
-from .qualifier_definitions import QualifierDefinitions
-from .parametrisations_template_generator import ParametrisationsTemplateGenerator
-from .annotations_template_generator import AnnotationsTemplateGenerator
+from .qualifier_definitions import QualifierDefinitions, ModelQualifierIdsLookup, BiologicalQualifierIdsLookup
 from .pbk_model_annotator import PbkModelAnnotator
 from .pbk_model_validator import PbkModelValidator
-
+from .pbk_model_infos_extractor import PbkModelInfosExtractor
+from .annotations_template_generator import AnnotationsTemplateGenerator
+from .parametrisations_template_generator import ParametrisationsTemplateGenerator
