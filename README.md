@@ -12,10 +12,10 @@ To install the latest version available on the main GitHub branch type:
 pip install git+https://github.com/jwkruisselbrink/sbml-pbk-utils.git@main
 ````
 
-To install a specific version, use the version tag. For instance, for version `v0.3.0`, use:
+To install a specific version, use the version tag. For instance, for version `v0.4.0`, use:
 
 ````
-pip install git+https://github.com/jwkruisselbrink/sbml-pbk-utils.git@v0.3.0
+pip install git+https://github.com/jwkruisselbrink/sbml-pbk-utils.git@v0.4.0
 ````
 
 Given the experimental nature of this package, there currently no plans to publish it on PyPI.
