@@ -1,47 +1,101 @@
 TermDefinitions = [
-    # Model terms: species
     {
-        "name": "mammals",
+        "name": "mus sp.",
         "element_type": "model",
-        "description": "Model for mammals (mammalia).",
+        "description": "",
         "synonyms": [
-            "mammalia",
-            "mammals"
+            "mice"
         ],
         "resources": [
             {
                 "qualifier": "BQB_HAS_TAXON",
-                "URI": "taxonomy/40674"
+                "URI": "https://identifiers.org/taxonomy/10095"
             }
         ]
     },
     {
-        "name": "human",
+        "name": "homo sapiens",
         "element_type": "model",
-        "description": "Model for human (homo sapiens).",
+        "description": "",
         "synonyms": [
-            "homo sapiens",
             "human"
         ],
         "resources": [
             {
                 "qualifier": "BQB_HAS_TAXON",
-                "URI": "taxonomy/9606"
+                "URI": "https://identifiers.org/taxonomy/9606"
             }
         ]
     },
-    # Compartment terms
     {
-        "name": "adipose tissue",
-        "element_type": "compartment",
-        "description": "Adipose tissue (fat) compartment.",
+        "name": "mammalia",
+        "element_type": "model",
+        "description": "",
         "synonyms": [
-            "fat",
-            "adipose tissue"
+            "mammals"
         ],
-        "recommended_id": "Fat",
+        "resources": [
+            {
+                "qualifier": "BQB_HAS_TAXON",
+                "URI": "https://identifiers.org/taxonomy/40674"
+            }
+        ]
+    },
+    {
+        "name": "physiologically based pharmacokinetic model",
+        "element_type": "model",
+        "description": "",
+        "resources": [
+            {
+                "qualifier": "BQB_IS",
+                "URI": "http://identifiers.org/mamo/MAMO_0000203"
+            }
+        ]
+    },
+    {
+        "name": "ordinary differential equation model",
+        "element_type": "model",
+        "description": "",
+        "resources": [
+            {
+                "qualifier": "BQB_IS",
+                "URI": "http://identifiers.org/mamo/MAMO_0000046"
+            }
+        ]
+    },
+    {
+        "name": "perfusion limited PBK model",
+        "element_type": "model",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "permeability limited PBK model",
+        "element_type": "model",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "hybrid perfusion limited/permeability PBK model (transfer model?)",
+        "element_type": "model",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "lifetime model",
+        "element_type": "model",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "adipose tissue compartment",
+        "element_type": "compartment",
+        "description": "PBK model compartment representing adipose tissue (or fat).",
+        "synonyms": [
+            "fat tissue"
+        ],
         "common_ids": [
-            "fat",
+            "Adipose"
         ],
         "resources": [
             {
@@ -51,15 +105,27 @@ TermDefinitions = [
         ]
     },
     {
-        "name": "alveolar air",
+        "name": "administrative compartment",
         "element_type": "compartment",
-        "description": "Alveolar air compartment.",
-        "synonyms": [],
-        "exposure_route": "inhalation",
-        "recommended_id": "Air",
-        "common_ids": [
-            "Air",
+        "description": "PBK model compartment not related to a physical entity but introduced for administrative purposes (e.g., mass balance).",
+        "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00457"
+            }
+        ]
+    },
+    {
+        "name": "alveolar air compartment",
+        "element_type": "compartment",
+        "description": "PBK model compartment representing alveolar air (i.e., air in the lungs).",
+        "synonyms": [
+            "air in the lungs"
         ],
+        "common_ids": [
+            "Air"
+        ],
+        "exposure_route": "inhalation",
         "resources": [
             {
                 "qualifier": "BQM_IS",
@@ -72,13 +138,11 @@ TermDefinitions = [
         ]
     },
     {
-        "name": "arterial blood",
+        "name": "arterial blood compartment",
         "element_type": "compartment",
-        "description": "Arterial blood compartment.",
-        "synonyms": [],
-        "recommended_id": "Art",
+        "description": "PBK model compartment representing arterial blood.",
         "common_ids": [
-            "art",
+            "Art"
         ],
         "resources": [
             {
@@ -94,39 +158,41 @@ TermDefinitions = [
     {
         "name": "arterial blood plasma",
         "element_type": "compartment",
-        "description": "Arterial blood plasma compartment.",
-        "synonyms": [],
-        "recommended_id": "Art_Plas",
+        "description": "PBK model compartment representing blood plasma.",
         "common_ids": [
-            "Art_Plas",
             "Art_Plasma"
         ],
+        "resources": []
     },
     {
-        "name": "blood",
+        "name": "bladder compartment",
         "element_type": "compartment",
-        "description": "Blood compartment.",
-        "synonyms": [],
-        "recommended_id": "Blood",
+        "description": "PBK model compartment representing the bladder (used e.g., as a urine delay compartment).",
         "common_ids": [
-            "Blood"
+            "Bladder"
         ],
         "resources": [
             {
                 "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON_0000178"
+                "URI": "http://purl.obolibrary.org/obo/UBERON_0004228"
             }
         ]
     },
     {
-        "name": "blood plasma",
+        "name": "blood compartment",
         "element_type": "compartment",
-        "description": "Blood plasma compartment.",
-        "synonyms": [],
-        "recommended_id": "Plasma",
+        "description": "PBK model compartment representing blood (whole blood).",
+        "common_ids": [
+            "Blood"
+        ],
+        "resources": []
+    },
+    {
+        "name": "blood plasma compartment",
+        "element_type": "compartment",
+        "description": "PBK model compartment representing blood plasma.",
         "common_ids": [
             "Plasma"
-            "Blood_plasma"
         ],
         "resources": [
             {
@@ -136,25 +202,25 @@ TermDefinitions = [
         ]
     },
     {
-        "name": "filtrate",
+        "name": "brain compartment",
         "element_type": "compartment",
-        "description": "Filtrate compartment.",
-        "synonyms": [],
-        "recommended_id": "Filtrate",
+        "description": "PBK model compartment representing brain tissue.",
         "common_ids": [
-            "filtrate",
-            "fil"
+            "Brain"
+        ],
+        "resources": [
+            {
+                "qualifier": "BQB_IS",
+                "URI": "http://purl.obolibrary.org/obo/UBERON_0000955"
+            }
         ]
     },
     {
-        "name": "gut",
+        "name": "digestive tract compartment",
         "element_type": "compartment",
-        "description": "Gut (digestive tract) compartment.",
-        "synonyms": [],
-        "recommended_id": "Gut",
-        "exposure_route": "oral",
-        "common_ids": [
-            "gut"
+        "description": "PBK model compartment representing the digestive tract.",
+        "synonyms": [
+            "digestive tract"
         ],
         "resources": [
             {
@@ -164,14 +230,133 @@ TermDefinitions = [
         ]
     },
     {
-        "name": "kidney",
+        "name": "digestive system compartment",
         "element_type": "compartment",
-        "description": "Kidney compartment.",
-        "synonyms": [],
-        "recommended_id": "Kidney",
+        "description": "PBK model compartment representing the digestive system.",
+        "resources": [
+            {
+                "qualifier": "BQB_IS",
+                "URI": "http://purl.obolibrary.org/obo/UBERON_0001007"
+            }
+        ]
+    },
+    {
+        "name": "excreta compartment",
+        "element_type": "compartment",
+        "description": "PBK model compartment representing excreta (e.g., urine and feces). ",
+        "synonyms": [
+            "excretion"
+        ],
         "common_ids": [
-            "kidney",
-            "kid"
+            "Excretion"
+        ],
+        "resources": [
+            {
+                "qualifier": "BQB_IS",
+                "URI": "http://purl.obolibrary.org/obo/UBERON_0000174"
+            }
+        ]
+    },
+    {
+        "name": "feces compartment",
+        "element_type": "compartment",
+        "description": "PBK model compartment representing feces.",
+        "common_ids": [
+            "Feces"
+        ],
+        "resources": [
+            {
+                "qualifier": "BQB_IS",
+                "URI": "http://purl.obolibrary.org/obo/UBERON_0001988"
+            }
+        ]
+    },
+    {
+        "name": "filtrate compartment",
+        "element_type": "compartment",
+        "description": "PBK model compartment representing the filtrate.",
+        "common_ids": [
+            "Filtrate"
+        ],
+        "resources": []
+    },
+    {
+        "name": "gut compartment",
+        "element_type": "compartment",
+        "description": "PBK model compartment representing the gut.",
+        "common_ids": [
+            "Gut"
+        ],
+        "exposure_route": "oral",
+        "resources": [
+            {
+                "qualifier": "BQB_IS",
+                "URI": "http://purl.obolibrary.org/obo/UBERON_0001555"
+            }
+        ]
+    },
+    {
+        "name": "gut lumen compartment",
+        "element_type": "compartment",
+        "description": "PBK model compartment representing the lumen of digestive tract.",
+        "common_ids": [
+            "Lumen"
+        ],
+        "resources": [
+            {
+                "qualifier": "BQB_IS",
+                "URI": "http://purl.obolibrary.org/obo/UBERON_0006909"
+            }
+        ]
+    },
+    {
+        "name": "gonads compaterment",
+        "element_type": "compartment",
+        "description": "PBK model compartment representing the gonads.",
+        "common_ids": [
+            "Gonads"
+        ],
+        "resources": [
+            {
+                "qualifier": "BQB_IS",
+                "URI": "http://purl.obolibrary.org/obo/UBERON_0000991"
+            }
+        ]
+    },
+    {
+        "name": "heart compartment",
+        "element_type": "compartment",
+        "description": "PBK model compartment representing the heart.",
+        "common_ids": [
+            "Heart"
+        ],
+        "resources": [
+            {
+                "qualifier": "BQB_IS",
+                "URI": "http://purl.obolibrary.org/obo/UBERON_0000948"
+            }
+        ]
+    },
+    {
+        "name": "intestine compartment",
+        "element_type": "compartment",
+        "description": "PBK model compartment representing the intestine.",
+        "common_ids": [
+            "Intestine"
+        ],
+        "resources": [
+            {
+                "qualifier": "BQB_IS",
+                "URI": "http://purl.obolibrary.org/obo/UBERON_0000160"
+            }
+        ]
+    },
+    {
+        "name": "kidney compartment",
+        "element_type": "compartment",
+        "description": "PBK model compartment representing the kidney.",
+        "common_ids": [
+            "Kidney"
         ],
         "resources": [
             {
@@ -181,45 +366,37 @@ TermDefinitions = [
         ]
     },
     {
-        "name": "liver",
+        "name": "liver compartment",
         "element_type": "compartment",
-        "description": "Liver compartment.",
-        "synonyms": [],
-        "recommended_id": "Liver",
+        "description": "PBK model compartment representing the liver.",
         "common_ids": [
-            "liver",
-            "liv"
+            "Liver"
         ],
         "resources": [
             {
                 "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON_0002107"
+                "URI": "http://purl.obolibrary.org/obo/UBERON_0002107 "
             }
         ]
     },
     {
-        "name": "lung",
+        "name": "lung compartment",
         "element_type": "compartment",
-        "description": "Lung compartment.",
-        "synonyms": [],
-        "recommended_id": "Lung",
+        "description": "PBK model compartment representing the lung.",
         "common_ids": [
-            "lung",
-            "lungs"
+            "Lung"
         ],
         "resources": [
             {
                 "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON_0000479"
+                "URI": "http://purl.obolibrary.org/obo/UBERON_0002048"
             }
         ]
     },
     {
-        "name": "poorly perfused tissue",
+        "name": "poorly perfused tissue compartment",
         "element_type": "compartment",
-        "description": "Poorly perfused tissue compartment.",
-        "synonyms": [],
-        "recommended_id": "Poor",
+        "description": "PBK model compartment representing the poorly perfused tissue.",
         "common_ids": [
             "Poor"
         ],
@@ -231,15 +408,29 @@ TermDefinitions = [
         ]
     },
     {
-        "name": "rest-of-body",
+        "name": "systemic exposure compartment",
         "element_type": "compartment",
-        "description": "Rest-of-body compartment.",
-        "synonyms": [],
-        "recommended_id": "Rest",
+        "description": "Administrative PBK model compartment representing systemic exposure (aggregated from multiple routes).",
         "common_ids": [
+            "Systemic"
+        ],
+        "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00459"
+            }
+        ]
+    },
+    {
+        "name": "rest-of-body compartment",
+        "element_type": "compartment",
+        "description": "PBK model compartment representing the rest of the body (periphery).",
+        "synonyms": [
             "rest-of-body",
-            "rest",
             "periphery"
+        ],
+        "common_ids": [
+            "Rest"
         ],
         "resources": [
             {
@@ -249,11 +440,9 @@ TermDefinitions = [
         ]
     },
     {
-        "name": "richly perfused tissue",
+        "name": "richly perfused tissue compartment",
         "element_type": "compartment",
-        "description": "Richly perfused tissue compartment.",
-        "synonyms": [],
-        "recommended_id": "Rich",
+        "description": "PBK model compartment representing richly perfused tissue.",
         "common_ids": [
             "Rich"
         ],
@@ -265,11 +454,9 @@ TermDefinitions = [
         ]
     },
     {
-        "name": "skin",
+        "name": "skin compartment",
         "element_type": "compartment",
-        "description": "Skin compartment.",
-        "synonyms": [],
-        "recommended_id": "Skin",
+        "description": "PBK model compartment representing the skin.",
         "common_ids": [
             "Skin"
         ],
@@ -281,72 +468,39 @@ TermDefinitions = [
         ]
     },
     {
-        "name": "skin exposed",
+        "name": "spleen compartment",
         "element_type": "compartment",
-        "description": "Exposed skin compartment.",
-        "synonyms": [],
-        "exposure_route": "dermal",
-        "recommended_id": "Skin_e",
+        "description": "PBK model compartment representing the spleen.",
         "common_ids": [
-            "Skin_e"
-        ],
-        "resources": []
-    },
-    {
-        "name": "skin unexposed",
-        "element_type": "compartment",
-        "description": "Unexposed skin compartment.",
-        "synonyms": [],
-        "recommended_id": "Skin_u",
-        "common_ids": [
-            "Skin_u"
-        ],
-        "resources": []
-    },
-    {
-        "name": "stratum corneum",
-        "element_type": "compartment",
-        "description": "Stratum corneum compartment.",
-        "synonyms": [],
-        "recommended_id": "SC",
-        "common_ids": [
-            "SC",
-            "Skin_sc"
+            "Spleen"
         ],
         "resources": [
             {
                 "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON_0002027"
+                "URI": "http://purl.obolibrary.org/obo/UBERON_0002106"
             }
         ]
     },
     {
-        "name": "stratum corneum exposed skin",
+        "name": "stomach compartment",
         "element_type": "compartment",
-        "description": "Stratum corneum of exposed skin compartment.",
-        "synonyms": [],
-        "exposure_route": "dermal",
-        "recommended_id": "SC_e",
+        "description": "PBK model compartment representing the stomach.",
         "common_ids": [
-            "SC_e",
-            "Skin_sc_e"
+            "Stomach"
         ],
         "resources": [
             {
-                "qualifier": "BQM_IS",
-                "URI": "http://purl.obolibrary.org/obo/PBPKO_00469"
+                "qualifier": "BQB_IS",
+                "URI": "http://purl.obolibrary.org/obo/UBERON_0000945"
             }
         ]
     },
     {
-        "name": "stratum corneum unexposed skin",
+        "name": "stratum corneum unexposed skin compartment",
         "element_type": "compartment",
-        "description": "Stratum corneum of unexposed skin compartment.",
-        "synonyms": [],
-        "recommended_id": "SC_u",
+        "description": "PBK model compartment representing the stratum corneum (the outermost layer of the epidermis) of unexposed skin.",
         "common_ids": [
-            "SC_u",
-            "Skin_sc_u"
+            "Skin_SC_u"
         ],
         "resources": [
             {
@@ -356,13 +510,43 @@ TermDefinitions = [
         ]
     },
     {
-        "name": "urine",
+        "name": "stratum corneum exposed skin compartment",
         "element_type": "compartment",
-        "description": "Urine compartment.",
-        "synonyms": [],
-        "recommended_id": "Urine",
+        "description": "PBK model compartment representing the stratum corneum (the outermost layer of the epidermis) of exposed skin.",
         "common_ids": [
-            "urine"
+            "Skin_SC_e"
+        ],
+        "exposure_route": "dermal",
+        "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00469"
+            }
+        ]
+    },
+    {
+        "name": "stratum corneum compartment",
+        "element_type": "compartment",
+        "description": "PBK model compartment representing the stratum corneum (the outermost layer of the epidermis).",
+        "synonyms": [
+            "outer layer of the skin"
+        ],
+        "common_ids": [
+            "Skin_SC"
+        ],
+        "resources": [
+            {
+                "qualifier": "BQB_IS",
+                "URI": "http://purl.obolibrary.org/obo/UBERON_0002027"
+            }
+        ]
+    },
+    {
+        "name": "urine compartment",
+        "element_type": "compartment",
+        "description": "PBK model compartment representing urine.",
+        "common_ids": [
+            "Urine"
         ],
         "resources": [
             {
@@ -372,19 +556,27 @@ TermDefinitions = [
         ]
     },
     {
-        "name": "venous blood",
+        "name": "uterus compartment",
         "element_type": "compartment",
-        "description": "Venous blood compartment.",
-        "synonyms": [],
-        "recommended_id": "Ven",
+        "description": "PBK model compartment representing the uterus.",
+        "common_ids": [
+            "Uterus"
+        ],
+        "resources": [
+            {
+                "qualifier": "BQB_IS",
+                "URI": "http://purl.obolibrary.org/obo/UBERON_0000995"
+            }
+        ]
+    },
+    {
+        "name": "venous blood compartment",
+        "element_type": "compartment",
+        "description": "PBK model compartment representing venous blood.",
         "common_ids": [
             "Ven"
         ],
         "resources": [
-            {
-                "qualifier": "BQM_IS",
-                "URI": "http://purl.obolibrary.org/obo/PBPKO_00463"
-            },
             {
                 "qualifier": "BQB_IS",
                 "URI": "http://purl.obolibrary.org/obo/UBERON_0013756"
@@ -392,41 +584,34 @@ TermDefinitions = [
         ]
     },
     {
-        "name": "venous blood plasma",
+        "name": "venous blood plasma compartment",
         "element_type": "compartment",
-        "description": "Venous blood plasma compartment.",
-        "synonyms": [],
-        "recommended_id": "Ven_Plas",
+        "description": "PBK model compartment representing venous blood plasma.",
         "common_ids": [
-            "Ven_Plas"
+            "Ven_Plasma"
         ],
         "resources": [
             {
-                "qualifier": "BQB_IS",
-                "URI": "obo/NCIT_C132462"
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00463"
             }
         ]
     },
     {
-        "name": "viable epidermis",
+        "name": "viable epidermis compartment",
         "element_type": "compartment",
-        "description": "Viable epidermis compartment.",
-        "synonyms": [],
-        "recommended_id": "VE",
+        "description": "PBK model compartment representing the viable epidermis.",
         "common_ids": [
-            "VE",
-            "Skin_ve"
-        ]
+            "Skin_VE"
+        ],
+        "resources": []
     },
     {
-        "name": "viable epidermis exposed",
+        "name": "viable epidermis exposed skin compartment",
         "element_type": "compartment",
-        "description": "Viable epidermis of exposed skin compartment.",
-        "synonyms": [],
-        "recommended_id": "VE_u",
+        "description": "PBK model compartment representing the viable epidermis of exposed skin.",
         "common_ids": [
-            "VE_u",
-            "Skin_ve_u"
+            "Skin_VE_e"
         ],
         "resources": [
             {
@@ -436,14 +621,11 @@ TermDefinitions = [
         ]
     },
     {
-        "name": "viable epidermis unexposed",
+        "name": "viable epidermis unexposed skin compartment",
         "element_type": "compartment",
-        "description": "Viable epidermis of unexposed skin compartment.",
-        "synonyms": [],
-        "recommended_id": "VE_u",
+        "description": "PBK model compartment representing the viable epidermis of unexposed skin.",
         "common_ids": [
-            "VE_u",
-            "Skin_ve_u"
+            "Skin_VE_u"
         ],
         "resources": [
             {
@@ -452,122 +634,145 @@ TermDefinitions = [
             }
         ]
     },
-    # Species terms
     {
-        "name": "metabolite",
+        "name": "amount of chemical in adipose tissue",
         "element_type": "species",
-        "description": "Species is a metabolite.",
-        "synonyms": [],
-        "common_ids": [
-            "metabolite"
-        ],
-        "resources": [
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://identifiers.org/CHEBI:25212"
-            }
-        ]
+        "description": "The amount of a chemical substance in adipose tissue (fat).",
+        "resources": []
     },
     {
-        "name": "simple chemical",
+        "name": "amount of chemical in arterial blood",
         "element_type": "species",
-        "description": "Species is a simple chemical.",
-        "synonyms": [],
-        "common_ids": [
-            "simple chemical"
-        ],
-        "resources": [
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://identifiers.org/SBO:0000247"
-            }
-        ]
+        "description": "The amount of a chemical substance in arterial blood.",
+        "resources": []
     },
-    # Parameters: main
+    {
+        "name": "amount of chemical in blood",
+        "element_type": "species",
+        "description": "The amount of a chemical substance in blood.",
+        "common_ids": [
+            "ABlood"
+        ],
+        "resources": []
+    },
+    {
+        "name": "amount of chemical in gut",
+        "element_type": "species",
+        "description": "The amount of a chemical substance in the gut.",
+        "resources": []
+    },
+    {
+        "name": "amount of chemical in kidney",
+        "element_type": "species",
+        "description": "The amount of a chemical substance in the kidney.",
+        "resources": []
+    },
+    {
+        "name": "amount of chemical in liver",
+        "element_type": "species",
+        "description": "The amount of a chemical substance in the liver.",
+        "resources": []
+    },
+    {
+        "name": "amount of chemical in plasma",
+        "element_type": "species",
+        "description": "The amount of a chemical substance in plasma.",
+        "resources": []
+    },
+    {
+        "name": "amount of chemical in poorly perfused tissue",
+        "element_type": "species",
+        "description": "The amount of a chemical substance in poorly perfused tissue.",
+        "resources": []
+    },
+    {
+        "name": "amount of chemical in rest-of-body",
+        "element_type": "species",
+        "description": "The amount of a chemical substance in the rest-of-body",
+        "resources": []
+    },
+    {
+        "name": "amount of chemical in richly perfused tissue",
+        "element_type": "species",
+        "description": "The amount of a chemical substance in richly perfused tissue.",
+        "resources": []
+    },
+    {
+        "name": "amount of chemical in skin",
+        "element_type": "species",
+        "description": "The amount of a chemical substance in skin tissue.",
+        "resources": []
+    },
+    {
+        "name": "amount of chemical in urine",
+        "element_type": "species",
+        "description": "The amount of a chemical substance in urine.",
+        "resources": []
+    },
+    {
+        "name": "amount of chemical in venous blood",
+        "element_type": "species",
+        "description": "The amount of a chemical substance in venous blood.",
+        "common_ids": [
+            "AVen"
+        ],
+        "resources": []
+    },
     {
         "name": "physiological parameter",
         "element_type": "parameter",
-        "description": "Pyhisiological parameter.",
-        "synonyms": [],
-        "common_ids": [
-        ],
+        "description": "",
         "resources": [
             {
                 "qualifier": "BQM_IS",
-                "URI": "http://purl.obolibrary.org/obo/PBPKO_00007"
+                "URI": "http://purl.obolibrary.org/obo/pbpko/PKPBO_00003"
             }
         ]
     },
     {
-        "name": "physicochemical parameter",
+        "name": "age",
         "element_type": "parameter",
-        "description": "Physicochemical parameter.",
-        "synonyms": [],
-        "common_ids": [
-        ],
-        "resources": [
-            {
-                "qualifier": "BQM_IS",
-                "URI": "http://purl.obolibrary.org/obo/PBPKO_00128"
-            }
-        ]
-    },
-    {
-        "name": "metabolic parameter",
-        "element_type": "parameter",
-        "description": "Metabolic parameter.",
-        "synonyms": [],
-        "common_ids": [
-        ],
-        "resources": [
-            {
-                "qualifier": "BQM_IS",
-                "URI": "http://purl.obolibrary.org/obo/PBPKO_00190"
-            }
-        ]
-    },
-    # Parameters: physiological
-    {
-        "name": "body mass",
-        "element_type": "parameter",
-        "description": "Body mass (or body weight) parameter.",
-        "synonyms": [],
-        "recommended_id": "BW",
-        "common_ids": [
-            "BM",
-            "BW",
-            "body mass",
-            "body weight"
+        "description": "PBK model parameter representing the (initial) age of the modelled entity.",
+        "synonyms": [
+            "age"
         ],
         "resources": [
             {
                 "qualifier": "BQB_IS",
+                "URI": "http://purl.obolibrary.org/obo/ExO_0000102"
+            }
+        ]
+    },
+    {
+        "name": "body weight",
+        "element_type": "parameter",
+        "description": "PBK model parameter representing the (initial) body weight of the modelled entity.",
+        "synonyms": [
+            "body mass"
+        ],
+        "common_ids": [
+            "BW",
+            "BM"
+        ],
+        "resources": [
+            {
+                "qualifier": "BQM_IS",
                 "URI": "http://purl.obolibrary.org/obo/PBPKO_00009"
             },
             {
                 "qualifier": "BQB_IS",
                 "URI": "http://purl.obolibrary.org/obo/NCIT_C81328"
-            },
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/CMO_0000012"
             }
         ]
     },
     {
         "name": "body surface area",
         "element_type": "parameter",
-        "description": "Body surface area (BSA) parameter.",
-        "synonyms": [],
-        "recommended_id": "BSA",
+        "description": "PBK model parameter representing the (initial) body surface area of the modelled entity.",
         "common_ids": [
             "BSA"
         ],
         "resources": [
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/PBPKO_00011"
-            },
             {
                 "qualifier": "BQB_IS",
                 "URI": "http://purl.obolibrary.org/obo/NCIT_C25157"
@@ -575,360 +780,789 @@ TermDefinitions = [
         ]
     },
     {
-        "name": "cardiac blood output",
+        "name": "sex",
         "element_type": "parameter",
-        "description": "Cardiac blood output as a function of body weight.",
-        "synonyms": [],
-        "recommended_id": "QCC",
+        "description": "PBK model parameter representing the (initial) sex of the modelled entity.",
         "common_ids": [
-            "QCC"
-        ]
-    },
-    {
-        "name": "alveolar ventilation rate",
-        "element_type": "parameter",
-        "description": "Alveolar ventilation rate.",
-        "synonyms": [],
-        "recommended_id": "Falv",
-        "common_ids": [
-            "Falv"
-        ]
-    },
-    {
-        "name": "thickness stratum corneum",
-        "element_type": "parameter",
-        "description": "Thickness stratum corneum.",
-        "synonyms": [],
-        "recommended_id": "Height_sc",
-        "common_ids": [
-            "Height_sc"
-        ]
-    },
-    {
-        "name": "thickness viable epidermis",
-        "element_type": "parameter",
-        "description": "Thickness viable epidermis.",
-        "synonyms": [],
-        "recommended_id": "Height_ve",
-        "common_ids": [
-            "Height_ve",
-            "Height_vs"
-        ]
-    },
-    {
-        "name": "tissue density",
-        "element_type": "parameter",
-        "description": "Density of the tissues.",
-        "synonyms": [],
-        "recommended_id": "rho",
-        "common_ids": [
-            "rho"
-        ]
-    },
-    # Parameters: physiological - compartment volumes
-    {
-        "name": "alveolar volume",
-        "element_type": "parameter",
-        "description": "Alveolar volume.",
-        "synonyms": [],
-        "recommended_id": "VAlv",
-        "common_ids": [
-            "VAlv"
-        ]
-    },
-    {
-        "name": "arterial blood plasma volume",
-        "element_type": "parameter",
-        "description": "Volume of arterial blood plasma.",
-        "synonyms": [],
-        "recommended_id": "VArt_Plas",
-        "common_ids": [
-            "VArt_Plas",
-            "VArt_Plasma"
-        ]
-    },
-    {
-        "name": "fat volume",
-        "element_type": "parameter",
-        "description": "Volume of adipose tissue or fat compartment.",
-        "synonyms": [],
-        "recommended_id": "VFat",
-        "common_ids": [
-            "VFat",
-            "VF"
-        ]
-    },
-    {
-        "name": "gut volume",
-        "element_type": "parameter",
-        "description": "Volume of the gut.",
-        "synonyms": [],
-        "recommended_id": "VGut",
-        "common_ids": [
-            "VGut",
-            "VG"
-        ]
-    },
-    {
-        "name": "kidney volume",
-        "element_type": "parameter",
-        "description": "Volume of kidney compartment.",
-        "synonyms": [],
-        "recommended_id": "VKidney",
-        "common_ids": [
-            "VKidney",
-            "VK"
-        ]
-    },
-    {
-        "name": "liver volume",
-        "element_type": "parameter",
-        "description": "Volume of liver compartment.",
-        "synonyms": [],
-        "recommended_id": "VLiver",
-        "common_ids": [
-            "VLiver",
-            "VL"
-        ]
-    },
-    {
-        "name": "lung volume",
-        "element_type": "parameter",
-        "description": "Volume of the lung compartment.",
-        "synonyms": [],
-        "recommended_id": "VLung",
-        "common_ids": [
-            "VLung",
-            "VLun"
-        ]
-    },
-    {
-        "name": "plasma volume",
-        "element_type": "parameter",
-        "description": "Volume of blood plasma.",
-        "synonyms": [],
-        "recommended_id": "VPlasma",
-        "common_ids": [
-            "VPlasma",
-            "VPlas"
-        ]
-    },
-    {
-        "name": "rest-of-body volume",
-        "element_type": "parameter",
-        "description": "Volume of rest-of-body compartment.",
-        "synonyms": [],
-        "recommended_id": "VRest",
-        "common_ids": [
-            "VRest",
-            "VR"
-        ]
-    },
-    {
-        "name": "skin volume",
-        "element_type": "parameter",
-        "description": "Volume of skin.",
-        "synonyms": [],
-        "recommended_id": "VSkin",
-        "common_ids": [
-            "VSkin",
-            "VSk"
-        ]
-    },
-    {
-        "name": "stratum corneum volume",
-        "element_type": "parameter",
-        "description": "Volume of stratum corneum.",
-        "synonyms": [],
-        "recommended_id": "VSC",
-        "common_ids": [
-            "VSC"
-        ]
-    },
-    {
-        "name": "venous blood plasma volume",
-        "element_type": "parameter",
-        "description": "Volume of blood plasma.",
-        "synonyms": [],
-        "recommended_id": "VVen_Plas",
-        "common_ids": [
-            "VVen_Plas",
-            "VVen_Plasma"
-        ]
-    },
-    {
-        "name": "viable epidermis corneum volume",
-        "element_type": "parameter",
-        "description": "Volume of viable epidermis.",
-        "synonyms": [],
-        "recommended_id": "VVE",
-        "common_ids": [
-            "VVE"
-        ]
-    },
-    # Parameters: chemical
-    {
-        "name": "molar weight",
-        "element_type": "parameter",
-        "description": "Molecular weight.",
-        "synonyms": [],
-        "recommended_id": "MW",
-        "common_ids": [
-            "MW"
-        ]
-    },
-    {
-        "name": "logP",
-        "element_type": "parameter",
-        "description": "logP descriptor.",
-        "synonyms": [],
-        "recommended_id": "logP",
-        "common_ids": [
-            "logP"
+            "Sex"
         ],
         "resources": [
             {
-                "qualifier": "BQB_IS",
-                "URI": "http://semanticscience.org/resource/CHEMINF_000251"
-            }
-        ]
-    },
-    # Parameters: chemical - partition coefficients
-    {
-        "name": "partition coefficient",
-        "element_type": "parameter",
-        "description": "Partition coefficient.",
-        "synonyms": [],
-        "common_ids": [
-        ],
-        "resources": [
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00125"
+            },
             {
                 "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/PBPKO_00167"
+                "URI": "http://purl.obolibrary.org/obo/NCIT_C43816"
             }
         ]
     },
     {
-        "name": "partition coefficient fat/plasma",
+        "name": "absorption rate constant gut",
         "element_type": "parameter",
-        "description": "Partition coefficient fat/plasma.",
-        "synonyms": [],
-        "recommended_id": "PC_Fat_Plas",
+        "description": "",
+        "synonyms": [
+            "oral absorption rate"
+        ],
         "common_ids": [
-            "PF",
-            "PC_Fat_Plas",
-            "PC_Fat_Plasma"
+            "kGut"
+        ],
+        "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/pbpko/PKPBO_00126"
+            }
         ]
     },
     {
-        "name": "partition coefficient gut/plasma",
+        "name": "creatinine excretion rate",
         "element_type": "parameter",
-        "description": "Partition coefficient gut/plasma.",
-        "synonyms": [],
-        "recommended_id": "PC_Gut_Plas",
-        "common_ids": [
-            "PG",
-            "PC_Gut_Plas",
-            "PC_Gut_Plasma"
+        "description": "",
+        "resources": [
+            {
+                "qualifier": "BQB_IS",
+                "URI": "http://purl.obolibrary.org/obo/NCIT_C150817"
+            }
         ]
     },
     {
-        "name": "partition coefficient kidney/plasma",
+        "name": "excretion rate",
         "element_type": "parameter",
-        "description": "Partition coefficient kidney/plasma.",
-        "synonyms": [],
-        "recommended_id": "PC_Kid_Plas",
-        "common_ids": [
-            "PK",
-            "PC_Kid_Plas",
-            "PC_Kidney_Plasma"
+        "description": "",
+        "resources": [
+            {
+                "qualifier": "BQB_IS",
+                "URI": "http://purl.obolibrary.org/obo/NCIT_C85534"
+            }
         ]
     },
     {
-        "name": "partition coefficient liver/plasma",
+        "name": "urinary excretion rate",
         "element_type": "parameter",
-        "description": "Partition coefficient liver/plasma.",
-        "synonyms": [],
-        "recommended_id": "PC_Liv_Plas",
-        "common_ids": [
-            "PL",
-            "PC_Liv_Plas",
-            "PC_Liver_Plasma"
-        ]
+        "description": "",
+        "resources": []
     },
-    {
-        "name": "partition coefficient lung/plasma",
-        "element_type": "parameter",
-        "description": "Partition coefficient lung/plasma.",
-        "synonyms": [],
-        "recommended_id": "PC_Lun_Plas",
-        "common_ids": [
-            "PLun",
-            "PC_Lun_Plas",
-            "PC_Lun_Plasma"
-        ]
-    },
-    {
-        "name": "partition coefficient rest-of-body/plasma",
-        "element_type": "parameter",
-        "description": "Partition coefficient rest-of-body/plasma.",
-        "synonyms": [],
-        "recommended_id": "PC_Rest_Plas",
-        "common_ids": [
-            "PR",
-            "PC_Rest_Plas",
-            "PC_Rest_Plasma"
-        ]
-    },
-    {
-        "name": "partition coefficient skin/plasma",
-        "element_type": "parameter",
-        "description": "Partition coefficient skin/plasma.",
-        "synonyms": [],
-        "recommended_id": "PC_Skin_Plas",
-        "common_ids": [
-            "PSk",
-            "PC_Skin_Plas",
-            "PC_Skin_Plasma"
-        ]
-    },
-    # Chemical - other
     {
         "name": "hepatic clearance rate",
         "element_type": "parameter",
-        "description": "Hepatic (or metabolic) clearnace rate.",
-        "synonyms": [],
-        "recommended_id": "CLH",
+        "description": "",
         "common_ids": [
             "CLH"
         ],
         "resources": [
             {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/OMIT_0009720"
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/pbpko/PKPBO_00215"
             }
         ]
     },
     {
-        "name": "unbound fraction in blood",
+        "name": "renal elimination rate constant",
         "element_type": "parameter",
-        "description": "Unbound fraction in blood.",
-        "synonyms": [],
-        "recommended_id": "fub",
+        "description": "",
+        "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/pbpko/PKPBO_00218"
+            }
+        ]
+    },
+    {
+        "name": "alveolar ventilation rate",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "blood flow rate",
+        "element_type": "parameter",
+        "description": "Total blood flow.",
+        "resources": [
+            {
+                "qualifier": "BQB_IS",
+                "URI": "http://purl.obolibrary.org/obo/NCIT_C94866"
+            }
+        ]
+    },
+    {
+        "name": "blood flow going to physiological compartment",
+        "element_type": "parameter",
+        "description": "Blood flow going to a physiological compartment.",
+        "resources": []
+    },
+    {
+        "name": "blood flow going to adipose tissue",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "blood flow going to liver",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "blood flow going to poorly perfused tissue",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "blood flow going to rest-of-body",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "blood flow going to richly perfused tissue",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "blood flow going to skin",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "blood flow going to exposed skin",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "blood flow going to unexposed skin",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "fraction of total blood flow going to physiological compartment",
+        "element_type": "parameter",
+        "description": "Fraction of the total blood flow going to a physiological compartment.",
+        "resources": []
+    },
+    {
+        "name": "fraction of total blood flow going to adipose tissue",
+        "element_type": "parameter",
+        "description": "Fraction of the total blood flow going to the adipose tissue (fat).",
+        "resources": []
+    },
+    {
+        "name": "fraction of total blood flow going to liver",
+        "element_type": "parameter",
+        "description": "Fraction of the total blood flow going to the liver.",
+        "resources": []
+    },
+    {
+        "name": "fraction of total blood flow going to poorly perfused tissue",
+        "element_type": "parameter",
+        "description": "Fraction of the total blood flow going to poorly perfused tissue.",
+        "resources": []
+    },
+    {
+        "name": "fraction of total blood flow going to rest-of-body",
+        "element_type": "parameter",
+        "description": "Fraction of the total blood flow going to the rest-of-body.",
+        "resources": []
+    },
+    {
+        "name": "fraction of total blood flow going to richly perfused tissue",
+        "element_type": "parameter",
+        "description": "Fraction of the total blood flow going to richly perfused tissue.",
+        "resources": []
+    },
+    {
+        "name": "fraction of total blood flow going to skin",
+        "element_type": "parameter",
+        "description": "Fraction of the total blood flow going to the skin.",
+        "resources": []
+    },
+    {
+        "name": "fraction of total blood flow going to exposed skin",
+        "element_type": "parameter",
+        "description": "Fraction of the total blood flow going to the exposed skin.",
+        "resources": []
+    },
+    {
+        "name": "fraction of total blood flow going to unexposed skin",
+        "element_type": "parameter",
+        "description": "Fraction of the total blood flow going to the unexposed skin.",
+        "resources": []
+    },
+    {
+        "name": "ratio blood to total body mass",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "ratio blood to total body volume",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "ratio gut to total body mass",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "ratio gut to total body volume",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "ratio fat to total body mass",
+        "element_type": "parameter",
+        "description": "",
+        "resources": [
+            {
+                "qualifier": "BQB_IS",
+                "URI": "http://purl.obolibrary.org/obo/CMO_0003945"
+            }
+        ]
+    },
+    {
+        "name": "ratio fat to total body volume",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "ratio kidney to total body mass",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "ratio kidney to total body volume",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "ratio liver to total body mass",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "ratio liver to total body volume",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "ratio plasma to total body mass",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "ratio plasma to total body volume",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "ratio rest-of-body to total body mass",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "ratio rest-of-body to total body volume",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "tissue density",
+        "element_type": "parameter",
+        "description": "Density of tissue expressed as a ratio mass over volume.",
+        "resources": []
+    },
+    {
+        "name": "skin thickness",
+        "element_type": "parameter",
+        "description": "Thickness of the skin in metres (SI base unit metres).",
+        "resources": [
+            {
+                "qualifier": "BQB_IS",
+                "URI": "http://purl.obolibrary.org/obo/OBA_VT0001200"
+            }
+        ]
+    },
+    {
+        "name": "thickness stratum corneum",
+        "element_type": "parameter",
+        "description": "Thickness of the stratum corneum (SI base unit metres).",
+        "resources": []
+    },
+    {
+        "name": "thickness viable epidermis",
+        "element_type": "parameter",
+        "description": "Thickness of the viable epidermis (SI base unit metres).",
+        "resources": []
+    },
+    {
+        "name": "compartment volume",
+        "element_type": "parameter",
+        "description": "Total volume of a physiological compartment (specified in litres or cubic metres).",
+        "resources": []
+    },
+    {
+        "name": "volume adipose tissue",
+        "element_type": "parameter",
+        "description": "Total volume of adipose tissue (specified in litres or cubic metres).",
+        "common_ids": [
+            "V_Fat"
+        ],
+        "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/pbpko/PKPBO_00077"
+            }
+        ]
+    },
+    {
+        "name": "volume arterial blood",
+        "element_type": "parameter",
+        "description": "Total volume of the arterial blood (specified in litres or cubic metres).",
+        "resources": []
+    },
+    {
+        "name": "volume arterial blood plasma",
+        "element_type": "parameter",
+        "description": "Total volume of the arterial blood plasma (specified in litres or cubic metres).",
+        "resources": []
+    },
+    {
+        "name": "volume blood",
+        "element_type": "parameter",
+        "description": "Total volume of the blood (specified in litres or cubic metres).",
+        "resources": []
+    },
+    {
+        "name": "volume blood plasma",
+        "element_type": "parameter",
+        "description": "Total volume of the blood plasma (specified in litres or cubic metres).",
+        "resources": []
+    },
+    {
+        "name": "volume gut",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "volume liver",
+        "element_type": "parameter",
+        "description": "Total volume of the liver (specified in litres or cubic metres).",
+        "common_ids": [
+            "V_Liver"
+        ],
+        "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/pbpko/PKPBO_00069"
+            }
+        ]
+    },
+    {
+        "name": "volume poorly perfused tissue",
+        "element_type": "parameter",
+        "description": "Total volume of the poorly perfused tissue (specified in litres or cubic metres).",
+        "common_ids": [
+            "V_Poor"
+        ],
+        "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/pbpko/PKPBO_00091"
+            }
+        ]
+    },
+    {
+        "name": "volume richly perfused tissue",
+        "element_type": "parameter",
+        "description": "Total volume of the richly perfused tissue (specified in litres or cubic metres).",
+        "common_ids": [
+            "V_Rich"
+        ],
+        "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/pbpko/PKPBO_00093"
+            }
+        ]
+    },
+    {
+        "name": "volume skin",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "volume skin exposed",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "volume skin unexposed",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "volume stratum corneum",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "volume stratum corneum exposed",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "volume stratum corneum unexposed",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "volume venous blood",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "volume venous blood plasma",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "volume viable epidermis",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "volume viable epidermis exposed",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "volume viable epidermis unexposed",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "diffusion coefficient",
+        "element_type": "parameter",
+        "description": "",
+        "synonyms": [
+            "diffusion rate"
+        ],
+        "resources": [
+            {
+                "qualifier": "BQB_IS",
+                "URI": "http://biomodels.net/SBO/SBO_0000491"
+            }
+        ]
+    },
+    {
+        "name": "fraction unbound in blood",
+        "element_type": "parameter",
+        "description": "",
         "common_ids": [
             "fub"
+        ],
+        "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/pbpko/PKPBO_00134"
+            }
+        ]
+    },
+    {
+        "name": "partition coefficient",
+        "element_type": "parameter",
+        "description": "",
+        "synonyms": [
+            "partition coefficient"
+        ],
+        "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00167"
+            },
+            {
+                "qualifier": "BQB_IS",
+                "URI": "http://purl.obolibrary.org/obo/NCIT_C20610"
+            }
+        ]
+    },
+    {
+        "name": "partition coefficient adipose tissue over blood",
+        "element_type": "parameter",
+        "description": "",
+        "common_ids": [
+            "PC_Fat_Plasma"
         ],
         "resources": []
     },
     {
-        "name": "oral absorption rate constant",
+        "name": "partition coefficient adipose tissue over plasma",
         "element_type": "parameter",
-        "description": "Oral 1st order absorption rate constant.",
-        "synonyms": [],
-        "recommended_id": "kGut",
+        "description": "",
         "common_ids": [
-            "kGut"
+            "PC_Fat_Plasma"
         ],
         "resources": []
+    },
+    {
+        "name": "partition coefficient blood over air",
+        "element_type": "parameter",
+        "description": "",
+        "common_ids": [
+            "PC_Blood_Air"
+        ],
+        "resources": []
+    },
+    {
+        "name": "partition coefficient muscle over blood (poorly perfused tissue)",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "partition coefficient viscera over blood (richly perfused tissue)",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "partition coefficient liver over blood",
+        "element_type": "parameter",
+        "description": "",
+        "common_ids": [
+            "PC_Liver_Blood"
+        ],
+        "resources": []
+    },
+    {
+        "name": "partition coefficient viable skin over blood",
+        "element_type": "parameter",
+        "description": "",
+        "common_ids": [
+            "PC_Skin_Blood"
+        ],
+        "resources": []
+    },
+    {
+        "name": "partition coefficient viable skin over stratum corneum",
+        "element_type": "parameter",
+        "description": "",
+        "common_ids": [
+            "PC_Skin_Sc"
+        ],
+        "resources": []
+    },
+    {
+        "name": "partition coefficient liver over blood",
+        "element_type": "parameter",
+        "description": "",
+        "common_ids": [
+            "PC_Liver_Plasma"
+        ],
+        "resources": []
+    },
+    {
+        "name": "partition coefficient liver over plasma",
+        "element_type": "parameter",
+        "description": "",
+        "common_ids": [
+            "PC_Liver_Plasma"
+        ],
+        "resources": []
+    },
+    {
+        "name": "partition coefficient kidney over blood",
+        "element_type": "parameter",
+        "description": "",
+        "common_ids": [
+            "PC_Kidney_Plasma"
+        ],
+        "resources": []
+    },
+    {
+        "name": "partition coefficient kidney over plasma",
+        "element_type": "parameter",
+        "description": "",
+        "common_ids": [
+            "PC_Kidney_Plasma"
+        ],
+        "resources": []
+    },
+    {
+        "name": "partition coefficient poorly perfused tissue over blood",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "partition coefficient poorly perfused tissue over plasma",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "partition coefficient skin over blood",
+        "element_type": "parameter",
+        "description": "",
+        "common_ids": [
+            "PC_Skin_Plasma"
+        ],
+        "resources": []
+    },
+    {
+        "name": "partition coefficient skin over plasma",
+        "element_type": "parameter",
+        "description": "",
+        "common_ids": [
+            "PC_Skin_Plasma"
+        ],
+        "resources": []
+    },
+    {
+        "name": "partition coefficient rest-of-body over blood",
+        "element_type": "parameter",
+        "description": "",
+        "common_ids": [
+            "PC_Rest_Plasma"
+        ],
+        "resources": []
+    },
+    {
+        "name": "partition coefficient rest-of-body over plasma",
+        "element_type": "parameter",
+        "description": "",
+        "common_ids": [
+            "PC_Rest_Plasma"
+        ],
+        "resources": []
+    },
+    {
+        "name": "partition coefficient richly perfused tissue over blood",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "partition coefficient richly perfused tissue over plasma",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "partition coefficient stratum corneum over blood",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "partition coefficient stratum corneum over plasma",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "partition coefficient viable epidermis over blood",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "partition coefficient viable epidermis over plasma",
+        "element_type": "parameter",
+        "description": "",
+        "resources": []
+    },
+    {
+        "name": "particion coefficient gut over plasma",
+        "element_type": "parameter",
+        "description": "",
+        "common_ids": [
+            "PC_Gut_Blood"
+        ],
+        "resources": []
+    },
+    {
+        "name": "partition coefficient lung over plasma",
+        "element_type": "parameter",
+        "description": "",
+        "common_ids": [
+            "PC_Lung_Plasma"
+        ],
+        "resources": []
+    },
+    {
+        "name": "maximal velocity",
+        "element_type": "parameter",
+        "description": "",
+        "resources": [
+            {
+                "qualifier": "BQB_IS",
+                "URI": "http://biomodels.net/SBO/SBO_0000186"
+            }
+        ]
+    },
+    {
+        "name": "biochemical parameter",
+        "element_type": "parameter",
+        "description": "",
+        "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/pbpko/PKPBO_00124"
+            }
+        ]
+    },
+    {
+        "name": "model parameter",
+        "element_type": "parameter",
+        "description": "",
+        "resources": [
+            {
+                "qualifier": "BQB_IS",
+                "URI": "http://purl.obolibrary.org/obo/STATO_0000034"
+            }
+        ]
+    },
+    {
+        "name": "hematocrit",
+        "element_type": "parameter",
+        "description": "Percentage (or fraction) of total blood volume that is made up of red blood cells.",
+        "common_ids": [
+            "Htc"
+        ],
+        "resources": [
+            {
+                "qualifier": "BQB_IS",
+                "URI": "http://purl.obolibrary.org/obo/CMO_0000037"
+            }
+        ]
     }
 ]
