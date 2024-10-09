@@ -1,18 +1,18 @@
 import libsbml as ls
 import numpy as np
-from . import UnitDefinitions
+from libsbml import SBMLDocument
+from logging import Logger
 from sbmlutils.metadata.annotator import ModelAnnotator, ExternalAnnotation, annotate_sbml_doc
-from sbmlutils.log import get_logger
-
-logger = get_logger(__name__)
+from . import UnitDefinitions
 
 class PbkModelAnnotator:
 
     def annotate(
         self,
-        sbml_file,
-        annotations_file,
-        out_file
+        sbml_file: str,
+        annotations_file: str,
+        out_file: str,
+        logger: Logger
     ):
         """Annotate the units of the SBML file using the annotations
         file and write results to the specified out file."""
@@ -41,7 +41,8 @@ class PbkModelAnnotator:
                         row["element_id"],
                         row["sbml_type"],
                         row["unit"],
-                        unitsDictionary
+                        unitsDictionary,
+                        logger
                     )
                 
                 if ("element_name" in row \
@@ -53,7 +54,8 @@ class PbkModelAnnotator:
                         row["element_id"],
                         row["sbml_type"],
                         row["element_name"],
-                        True
+                        True,
+                        logger
                     )
 
         # If the annotations file contains an URI column, then try to add
@@ -87,7 +89,10 @@ class PbkModelAnnotator:
         logger.info(f"Writing SBML to file [{out_file}].")
         ls.writeSBML(document, out_file)
 
-    def find_unit_definition(self, str):
+    def find_unit_definition(
+        self,
+        str: str
+    ):
         """Find unit definition matching the provided string."""
         res = None
         for index, value in enumerate(UnitDefinitions):
@@ -98,16 +103,17 @@ class PbkModelAnnotator:
 
     def set_element_unit(
         self,
-        doc,
-        elementId,
-        elementType,
-        unitId,
-        unitsDictionary
+        doc: SBMLDocument,
+        elementId: str,
+        elementType: str,
+        unitId: str,
+        unitsDictionary: dict,
+        logger: Logger
     ):
         """Set element unit of element with specified id and type to the specfied unit."""
         if (elementType == "document"):
             model = doc.getModel()
-            uDef = self.get_or_add_unit_definition(doc, unitId, unitsDictionary)
+            uDef = self.get_or_add_unit_definition(doc, unitId, unitsDictionary, logger)
             if (elementId == "timeUnits" and not model.isSetTimeUnits()):
                 model.setTimeUnits(uDef.getId())
             elif (elementId == "substanceUnits" and not model.isSetSubstanceUnits()):
@@ -120,19 +126,20 @@ class PbkModelAnnotator:
                 logger.error(f"Cannot set unit [{unitId}] for {elementType} [{elementId}]: element not found!")
                 return
             if (not el.isSetUnits()):
-                uDef = self.get_or_add_unit_definition(doc, unitId, unitsDictionary)
+                uDef = self.get_or_add_unit_definition(doc, unitId, unitsDictionary, logger)
                 if (uDef):
                     logger.info(f"Setting unit [{unitId}] for {elementType} [{elementId}].")
                     el.setUnits(uDef.getId())
 
     def set_element_name(
         self,
-        doc,
-        elementId,
-        elementType,
-        name,
-        overwrite
-    ):
+        doc: SBMLDocument,
+        elementId: str,
+        elementType: str,
+        name: str,
+        overwrite: bool,
+        logger: Logger
+    ) -> None:
         """Set element unit of element with specified id and type to the specfied unit."""
         el = doc.getElementBySId(elementId)
         if (el is None):
@@ -141,7 +148,13 @@ class PbkModelAnnotator:
         if not el.isSetName() or overwrite:
             el.setName(name)
 
-    def get_or_add_unit_definition(self, doc, unitId, unitsDictionary):
+    def get_or_add_unit_definition(
+        self,
+        doc: SBMLDocument,
+        unitId: str,
+        unitsDictionary: dict,
+        logger: Logger
+    ):
         """Tries to get the unit definition for the specified unit id from the SBML document.
         The unit definition will be created and added to the document if it does not yet exist.
         """
