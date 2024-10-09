@@ -1,4 +1,5 @@
 import unittest
+import uuid
 import sys
 import os
 import logging
@@ -12,10 +13,12 @@ __test_outputs_path__ = './tests/__testoutputs__'
 
 class PbkModelValidatorTests(unittest.TestCase):
 
-    def create_file_logger(self, logfile) -> logging.Logger:
-        logger = logging.getLogger()
-        logger.setLevel(logging.DEBUG)
-        fh = logging.FileHandler(logfile)
+    def create_file_logger(self, logfile: str) -> logging.Logger:
+        logger = logging.getLogger(uuid.uuid4().hex)
+        logger.setLevel(logging.INFO)
+        fh = logging.FileHandler(logfile, 'w+')
+        formatter = logging.Formatter('[%(levelname)s] - %(message)s')
+        fh.setFormatter(formatter)
         logger.addHandler(fh)
         return logger
 
@@ -35,7 +38,7 @@ class PbkModelValidatorTests(unittest.TestCase):
         validator = PbkModelValidator()
         for sbml_file in self.sbml_files:
             sbml_basename = os.path.basename(sbml_file)
-            log_file = os.path.join(__test_outputs_path__, Path(sbml_basename).with_suffix('.log'))
+            log_file = os.path.join(__test_outputs_path__, Path(sbml_basename).with_suffix('.validation.log'))
             logger = self.create_file_logger(log_file)
             validator.validate(sbml_file, logger)
 
