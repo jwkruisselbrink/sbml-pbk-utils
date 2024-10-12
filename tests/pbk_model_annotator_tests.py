@@ -46,8 +46,16 @@ class PbkModelAnnotatorTests(unittest.TestCase):
             document = annotator.annotate(sbml_file, annotations_file, logger)
             self.assertIsNotNone(document)
 
-    def test_annotate_document_invalid(self):
+    def test_remove_all_annotations(self):
+        sbml_file = os.path.join(__test_models_path__, 'euromix.annotated.sbml') 
         annotator = PbkModelAnnotator()
+        document = ls.readSBML(sbml_file)
+        annotator.remove_all_annotations(document)
+        sbml_basename = os.path.basename(sbml_file)
+        out_file = os.path.join(__test_outputs_path__, Path(sbml_basename).with_suffix('.clean.sbml'))
+        ls.writeSBML(document, out_file)
+
+    def test_annotate_document_invalid(self):
         annotations_df = pd.DataFrame({
             'xxx': ['A', 'B', 'C', 'D'],
             'yyy': [20, 21, 19, 18]

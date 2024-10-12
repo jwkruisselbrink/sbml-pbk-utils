@@ -163,6 +163,81 @@ class PbkModelAnnotator:
 
         return document
 
+    def remove_all_annotations(
+        self,
+        document: ls.SBMLDocument
+    ):
+        model = document.getModel()
+        model.unsetAnnotation()
+        
+        for i in range(0, model.getNumReactions()):
+            re = model.getReaction(i)
+            re.unsetAnnotation()
+        
+            for j in range(0, re.getNumReactants()):
+                rt = re.getReactant(j)
+                rt.unsetAnnotation()
+        
+            for j in range(0, re.getNumProducts()):
+                rt = re.getProduct(j)
+                rt.unsetAnnotation()
+        
+            for j in range(0, re.getNumModifiers()):
+                md = re.getModifier(j)
+                md.unsetAnnotation()
+        
+            if re.isSetKineticLaw():
+                kl = re.getKineticLaw()
+                kl.unsetAnnotation()
+        
+                for j in range(0, kl.getNumParameters()):
+                    pa = kl.getParameter(j)
+                    pa.unsetAnnotation()
+        
+        for i in range(0, model.getNumSpecies()):
+            sp = model.getSpecies(i)
+            sp.unsetAnnotation()
+        
+        for i in range(0, model.getNumCompartments()):
+            sp = model.getCompartment(i)
+            sp.unsetAnnotation()
+        
+        for i in range(0, model.getNumFunctionDefinitions()):
+            sp = model.getFunctionDefinition(i)
+            sp.unsetAnnotation()
+        
+        for i in range(0, model.getNumUnitDefinitions()):
+            sp = model.getUnitDefinition(i)
+            sp.unsetAnnotation()
+        
+        for i in range(0, model.getNumParameters()):
+            sp = model.getParameter(i)
+            sp.unsetAnnotation()
+        
+        for i in range(0, model.getNumRules()):
+            sp = model.getRule(i)
+            sp.unsetAnnotation()
+        
+        for i in range(0, model.getNumInitialAssignments()):
+            sp = model.getInitialAssignment(i)
+            sp.unsetAnnotation()
+        
+        for i in range(0, model.getNumEvents()):
+            sp = model.getEvent(i)
+            sp.unsetAnnotation()
+        
+            for j in range(0, sp.getNumEventAssignments()):
+                ea = sp.getEventAssignment(j)
+                ea.unsetAnnotation()
+        
+        for i in range(0, model.getNumSpeciesTypes()):
+            sp = model.getSpeciesType(i)
+            sp.unsetAnnotation()
+        
+        for i in range(0, model.getNumConstraints()):
+            sp = model.getConstraint(i)
+            sp.unsetAnnotation()
+
     def annotate_element(
         self,
         element: ls.SBase, 
