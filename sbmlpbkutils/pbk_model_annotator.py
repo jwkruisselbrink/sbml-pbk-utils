@@ -47,11 +47,11 @@ class PbkModelAnnotator:
         self,
         document: ls.SBMLDocument,
         annotations_df: pd.DataFrame,
-        logger: Logger
+        my_logger: Logger
     ) -> ls.SBMLDocument:
         """Annotate the units of the SBML file using the annotations
         file and write results to the specified out file."""
-
+        logger = my_logger
         model = document.getModel()
 
         logger.info(f'Start model annoation: total {len(annotations_df.index)} annotation records')
@@ -98,18 +98,25 @@ class PbkModelAnnotator:
 
         # Iterate over annotation records
         for index, row in annotations_df.iterrows():
-            element_id = str(row["element_id"])
-            sbml_type = str(row["sbml_type"])
+            element_id = str(row["element_id"]).strip() if "element_id" in row and row["element_id"] else None
+            element_name = str(row["element_name"]).strip() if "element_name" in row and row["element_name"] else None
+            sbml_type = str(row["sbml_type"]).strip() if "sbml_type" in row and row["sbml_type"] else None
+            resource = str(row["resource"]).strip() if "resource" in row and row["resource"] else None
+            qualifier = str(row["qualifier"]).strip() if "qualifier" in row and row["qualifier"] else None
+            unit = str(row["unit"]).strip() if "unit" in row and row["unit"] else None
 
             # Skip records with empty URI field
-            if row['resource'] is not None:
+            annotation = None
+            if resource is not None:
                 if row['annotation_type'] != 'rdf':
-                    msg = f"Unsupported annotation type [{row['annotation_type']}]."
-                    logger.critical(msg)
-                    raise ValueError(msg)
-                annotation = ExternalAnnotation(row)
-            else:
-                annotation = None
+                    msg = f'Unsupported annotation type "{row['annotation_type']}" for {sbml_type} element "{element_id}".'
+                    logger.error(msg)
+                else:
+                    try:
+                        annotation = ExternalAnnotation(row)
+                    except:
+                        msg = f'Invalid annotation [{qualifier}|{resource}] for {sbml_type} "{element_id}".'
+                        logger.error(msg)
 
             if sbml_type == "document":
                 elements = [document]
@@ -117,65 +124,63 @@ class PbkModelAnnotator:
                 elements = self.get_elements_by_pattern(
                     model,
                     sbml_type,
-                    element_id,
-                    logger
+                    element_id
                 )
                 if not elements:
-                    logger.error(f'Could not find {sbml_type} element with identifier "{element_id}".')
+                    logger.error(f'Could not find {sbml_type} "{element_id}".')
 
             for element in elements:
                 # If unit field is not empty, try set element unit
-                if (row["unit"] is not None):
+                if (unit is not None):
                     self.set_element_unit(
                         document,
                         element,
                         element_id,
-                        row["unit"],
+                        unit,
                         units_dict,
                         True,
                         logger
                     )
 
                 # If name is not empty, try to set element name
-                if ("element_name" in row \
-                    and row["element_name"] is not None
-                    and row["sbml_type"] != "document"):
+                if (element_name is not None
+                    and sbml_type != "document"):
                     # If description field is not empty, try set element name
                     self.set_element_name(
                         element,
-                        row["element_name"],
+                        element_name,
                         True,
                         logger
                     )
 
                 # Set annotations
                 if annotation is not None:
-                    if annotation.annotation_type == "rdf":
-                        rdf_annotation = Annotation(
-                            qualifier=annotation.qualifier,
-                            resource=annotation.resource  # type: ignore
-                        )
-                        self.annotate_sbase(element, rdf_annotation, logger)
-
-                        # write SBO terms based on the SBO RDF
-                        if rdf_annotation.collection == "sbo":
-                            element.setSBOTerm(rdf_annotation.term)
-                    else:
-                        msg = f'Annotation type not supported: "{annotation.annotation_type}"'
-                        logger.critical(msg)
-                        raise ValueError(msg)
+                    self.annotate_element(
+                        element,
+                        annotation,
+                        logger
+                    )
 
         return document
 
-    def annotate_sbase(
+    def annotate_element(
         self,
         element: ls.SBase, 
-        annotation: Annotation,
+        external_annotation: ExternalAnnotation,
         logger: Logger
     ) -> None:
         """Annotate SBase based on given annotation data.
         """
-        qualifier, resource = annotation.qualifier.value, annotation.resource_normalized
+        try:
+            annotation = Annotation(
+                qualifier=external_annotation.qualifier,
+                resource=external_annotation.resource
+            )
+            qualifier, resource = annotation.qualifier.value, annotation.resource_normalized
+        except  Exception as error:
+            msg = f'Invalid annotation record [{external_annotation.qualifier}|{external_annotation.resource}]:' + error
+            return
+
         cv: ls.CVTerm = ls.CVTerm()
 
         # set correct type of qualifier
@@ -218,6 +223,10 @@ class PbkModelAnnotator:
         else:
             logger.info(f"Add [{qualifier}] resource [{resource}] to {element}.")
 
+        # write SBO terms based on the SBO RDF
+        if annotation.collection == "sbo":
+            element.setSBOTerm(annotation.term)
+
     def is_libsbml_operation_success(self, value: int) -> bool:
         valid = True
         if value is None:
@@ -241,23 +250,23 @@ class PbkModelAnnotator:
         if element.getTypeCode() == ls.SBML_DOCUMENT \
             or element.getTypeCode() == ls.SBML_MODEL:
             model = doc.getModel()
-            uDef = self.get_or_add_unit_definition(doc, unit_id, units_dict, logger)
+            u_def = self.get_or_add_unit_definition(doc, unit_id, units_dict, logger)
             if element_id == "timeUnits":
                 if not model.isSetTimeUnits() or overwrite:
                     logger.info(f"Set model time unit [{unit_id}].")
-                    model.setTimeUnits(uDef.getId())
+                    model.setTimeUnits(u_def.getId())
                 elif model.isSetTimeUnits():
                     logger.info(f"Did not set model time unit [{unit_id}]: unit already set.")
             elif element_id == "substanceUnits":
                 if not model.isSetSubstanceUnits() or overwrite:
                     logger.info(f"Set model substances unit [{unit_id}].")
-                    model.setSubstanceUnits(uDef.getId())
+                    model.setSubstanceUnits(u_def.getId())
                 elif model.isSetSubstanceUnits():
                     logger.info(f"Did not set model substances unit [{unit_id}]: unit already set.")
             elif element_id == "volumeUnits":
                 if not model.isSetVolumeUnits() or overwrite:
                     logger.info(f"Set model volume unit [{unit_id}].")
-                    model.setVolumeUnits(uDef.getId())
+                    model.setVolumeUnits(u_def.getId())
                 elif model.isSetVolumeUnits():
                     logger.info(f"Did not set model volume unit [{unit_id}]: unit already set.")
             else:
@@ -265,10 +274,10 @@ class PbkModelAnnotator:
 
         else:
             if not element.isSetUnits() or overwrite:
-                uDef = self.get_or_add_unit_definition(doc, unit_id, units_dict, logger)
-                if (uDef):
+                u_def = self.get_or_add_unit_definition(doc, unit_id, units_dict, logger)
+                if (u_def):
                     logger.info(f"Set unit of {element} to [{unit_id}].")
-                    element.setUnits(uDef.getId())
+                    element.setUnits(u_def.getId())
                 elif element.isSetUnits():
                     logger.info(f"Did not set unit [{unit_id}] for {element}: unit already set.")
             else:
@@ -292,8 +301,7 @@ class PbkModelAnnotator:
         self,
         model: ls.Model,
         sbml_type: str,
-        pattern: str,
-        logger: Logger
+        pattern: str
     ) -> List[ls.SBase]:
         """
         Get list of SBML elements from given ids.
@@ -320,33 +328,33 @@ class PbkModelAnnotator:
     def get_or_add_unit_definition(
         self,
         doc: ls.SBMLDocument,
-        unitId: str,
-        unitsDictionary: dict,
+        unit_id: str,
+        units_dict: dict,
         logger: Logger
     ):
         """Tries to get the unit definition for the specified unit id from the SBML document.
         The unit definition will be created and added to the document if it does not yet exist.
         """
-        if (unitId not in unitsDictionary):
-            unitDef = self.find_unit_definition(unitId)
-            if (unitDef is None):
-                logger.error(f"Failed to set unit [{unitId}]: unknown unit definition!")
+        if (unit_id not in units_dict):
+            unit_def = self.find_unit_definition(unit_id)
+            if (unit_def is None):
+                logger.error(f"Failed to set unit [{unit_id}]: unknown unit definition!")
                 return
             model = doc.getModel()
-            uDef = model.getUnitDefinition(unitDef["id"])
-            if (not uDef):
-                unitDefId = unitDef["id"]
-                logger.info(f"Adding unit definition [{unitDefId}] for [{unitId}]")
-                uDef = model.createUnitDefinition()
-                uDef.setId(unitDefId)
-                for unitPart in unitDef["units"]:
-                    u = uDef.createUnit()
+            u_def = model.getUnitDefinition(unit_def["id"])
+            if (not u_def):
+                unit_def_id = unit_def["id"]
+                logger.info(f"Add unit definition [{unit_id}].")
+                u_def = model.createUnitDefinition()
+                u_def.setId(unit_def_id)
+                for unitPart in unit_def["units"]:
+                    u = u_def.createUnit()
                     u.setKind(unitPart["kind"])
                     u.setExponent(unitPart["exponent"])
                     u.setMultiplier(unitPart["multiplier"])
                     u.setScale(unitPart["scale"])
-            unitsDictionary[unitId] = uDef
-        return unitsDictionary[unitId]
+            units_dict[unit_id] = u_def
+        return units_dict[unit_id]
 
     def find_unit_definition(
         self,
@@ -398,3 +406,17 @@ class PbkModelAnnotator:
 
         df.dropna(axis="index", inplace=True, how="all")
         return df
+
+    @staticmethod
+    def print_element_terms(
+        document: ls.SBMLDocument,
+        element_id: str
+    ) -> None:
+        model = document.getModel()
+        element = model.getElementBySId(element_id)
+        if not element.isSetAnnotation():
+            return
+
+        print(f"-----{element.getElementName()} ({element_id}) annotation -----")
+        print(element.getAnnotationString())
+        print("\n")
