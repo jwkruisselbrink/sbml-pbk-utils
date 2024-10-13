@@ -18,7 +18,6 @@ class PbkModelAnnotator:
         annotations_file: str,
         logger: Logger
     ) -> ls.SBMLDocument:
-
         # Open SBML document using libSBML
         try:
             document = ls.readSBML(sbml_file)
@@ -57,9 +56,7 @@ class PbkModelAnnotator:
         logger.info(f'Start model annoation: total {len(annotations_df.index)} annotation records')
 
         # Read model units
-        units_dict = dict()
-        for unit_def in model.getListOfUnitDefinitions():
-            units_dict[unit_def.getId()] = unit_def
+        units_dict = self.get_model_units_dict(model)
 
         # Check for required columns
         required_columns = ['element_id', 'sbml_type', 'unit']
@@ -238,6 +235,35 @@ class PbkModelAnnotator:
             sp = model.getConstraint(i)
             sp.unsetAnnotation()
 
+    def update_element_info(
+        self,
+        document: ls.SBMLDocument,
+        element_id: str,
+        logger: Logger,
+        element_name: str = None,
+        unit_id: str = None
+    ):
+        model = document.getModel()
+        units_dict = self.get_model_units_dict(model)
+        element = model.getElementBySId(element_id)
+        if element_name is not None:
+            self.set_element_name(
+                element,
+                element_name,
+                True,
+                logger
+            )
+        if unit_id is not None:
+            self.set_element_unit(
+                document,
+                element,
+                element_id,
+                unit_id,
+                units_dict,
+                True,
+                logger
+            )
+
     def annotate_element(
         self,
         element: ls.SBase, 
@@ -400,6 +426,16 @@ class PbkModelAnnotator:
             elements.append(e)
         return elements
 
+    def get_model_units_dict(
+        self,
+        model: ls.Model
+    ) -> dict:
+        # Read model units
+        units_dict = dict()
+        for unit_def in model.getListOfUnitDefinitions():
+            units_dict[unit_def.getId()] = unit_def
+        return units_dict
+
     def get_or_add_unit_definition(
         self,
         doc: ls.SBMLDocument,
@@ -438,7 +474,8 @@ class PbkModelAnnotator:
         """Find unit definition matching the provided string."""
         res = None
         for index, value in enumerate(UnitDefinitions):
-            if any(val.lower() == str.lower() for val in value['synonyms']):
+            if value['id'].lower() == str.lower() \
+                or any(val.lower() == str.lower() for val in value['synonyms']):
                 res = value
                 break
         return res

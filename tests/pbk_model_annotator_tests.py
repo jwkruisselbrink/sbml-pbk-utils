@@ -82,6 +82,42 @@ class PbkModelAnnotatorTests(unittest.TestCase):
         self.assertIsNotNone(document)
         #PbkModelAnnotator.print_element_terms(document, 'Blood')
 
+    def test_update_element_info_set_name(self):
+        # Arrange
+        sbml_file = os.path.join(__test_models_path__, 'euromix.annotated.sbml') 
+        annotator = PbkModelAnnotator()
+        document = ls.readSBML(sbml_file)
+        logger = logging.getLogger(__name__)
+        element_id = 'Air'
+        new_name = 'XXX'
+
+        # Act
+        annotator.update_element_info(document, element_id, logger, new_name)
+
+        # Assert
+        model = document.getModel()
+        element = model.getElementBySId(element_id)
+        element_name = element.getName()
+        self.assertEqual(element_name, new_name)
+
+    def test_update_element_info_set_unit(self):
+        # Arrange
+        sbml_file = os.path.join(__test_models_path__, 'euromix.annotated.sbml') 
+        annotator = PbkModelAnnotator()
+        document = ls.readSBML(sbml_file)
+        logger = logging.getLogger(__name__)
+        element_id = 'Air'
+        new_unit = 'MilliL'
+
+        # Act
+        annotator.update_element_info(document, element_id, logger, unit_id=new_unit)
+
+        # Assert
+        model = document.getModel()
+        element = model.getElementBySId(element_id)
+        element_unit = element.getUnits()
+        self.assertEqual(element_unit, new_unit)
+
     def fake_single_annotation_record(self) -> pd.DataFrame:
         return pd.DataFrame({
             'element_id': ['Blood'],
