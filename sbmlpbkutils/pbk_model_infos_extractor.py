@@ -1,6 +1,6 @@
 import libsbml as ls
 
-from sbmlpbkutils.qualifier_definitions import BiologicalQualifierIdsLookup, ModelQualifierIdsLookup, QualifierDefinitions
+from sbmlpbkutils.qualifier_definitions import BiologicalQualifierIdsLookup, ModelQualifierIdsLookup
 from sbmlpbkutils.term_definitions import TermDefinitions
 
 class PbkModelInfosExtractor:

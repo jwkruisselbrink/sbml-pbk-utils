@@ -1,4 +1,4 @@
-from .unit_definitions import UnitDefinitions
+from .unit_definitions import UnitDefinitions, create_unit_definition
 from .term_definitions import TermDefinitions
 from .qualifier_definitions import QualifierDefinitions, ModelQualifierIdsLookup, BiologicalQualifierIdsLookup
 from .pbk_model_annotator import PbkModelAnnotator

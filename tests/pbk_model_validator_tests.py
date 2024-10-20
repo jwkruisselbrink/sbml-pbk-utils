@@ -3,7 +3,6 @@ import uuid
 import sys
 import os
 import logging
-import libsbml as ls
 from pathlib import Path
 from sbmlpbkutils import PbkModelValidator
 

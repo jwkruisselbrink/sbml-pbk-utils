@@ -7,7 +7,6 @@ import libsbml as ls
 import pandas as pd
 from pathlib import Path
 from sbmlpbkutils.pbk_model_annotator import PbkModelAnnotator
-
 sys.path.append('../sbmlpbkutils/')
 
 __test_outputs_path__ = './tests/__testoutputs__'

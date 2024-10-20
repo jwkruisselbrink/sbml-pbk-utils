@@ -1,9 +1,6 @@
 import unittest
 import sys
 import os
-import libsbml as ls
-from pathlib import Path
-from sbmlpbkutils import AnnotationsTemplateGenerator
 from sbmlpbkutils.pbk_model_infos_extractor import PbkModelInfosExtractor
 sys.path.append('../sbmlpbkutils/')
 

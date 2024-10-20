@@ -1,5 +1,17 @@
 import libsbml as ls
 
+def create_unit_definition(unit_definition, version = 3, level = 2):
+    id = unit_definition["id"]
+    result = ls.UnitDefinition(version, level)
+    result.setId(id)
+    for unitPart in unit_definition["units"]:
+        u = result.createUnit()
+        u.setKind(unitPart["kind"])
+        u.setExponent(unitPart["exponent"])
+        u.setMultiplier(unitPart["multiplier"])
+        u.setScale(unitPart["scale"])
+    return result
+
 # Unit definitions, translating a unit string to the elementary unit
 # compositions following the SBML structure.
 # Unit IDs should match up with vocabulary of QUDT (https://qudt.org/2.1/vocab/unit) 
@@ -38,6 +50,17 @@ UnitDefinitions = [
         ],
         "units": [
             { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -3 }
+        ]
+    },
+    {
+        "id" : "MicroMOL",
+        "qudt" : "MicroMOL",
+        "UCUM" : "umol",
+        "synonyms" : [
+            "umol"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -6 }
         ]
     },
     {
@@ -264,6 +287,19 @@ UnitDefinitions = [
         ]
     },
     {
+        "id" : "MicroMOL_PER_L",
+        "qudt" : "MicroMOL-PER-L",
+        "UCUM" : "umol/L",
+        "synonyms" : [
+            "umol_per_L",
+            "umol/L"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -6 },
+            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": 0 }
+        ]
+    },
+    {
         "id" : "GM_PER_MOL",
         "qudt" : "GM-PER-MOL",
         "UCUM" : "g/mol",
@@ -275,6 +311,136 @@ UnitDefinitions = [
         "units": [
             { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": 0 },
             { "kind": ls.UNIT_KIND_MOLE, "exponent": -1, "multiplier": 1, "scale": 0 }
+        ]
+    },
+    {
+        "id" : "MOL_PER_KiloGM",
+        "qudt" : "MOL-PER-KiloGM",
+        "UCUM" : "mol/kg",
+        "synonyms" : [
+            "mol/kg",
+            "mol_per_kg"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": 0 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 3 }
+        ]
+    },
+    {
+        "id" : "MilliMOL_PER_KiloGM",
+        "qudt" : "MilliMOL-PER-KiloGM",
+        "UCUM" : "mmol/kg",
+        "synonyms" : [
+            "mmol/kg",
+            "mmol_per_kg"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -3 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 3 }
+        ]
+    },
+    {
+        "id" : "MicroMOL_PER_KiloGM",
+        "qudt" : "MicroMOL-PER-KiloGM",
+        "UCUM" : "umol/kg",
+        "synonyms" : [
+            "umol/kg",
+            "umol_per_kg"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -6 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 3 }
+        ]
+    },
+    {
+        "id" : "NanoMOL_PER_KiloGM",
+        "qudt" : "NanoMOL-PER-KiloGM",
+        "UCUM" : "nmol/kg",
+        "synonyms" : [
+            "nmol/kg",
+            "nmol_per_kg"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -9 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 3 }
+        ]
+    },
+    {
+        "id" : "PicoMOL_PER_KiloGM",
+        "qudt" : "PicoMOL-PER-KiloGM",
+        "UCUM" : "pmol/kg",
+        "synonyms" : [
+            "pmol/kg",
+            "pmol_per_kg"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -12 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 3 }
+        ]
+    },
+    {
+        "id" : "MOL_PER_GM",
+        "qudt" : "MOL-PER-GM",
+        "UCUM" : "mol/g",
+        "synonyms" : [
+            "mol/g",
+            "mol_per_g"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": 0 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 0 }
+        ]
+    },
+    {
+        "id" : "MilliMOL_PER_GM",
+        "qudt" : "MilliMOL-PER-GM",
+        "UCUM" : "mmol/g",
+        "synonyms" : [
+            "mmol/g",
+            "mmol_per_g"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -3 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 0 }
+        ]
+    },
+    {
+        "id" : "MicroMOL_PER_GM",
+        "qudt" : "MicroMOL-PER-GM",
+        "UCUM" : "umol/g",
+        "synonyms" : [
+            "umol/g",
+            "umol_per_g"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -6 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 0 }
+        ]
+    },
+    {
+        "id" : "NanoMOL_PER_GM",
+        "qudt" : "NanoMOL-PER-GM",
+        "UCUM" : "nmol/g",
+        "synonyms" : [
+            "nmol/g",
+            "nmol_per_g"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -9 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 0 }
+        ]
+    },
+    {
+        "id" : "PicoMOL_PER_MilliGM",
+        "qudt" : "PicoMOL-PER-MilliGM",
+        "UCUM" : "pmol/mg",
+        "synonyms" : [
+            "pmol/mg",
+            "pmol_per_mg"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -12 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": -3 }
         ]
     },
     # Time units
@@ -327,7 +493,7 @@ UnitDefinitions = [
             "s-1"
         ],
         "units": [
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 1, "scale": 1 }
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 1, "scale": 0 }
         ]
     },
     {
@@ -341,7 +507,7 @@ UnitDefinitions = [
             "h-1"
         ],
         "units": [
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 1 }
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 }
         ]
     },
     {
@@ -356,7 +522,7 @@ UnitDefinitions = [
             "d-1"
         ],
         "units": [
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 24 * 3600, "scale": 1 }
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 24 * 3600, "scale": 0 }
         ]
     },
     {
@@ -369,7 +535,7 @@ UnitDefinitions = [
         ],
         "units": [
             { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -3 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 1 }
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 }
         ]
     },
     {
@@ -382,7 +548,7 @@ UnitDefinitions = [
         ],
         "units": [
             { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": 0 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 1 }
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 }
         ]
     },
     {
@@ -396,7 +562,7 @@ UnitDefinitions = [
         ],
         "units": [
             { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": 0 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 1 }
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 }
         ]
     },
     {
@@ -410,7 +576,7 @@ UnitDefinitions = [
         ],
         "units": [
             { "kind": ls.UNIT_KIND_METRE, "exponent": 1, "multiplier": 1, "scale": -2 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 1 }
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 }
         ]
     },
     {
@@ -424,7 +590,7 @@ UnitDefinitions = [
         ],
         "units": [
             { "kind": ls.UNIT_KIND_METRE, "exponent": 1, "multiplier": 1, "scale": -1 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 1 }
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 }
         ]
     },
     # Rate per mass units
@@ -435,12 +601,13 @@ UnitDefinitions = [
         "synonyms" : [
             "L_per_kg_h",
             "L/(kg.h)",
+            "L/kg/h",
             "L.kg-1.h-1"
         ],
         "units": [
             { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": 0 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 1 },
             { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 3 },
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 },
         ]
     },
     {
@@ -449,13 +616,14 @@ UnitDefinitions = [
         "UCUM" : "mmol/(L.h)",
         "synonyms" : [
             "mmol/(L.h)",
+            "mmol/L/h",
             "mM_per_L_h",
             "mM.L-1.h-1"
         ],
         "units": [
             { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -3 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 1 },
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": 3 },
+            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": 0 },
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 },
         ]
     },
     {
@@ -470,8 +638,66 @@ UnitDefinitions = [
         ],
         "units": [
             { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": 0 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 1 },
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
             { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
+        ]
+    },
+    {
+        "id" : "PicoMOL_PER_MIN_PER_PicoMOL",
+        "qudt" : "",
+        "UCUM" : "pmol/min/pmol",
+        "synonyms" : [
+            "pmol/min/pmol",
+            "pmol/(min.pmol)"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -12 },
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 60, "scale": 0 },
+            { "kind": ls.UNIT_KIND_MOLE, "exponent": -1, "multiplier": 1, "scale": -12 },
+        ]
+    },
+    {
+        "id" : "PicoMOL_PER_MIN_PER_MilliGM",
+        "qudt" : "",
+        "UCUM" : "pmol/min/mg",
+        "synonyms" : [
+            "pmol/min/mg",
+            "pmol/(min.mg)"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -12 },
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 60, "scale": 0 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": -3 },
+        ]
+    },
+    {
+        "id" : "MicroMOL_PER_HR_PER_KiloGM",
+        "qudt" : "",
+        "UCUM" : "umol/hr/kg",
+        "synonyms" : [
+            "umol/hr/kg",
+            "umol/h/kg",
+            "umol/(hr.kg)",
+            "umol/(h.kg)"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -6 },
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 3 },
+        ]
+    },
+    {
+        "id" : "NanoMOL_PER_MIN_PER_MilliL",
+        "qudt" : "",
+        "UCUM" : "nmol/min/mL",
+        "synonyms" : [
+            "nmol/min/mL",
+            "nmol/(min.mL)"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -9 },
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 60, "scale": 0 },
+            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": -3 },
         ]
     },
     # Area units
