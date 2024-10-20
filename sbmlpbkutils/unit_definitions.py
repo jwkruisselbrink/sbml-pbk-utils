@@ -1,16 +1,18 @@
 import libsbml as ls
 
-def create_unit_definition(unit_definition, version = 3, level = 2):
-    id = unit_definition["id"]
-    result = ls.UnitDefinition(version, level)
-    result.setId(id)
-    for unitPart in unit_definition["units"]:
-        u = result.createUnit()
+def set_unit_definition(
+    unit_definition,
+    definition
+):
+    """ Sets the libSBML unit definition according to the unit definition."""
+    id = definition["id"]
+    unit_definition.setId(id)
+    for unitPart in definition["units"]:
+        u = unit_definition.createUnit()
         u.setKind(unitPart["kind"])
         u.setExponent(unitPart["exponent"])
         u.setMultiplier(unitPart["multiplier"])
         u.setScale(unitPart["scale"])
-    return result
 
 # Unit definitions, translating a unit string to the elementary unit
 # compositions following the SBML structure.

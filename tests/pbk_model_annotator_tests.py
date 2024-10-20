@@ -62,6 +62,22 @@ class PbkModelAnnotatorTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             _ = self.annotate_model('example.sbml', annotations_df, 'annotation_invalid_doc')
 
+    def test_annotate_document_set_unit(self):
+        annotations_df = self.fake_single_annotation_record()
+        annotations_df.at[0, 'element_id'] = 'Blood'
+        annotations_df.at[0, 'unit'] = 'mL'
+        document = self.annotate_model('example.sbml', annotations_df, 'annotation_set_unit')
+        self.assertIsNotNone(document)
+        model = document.getModel()
+        unit_defs = []
+        for i in range(0, model.getNumUnitDefinitions()):
+            if (model.getUnitDefinition(i).getId() == 'MilliL'):
+                unit_def = model.getUnitDefinition(i)
+                break
+        self.assertIsNotNone(unit_def)
+        element = model.getElementBySId('Blood')
+        self.assertEqual(element.getUnits(), 'MilliL')
+
     def test_annotate_document_invalid_rdf(self):
         annotations_df = self.fake_single_annotation_record()
         annotations_df.at[0, 'annotation_type'] = 'xxx'

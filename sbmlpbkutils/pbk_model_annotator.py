@@ -8,7 +8,7 @@ from logging import Logger
 from sbmlutils import utils
 from sbmlutils.metadata.annotator import ModelAnnotator, ExternalAnnotation
 from pymetadata.core.annotation import RDFAnnotation as Annotation
-from . import UnitDefinitions, create_unit_definition
+from . import UnitDefinitions, set_unit_definition
 
 class PbkModelAnnotator:
 
@@ -452,12 +452,15 @@ class PbkModelAnnotator:
                 logger.error(f"Failed to set unit [{unit_id}]: unknown unit definition!")
                 return
             model = doc.getModel()
-            u_def = model.getUnitDefinition(unit_def["id"])
-            if (not u_def):
+            unit_definition = model.getUnitDefinition(unit_def["id"])
+            if (not unit_definition):
                 logger.info(f"Add unit definition [{unit_id}].")
-                u_def = create_unit_definition(unit_def, model.getVersion(), model.getLevel())
-                model.addUnitDefinition(u_def)
-            units_dict[unit_id] = u_def
+                unit_definition = model.createUnitDefinition()
+                set_unit_definition(
+                    unit_definition,
+                    unit_def
+                )
+            units_dict[unit_id] = unit_definition
         return units_dict[unit_id]
 
     def find_unit_definition(

@@ -1,7 +1,7 @@
 import unittest
 import sys
 import libsbml as ls
-from sbmlpbkutils.unit_definitions import create_unit_definition
+from sbmlpbkutils.unit_definitions import set_unit_definition
 from sbmlpbkutils.unit_definitions import UnitDefinitions
 
 sys.path.append('../sbmlpbkutils/')
@@ -114,7 +114,8 @@ class UnitDefinitionsTests(unittest.TestCase):
 
     def test_unit_definition(self):
         for definition in UnitDefinitions:
-            unit_definition = create_unit_definition(definition)
+            unit_definition = ls.UnitDefinition(3, 2)
+            set_unit_definition(unit_definition, definition)
             unit_string = self.create_unit_string(unit_definition)
             aliases = ', '.join(definition['synonyms'])
             msg = f"Generated unit string '{unit_string}' not in synonyms of unit '{definition["id"]}' [{aliases}]"
