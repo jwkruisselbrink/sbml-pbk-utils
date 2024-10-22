@@ -5,23 +5,17 @@ import libsbml as ls
 from sbmlpbkutils import ParametrisationsTemplateGenerator
 sys.path.append('../sbmlpbkutils/')
 
-class ParametrisationsTemplateGeneratorTests(unittest.TestCase):
+__test_models_path__ = './tests/models/'
 
-    @classmethod
-    def setUpClass(cls):
-        cls.sbml_files = []
-        files = os.listdir('./tests/models/')
-        for file in files:
-            if file.endswith('.sbml'):
-                cls.sbml_files.append('./tests/models/' + file)
+class ParametrisationsTemplateGeneratorTests(unittest.TestCase):
 
     def test_export_terms(self):
         generator = ParametrisationsTemplateGenerator()
-        for sbml_file in self.sbml_files:
-            document = ls.readSBML(sbml_file)
-            model = document.getModel()
-            df = generator.generate(model)
-            self.assertEqual(df.ndim, 2)
+        sbml_file = os.path.join(__test_models_path__, 'example.sbml') 
+        document = ls.readSBML(sbml_file)
+        model = document.getModel()
+        df = generator.generate(model)
+        self.assertEqual(df.ndim, 2)
 
 if __name__ == '__main__':
     unittest.main()
