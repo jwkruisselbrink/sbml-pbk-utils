@@ -99,6 +99,10 @@ TermDefinitions = [
         ],
         "resources": [
             {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00460"
+            },
+            {
                 "qualifier": "BQB_IS",
                 "URI": "http://purl.obolibrary.org/obo/UBERON_0001013"
             }
@@ -162,7 +166,12 @@ TermDefinitions = [
         "common_ids": [
             "Art_Plasma"
         ],
-        "resources": []
+        "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00451"
+            }
+        ]
     },
     {
         "name": "bladder compartment",
@@ -172,6 +181,10 @@ TermDefinitions = [
             "Bladder"
         ],
         "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00402"
+            },
             {
                 "qualifier": "BQB_IS",
                 "URI": "http://purl.obolibrary.org/obo/UBERON_0004228"
@@ -185,7 +198,12 @@ TermDefinitions = [
         "common_ids": [
             "Blood"
         ],
-        "resources": []
+        "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00464"
+            }
+        ]
     },
     {
         "name": "blood plasma compartment",
@@ -195,6 +213,10 @@ TermDefinitions = [
             "Plasma"
         ],
         "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00488"
+            },
             {
                 "qualifier": "BQB_IS",
                 "URI": "http://purl.obolibrary.org/obo/UBERON_0001969"
@@ -209,6 +231,10 @@ TermDefinitions = [
             "Brain"
         ],
         "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00466"
+            },
             {
                 "qualifier": "BQB_IS",
                 "URI": "http://purl.obolibrary.org/obo/UBERON_0000955"
@@ -278,7 +304,12 @@ TermDefinitions = [
         "common_ids": [
             "Filtrate"
         ],
-        "resources": []
+        "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00397"
+            }
+        ]
     },
     {
         "name": "gut compartment",
@@ -289,6 +320,10 @@ TermDefinitions = [
         ],
         "exposure_route": "oral",
         "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00477"
+            },
             {
                 "qualifier": "BQB_IS",
                 "URI": "http://purl.obolibrary.org/obo/UBERON_0001555"
@@ -303,6 +338,10 @@ TermDefinitions = [
             "Lumen"
         ],
         "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00478"
+            },
             {
                 "qualifier": "BQB_IS",
                 "URI": "http://purl.obolibrary.org/obo/UBERON_0006909"
@@ -331,6 +370,10 @@ TermDefinitions = [
             "Heart"
         ],
         "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00480"
+            },
             {
                 "qualifier": "BQB_IS",
                 "URI": "http://purl.obolibrary.org/obo/UBERON_0000948"
@@ -403,7 +446,7 @@ TermDefinitions = [
         "resources": [
             {
                 "qualifier": "BQM_IS",
-                "URI": "http://purl.obolibrary.org/obo/PBPKO_00465"
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00454"
             }
         ]
     },
@@ -435,7 +478,7 @@ TermDefinitions = [
         "resources": [
             {
                 "qualifier": "BQM_IS",
-                "URI": "http://purl.obolibrary.org/obo/PBPKO_00460"
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00450"
             }
         ]
     },
@@ -449,7 +492,7 @@ TermDefinitions = [
         "resources": [
             {
                 "qualifier": "BQM_IS",
-                "URI": "http://purl.obolibrary.org/obo/PBPKO_00464"
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00453"
             }
         ]
     },
@@ -460,7 +503,12 @@ TermDefinitions = [
         "common_ids": [
             "Skin"
         ],
+        "exposure_route": "dermal",
         "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00470"
+            },
             {
                 "qualifier": "BQB_IS",
                 "URI": "http://purl.obolibrary.org/obo/UBERON_0002097"
@@ -475,6 +523,10 @@ TermDefinitions = [
             "Spleen"
         ],
         "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00492"
+            },
             {
                 "qualifier": "BQB_IS",
                 "URI": "http://purl.obolibrary.org/obo/UBERON_0002106"
@@ -505,7 +557,7 @@ TermDefinitions = [
         "resources": [
             {
                 "qualifier": "BQM_IS",
-                "URI": "http://purl.obolibrary.org/obo/PBPKO_00468"
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00457"
             }
         ]
     },
@@ -520,7 +572,7 @@ TermDefinitions = [
         "resources": [
             {
                 "qualifier": "BQM_IS",
-                "URI": "http://purl.obolibrary.org/obo/PBPKO_00469"
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00458"
             }
         ]
     },
@@ -577,6 +629,10 @@ TermDefinitions = [
             "Ven"
         ],
         "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00452"
+            },
             {
                 "qualifier": "BQB_IS",
                 "URI": "http://purl.obolibrary.org/obo/UBERON_0013756"
@@ -725,7 +781,7 @@ TermDefinitions = [
         "resources": [
             {
                 "qualifier": "BQM_IS",
-                "URI": "http://purl.obolibrary.org/obo/pbpko/PKPBO_00003"
+                "URI": "http://purl.obolibrary.org/obo/PKPBO_00003"
             }
         ]
     },
@@ -789,7 +845,7 @@ TermDefinitions = [
         "resources": [
             {
                 "qualifier": "BQM_IS",
-                "URI": "http://purl.obolibrary.org/obo/PBPKO_00125"
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00123"
             },
             {
                 "qualifier": "BQB_IS",
@@ -810,7 +866,7 @@ TermDefinitions = [
         "resources": [
             {
                 "qualifier": "BQM_IS",
-                "URI": "http://purl.obolibrary.org/obo/pbpko/PKPBO_00126"
+                "URI": "http://purl.obolibrary.org/obo/PKPBO_00126"
             }
         ]
     },
@@ -852,7 +908,7 @@ TermDefinitions = [
         "resources": [
             {
                 "qualifier": "BQM_IS",
-                "URI": "http://purl.obolibrary.org/obo/pbpko/PKPBO_00215"
+                "URI": "http://purl.obolibrary.org/obo/PKPBO_00215"
             }
         ]
     },
@@ -863,7 +919,7 @@ TermDefinitions = [
         "resources": [
             {
                 "qualifier": "BQM_IS",
-                "URI": "http://purl.obolibrary.org/obo/pbpko/PKPBO_00218"
+                "URI": "http://purl.obolibrary.org/obo/PKPBO_00218"
             }
         ]
     },
@@ -871,7 +927,12 @@ TermDefinitions = [
         "name": "alveolar ventilation rate",
         "element_type": "parameter",
         "description": "",
-        "resources": []
+        "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00114"
+            }
+        ]
     },
     {
         "name": "blood flow rate",
@@ -894,13 +955,29 @@ TermDefinitions = [
         "name": "blood flow going to adipose tissue",
         "element_type": "parameter",
         "description": "",
-        "resources": []
+        "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00032"
+            }
+        ]
     },
     {
         "name": "blood flow going to liver",
         "element_type": "parameter",
         "description": "",
         "resources": []
+    },
+    {
+        "name": "blood flow going to the kidney",
+        "element_type": "parameter",
+        "description": "",
+        "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00026"
+            }
+        ]
     },
     {
         "name": "blood flow going to poorly perfused tissue",
@@ -1126,7 +1203,7 @@ TermDefinitions = [
         "resources": [
             {
                 "qualifier": "BQM_IS",
-                "URI": "http://purl.obolibrary.org/obo/pbpko/PKPBO_00077"
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00085"
             }
         ]
     },
@@ -1143,10 +1220,26 @@ TermDefinitions = [
         "resources": []
     },
     {
+        "name": "volume of bone",
+        "element_type": "parameter",
+        "description": "Total volume of the bone (specified in litres or cubic metres).",
+        "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00091"
+            }
+        ]
+    },
+    {
         "name": "volume blood",
         "element_type": "parameter",
         "description": "Total volume of the blood (specified in litres or cubic metres).",
-        "resources": []
+        "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00108"
+            }
+        ]
     },
     {
         "name": "volume blood plasma",
@@ -1170,7 +1263,7 @@ TermDefinitions = [
         "resources": [
             {
                 "qualifier": "BQM_IS",
-                "URI": "http://purl.obolibrary.org/obo/pbpko/PKPBO_00069"
+                "URI": "http://purl.obolibrary.org/obo/PKPBO_00069"
             }
         ]
     },
@@ -1184,7 +1277,7 @@ TermDefinitions = [
         "resources": [
             {
                 "qualifier": "BQM_IS",
-                "URI": "http://purl.obolibrary.org/obo/pbpko/PKPBO_00091"
+                "URI": "http://purl.obolibrary.org/obo/PKPBO_00091"
             }
         ]
     },
@@ -1198,7 +1291,7 @@ TermDefinitions = [
         "resources": [
             {
                 "qualifier": "BQM_IS",
-                "URI": "http://purl.obolibrary.org/obo/pbpko/PKPBO_00093"
+                "URI": "http://purl.obolibrary.org/obo/PKPBO_00093"
             }
         ]
     },
@@ -1242,7 +1335,12 @@ TermDefinitions = [
         "name": "volume venous blood",
         "element_type": "parameter",
         "description": "",
-        "resources": []
+        "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00122"
+            }
+        ]
     },
     {
         "name": "volume venous blood plasma",
@@ -1269,6 +1367,17 @@ TermDefinitions = [
         "resources": []
     },
     {
+        "name": "physicochemical parameter",
+        "element_type": "parameter",
+        "description": "",
+        "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00126"
+            }
+        ]
+    },
+    {
         "name": "diffusion coefficient",
         "element_type": "parameter",
         "description": "",
@@ -1276,6 +1385,10 @@ TermDefinitions = [
             "diffusion rate"
         ],
         "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00431"
+            },
             {
                 "qualifier": "BQB_IS",
                 "URI": "http://biomodels.net/SBO/SBO_0000491"
@@ -1292,21 +1405,21 @@ TermDefinitions = [
         "resources": [
             {
                 "qualifier": "BQM_IS",
-                "URI": "http://purl.obolibrary.org/obo/pbpko/PKPBO_00134"
+                "URI": "http://purl.obolibrary.org/obo/PKPBO_00134"
             }
         ]
     },
     {
         "name": "partition coefficient",
         "element_type": "parameter",
-        "description": "",
+        "description": "The ratio of the concentration of a drug/chemical in a particular tissue to its concentration in plasma at equilibrium.",
         "synonyms": [
             "partition coefficient"
         ],
         "resources": [
             {
                 "qualifier": "BQM_IS",
-                "URI": "http://purl.obolibrary.org/obo/PBPKO_00167"
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00165"
             },
             {
                 "qualifier": "BQB_IS",
@@ -1330,7 +1443,12 @@ TermDefinitions = [
         "common_ids": [
             "PC_Fat_Plasma"
         ],
-        "resources": []
+        "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00174"
+            }
+        ]
     },
     {
         "name": "partition coefficient blood over air",
@@ -1339,7 +1457,12 @@ TermDefinitions = [
         "common_ids": [
             "PC_Blood_Air"
         ],
-        "resources": []
+        "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00183"
+            }
+        ]
     },
     {
         "name": "partition coefficient muscle over blood (poorly perfused tissue)",
@@ -1414,13 +1537,23 @@ TermDefinitions = [
         "common_ids": [
             "PC_Kidney_Plasma"
         ],
-        "resources": []
+        "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00171"
+            }
+        ]
     },
     {
         "name": "partition coefficient poorly perfused tissue over blood",
         "element_type": "parameter",
         "description": "",
-        "resources": []
+        "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00181"
+            }
+        ]
     },
     {
         "name": "partition coefficient poorly perfused tissue over plasma",
@@ -1444,7 +1577,12 @@ TermDefinitions = [
         "common_ids": [
             "PC_Skin_Plasma"
         ],
-        "resources": []
+        "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00176"
+            }
+        ]
     },
     {
         "name": "partition coefficient rest-of-body over blood",
@@ -1468,7 +1606,12 @@ TermDefinitions = [
         "name": "partition coefficient richly perfused tissue over blood",
         "element_type": "parameter",
         "description": "",
-        "resources": []
+        "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00180"
+            }
+        ]
     },
     {
         "name": "partition coefficient richly perfused tissue over plasma",
@@ -1532,19 +1675,23 @@ TermDefinitions = [
     {
         "name": "biochemical parameter",
         "element_type": "parameter",
-        "description": "",
+        "description": "Biochemical parameters refer to the various chemical and biological measurements that can be analyzed in bodily fluids, such as blood, urine, or cerebrospinal fluid",
         "resources": [
             {
                 "qualifier": "BQM_IS",
-                "URI": "http://purl.obolibrary.org/obo/pbpko/PKPBO_00124"
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00139"
             }
         ]
     },
     {
-        "name": "model parameter",
+        "name": "PBK model parameter",
         "element_type": "parameter",
-        "description": "",
+        "description": "Different types of parameters involved in PBK modelling.",
         "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00002"
+            },
             {
                 "qualifier": "BQB_IS",
                 "URI": "http://purl.obolibrary.org/obo/STATO_0000034"
