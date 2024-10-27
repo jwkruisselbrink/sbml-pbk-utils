@@ -1,3 +1,4 @@
+owlready2>=0.47
 antimony>=2.15.0
 python-libsbml>=5.20.2
 sbmlutils>=0.9.0
