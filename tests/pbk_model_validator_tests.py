@@ -8,6 +8,7 @@ from sbmlpbkutils import PbkModelValidator
 
 sys.path.append('../sbmlpbkutils/')
 
+__test_models_path__ = './tests/models/'
 __test_outputs_path__ = './tests/__testoutputs__'
 
 class PbkModelValidatorTests(unittest.TestCase):
@@ -25,21 +26,21 @@ class PbkModelValidatorTests(unittest.TestCase):
         from pathlib import Path
         Path(__test_outputs_path__).mkdir(parents=True, exist_ok=True)
 
-    @classmethod
-    def setUpClass(cls):
-        cls.sbml_files = []
-        files = os.listdir('./tests/models/')
-        for file in files:
-            if file.endswith('.sbml'):
-                cls.sbml_files.append('./tests/models/' + file)
-
-    def test_validate(self):
+    def test_validate_simple(self):
+        sbml_file = os.path.join(__test_models_path__, 'simple.sbml')
         validator = PbkModelValidator()
-        for sbml_file in self.sbml_files:
-            sbml_basename = os.path.basename(sbml_file)
-            log_file = os.path.join(__test_outputs_path__, Path(sbml_basename).with_suffix('.validation.log'))
-            logger = self.create_file_logger(log_file)
-            validator.validate(sbml_file, logger)
+        sbml_basename = os.path.basename(sbml_file)
+        log_file = os.path.join(__test_outputs_path__, Path(sbml_basename).with_suffix('.validation.log'))
+        logger = self.create_file_logger(log_file)
+        validator.validate(sbml_file, logger)
+
+    def test_validate_simple_annotated(self):
+        sbml_file = os.path.join(__test_models_path__, 'simple.annotated.sbml')
+        validator = PbkModelValidator()
+        sbml_basename = os.path.basename(sbml_file)
+        log_file = os.path.join(__test_outputs_path__, Path(sbml_basename).with_suffix('.validation.log'))
+        logger = self.create_file_logger(log_file)
+        validator.validate(sbml_file, logger)
 
 if __name__ == '__main__':
     unittest.main()

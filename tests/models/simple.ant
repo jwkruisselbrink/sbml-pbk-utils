@@ -1,0 +1,76 @@
+model simple()
+
+  # Parameters
+
+  ## Physiology
+
+  ### Body size
+  BW = 70            # body weight [kg]
+  VRc = 0.9003       # volume fraction Rest compartment [-]
+  VLc = 0.0257       # volume fraction Liver compartment [-]
+  VBc = 0.074        # volume fraction Blood compartment [-]
+
+  ### Fractional flow rates
+  QRc = 0.773        # rest-of-body perfusion rate [L/kg/h]
+  QLc = 0.227        # liver perfusion rate [L/kg/h]
+
+  ### Tissue density
+  rho = 1            # tissue density [kg/L]
+
+  ## Biochemical parameters
+
+  #### Partition coefficients
+  PCLiver = 2        # partition coefficient liver:blood [-]
+  PCRest = 1.2       # partition coefficient rest:blood [-]
+
+  #### Metabolism and excretion
+  CLUrine = 1        # excretion rate of parent [L/h]
+
+  #### Absorption
+  Ka = 0.05          # absorption rate from gut to liver [/h]
+
+  # Assignments
+
+  ## Physiology
+
+  ### Flow rates
+  const QC := 15 * BW^0.74 # cardiac output [L/kg/h]
+  const QL := QC * QLc
+  const QR := QC * QRc
+
+  # Compartments
+  compartment Blood := BW * VBc / rho
+  compartment Liver := BW * VLc / rho
+  compartment Rest := BW * VRc / rho
+  compartment Gut
+  compartment Urine
+
+  # Species
+  substanceOnly species ABlood in Blood
+  substanceOnly species ALiver in Liver
+  substanceOnly species ARest in Rest
+  substanceOnly species AGut in Gut
+  substanceOnly species AUrine in Urine
+
+  # Initial values
+  ABlood = 0
+  ALiver = 0
+  ARest = 0
+  AGut = 0
+  AUrine = 0
+
+  # Model equations
+
+  ## Absorption
+  AGut -> ALiver; AGut * Ka
+
+  ## Distribution
+  ABlood -> ALiver; QL * ABlood / Blood
+  ALiver -> ABlood; QL * (ALiver / Liver) / PCLiver
+  ABlood -> ARest; QR * ABlood / Blood
+  ARest -> ABlood; QR * (ARest / Rest) / PCRest
+
+  ## Excretion
+  ABlood -> AUrine; ABlood / Blood * CLUrine
+
+end

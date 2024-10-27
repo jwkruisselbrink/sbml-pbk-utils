@@ -6,7 +6,7 @@ from . import QualifierDefinitions
 
 class AnnotationsTemplateGenerator:
 
-    def generate(self, model, try_fill=True):
+    def generate(self, model: ls.Model, try_fill: bool = True):
         """Generates an annotations data table 
         file and write results to the specified out file."""
         dt = []

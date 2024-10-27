@@ -1,0 +1,110 @@
+model simple_metab()
+
+  # Parameters
+
+  ## Physiology
+
+  ### Body size
+  BW = 70                # body weight [kg]
+  scVRest = 0.9003       # volume fraction Rest compartment [-]
+  scVLiver = 0.0257      # volume fraction Liver compartment [-]
+  scVBlood = 0.074       # volume fraction Blood compartment [-]
+
+  ### Fractional flow rates
+  scQRest = 0.773        # rest perfusion  [L/kg/h]
+  scQLiver = 0.227       # liver perfusion  [L/kg/h]
+
+  ### Tissue density
+  rho = 1                # tissue density [kg/L]
+
+  ## Biochemical parameters
+
+  ### Parent compound (P)
+
+  #### Partition coefficients
+  PCLiver_P = 2          # liver:blood partition coefficient [-]
+  PCRest_P = 1.2         # rest:blood partition coefficient [-]
+
+  #### Metabolism and excretion
+  CLmet_P = 50           # [L/h]
+  CLurine_P = 0          # Excretion rate of parent [L/h]
+
+  #### Absorption
+  Ka_P = 0.05            # Absorption rate from gut to liver [/h]
+
+  ### Metabolite (M)
+
+  #### Partition coefficients
+  PCLiver_M = 1.4        # liver:blood partition coefficient [-]
+  PCRest_M = 0.5         # rest:blood partition coefficient [-]
+
+  #### Excretion
+  CLurine_M = 20         # Excretion rate of parent [L/h]
+
+  # Assignments
+
+  ## Physiology
+
+  ### Flow rates
+  const QBlood := 15*BW^0.74 # cardiac output [L/kg/h]
+  const QLiver := QBlood * scQLiver
+  const QRest := QBlood * scQRest
+
+  # Compartments and Species
+  compartment Blood := BW * scVBlood / rho
+  compartment Liver := BW * scVLiver / rho
+  compartment Rest := BW * scVRest / rho
+  compartment Gut
+  compartment Urine
+
+  # Species
+  substanceOnly species AGut_P in Gut
+  substanceOnly species ALiver_P in Liver
+  substanceOnly species ABlood_P in Blood
+  substanceOnly species ARest_P in Rest
+  substanceOnly species AUrine_P in Urine
+
+  substanceOnly species AGut_M in Gut
+  substanceOnly species ALiver_M in Liver
+  substanceOnly species ABlood_M in Blood
+  substanceOnly species ARest_M in Rest
+  substanceOnly species AUrine_M in Urine
+
+  AGut_P = 0
+  ALiver_P = 0
+  ABlood_P = 0
+  ARest_P = 0
+  AUrine_P = 0
+
+  AGut_M = 0
+  ALiver_M = 0
+  ABlood_M = 0
+  ARest_M = 0
+  AUrine_M = 0
+
+  # Model equations
+
+  ## Absorption
+  AGut_P -> ALiver_P; AGut_P * Ka_P
+
+  ## Distribution
+  ABlood_P -> ALiver_P; QLiver * ABlood_P / Blood
+  ALiver_P -> ABlood_P; QLiver * (ALiver_P / Liver) / PCLiver_P
+
+  ABlood_M -> ALiver_M; QLiver * ABlood_M / Blood
+  ALiver_M -> ABlood_M; QLiver * (ALiver_M / Liver) / PCLiver_M
+
+  ABlood_P -> ARest_P; QRest * ABlood_P / Blood
+  ARest_P -> ABlood_P; QRest * (ARest_P / Rest) / PCRest_P
+
+  ABlood_M -> ARest_M; QRest * ABlood_M / Blood
+  ARest_M -> ABlood_M; QRest * (ARest_M / Rest) / PCRest_M
+
+  ## Excretion
+  ABlood_P -> AUrine_P; ABlood_P / Blood * CLurine_P
+  ABlood_M -> AUrine_M; (ABlood_M / Blood) * CLurine_M
+
+  ## Metabolism
+  ALiver_P -> ALiver_M; CLmet_P * (ALiver_P / Liver) / PCLiver_P
+
+end

@@ -16,11 +16,12 @@ class AnnotationsTemplateGeneratorTests(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.sbml_files = []
-        files = os.listdir('./tests/models/')
-        for file in files:
-            if file.endswith('.sbml'):
-                cls.sbml_files.append('./tests/models/' + file)
+        cls.sbml_files = [
+            os.path.join('./tests/models', 'simple.sbml'),
+            os.path.join('./tests/models', 'simple.annotated.sbml'),
+            os.path.join('./tests/models', 'euromix.sbml'),
+            os.path.join('./tests/models', 'euromix.annotated.sbml')
+        ]
 
     def test_generate_no_fill(self):
         infosExporter = AnnotationsTemplateGenerator()

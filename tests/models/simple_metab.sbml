@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2">
-  <model metaid="example" id="example">
+  <model metaid="simple_metab" id="simple_metab">
     <listOfCompartments>
       <compartment id="Blood" spatialDimensions="3" size="5.18" constant="false"/>
       <compartment id="Liver" spatialDimensions="3" size="1.799" constant="false"/>
@@ -9,36 +9,36 @@
       <compartment id="Urine" spatialDimensions="3" size="1" constant="true"/>
     </listOfCompartments>
     <listOfSpecies>
-      <species id="AG_P" compartment="Gut" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="AL_P" compartment="Liver" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="AB_P" compartment="Blood" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="AR_P" compartment="Rest" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="AGut_P" compartment="Gut" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="ALiver_P" compartment="Liver" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="ABlood_P" compartment="Blood" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="ARest_P" compartment="Rest" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
       <species id="AUrine_P" compartment="Urine" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="AG_M" compartment="Gut" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="AL_M" compartment="Liver" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="AB_M" compartment="Blood" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="AR_M" compartment="Rest" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="AGut_M" compartment="Gut" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="ALiver_M" compartment="Liver" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="ABlood_M" compartment="Blood" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="ARest_M" compartment="Rest" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
       <species id="AUrine_M" compartment="Urine" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
     </listOfSpecies>
     <listOfParameters>
       <parameter id="BW" value="70" constant="true"/>
-      <parameter id="VRc" value="0.9003" constant="true"/>
-      <parameter id="VLc" value="0.0257" constant="true"/>
-      <parameter id="VBc" value="0.074" constant="true"/>
-      <parameter id="QRc" value="0.773" constant="true"/>
-      <parameter id="QLc" value="0.227" constant="true"/>
+      <parameter id="scVRest" value="0.9003" constant="true"/>
+      <parameter id="scVLiver" value="0.0257" constant="true"/>
+      <parameter id="scVBlood" value="0.074" constant="true"/>
+      <parameter id="scQRest" value="0.773" constant="true"/>
+      <parameter id="scQLiver" value="0.227" constant="true"/>
       <parameter id="rho" value="1" constant="true"/>
-      <parameter id="PL_P" value="2" constant="true"/>
-      <parameter id="PR_P" value="1.2" constant="true"/>
+      <parameter id="PCLiver_P" value="2" constant="true"/>
+      <parameter id="PCRest_P" value="1.2" constant="true"/>
       <parameter id="CLmet_P" value="50" constant="true"/>
       <parameter id="CLurine_P" value="0" constant="true"/>
       <parameter id="Ka_P" value="0.05" constant="true"/>
-      <parameter id="PL_M" value="1.4" constant="true"/>
-      <parameter id="PR_M" value="0.5" constant="true"/>
+      <parameter id="PCLiver_M" value="1.4" constant="true"/>
+      <parameter id="PCRest_M" value="0.5" constant="true"/>
       <parameter id="CLurine_M" value="20" constant="true"/>
-      <parameter id="QC" value="347.90751404651" constant="false"/>
-      <parameter id="QL" value="78.9750056885578" constant="false"/>
-      <parameter id="QR" value="268.932508357952" constant="false"/>
+      <parameter id="QBlood" value="347.90751404651" constant="false"/>
+      <parameter id="QLiver" value="78.9750056885578" constant="false"/>
+      <parameter id="QRest" value="268.932508357952" constant="false"/>
     </listOfParameters>
     <listOfRules>
       <assignmentRule variable="Blood">
@@ -48,7 +48,7 @@
             <apply>
               <times/>
               <ci> BW </ci>
-              <ci> VBc </ci>
+              <ci> scVBlood </ci>
             </apply>
             <ci> rho </ci>
           </apply>
@@ -61,7 +61,7 @@
             <apply>
               <times/>
               <ci> BW </ci>
-              <ci> VLc </ci>
+              <ci> scVLiver </ci>
             </apply>
             <ci> rho </ci>
           </apply>
@@ -74,13 +74,13 @@
             <apply>
               <times/>
               <ci> BW </ci>
-              <ci> VRc </ci>
+              <ci> scVRest </ci>
             </apply>
             <ci> rho </ci>
           </apply>
         </math>
       </assignmentRule>
-      <assignmentRule variable="QC">
+      <assignmentRule variable="QBlood">
         <math xmlns="http://www.w3.org/1998/Math/MathML">
           <apply>
             <times/>
@@ -93,21 +93,21 @@
           </apply>
         </math>
       </assignmentRule>
-      <assignmentRule variable="QL">
+      <assignmentRule variable="QLiver">
         <math xmlns="http://www.w3.org/1998/Math/MathML">
           <apply>
             <times/>
-            <ci> QC </ci>
-            <ci> QLc </ci>
+            <ci> QBlood </ci>
+            <ci> scQLiver </ci>
           </apply>
         </math>
       </assignmentRule>
-      <assignmentRule variable="QR">
+      <assignmentRule variable="QRest">
         <math xmlns="http://www.w3.org/1998/Math/MathML">
           <apply>
             <times/>
-            <ci> QC </ci>
-            <ci> QRc </ci>
+            <ci> QBlood </ci>
+            <ci> scQRest </ci>
           </apply>
         </math>
       </assignmentRule>
@@ -115,16 +115,16 @@
     <listOfReactions>
       <reaction id="_J0" reversible="true">
         <listOfReactants>
-          <speciesReference species="AG_P" stoichiometry="1" constant="true"/>
+          <speciesReference species="AGut_P" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="AL_P" stoichiometry="1" constant="true"/>
+          <speciesReference species="ALiver_P" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <ci> AG_P </ci>
+              <ci> AGut_P </ci>
               <ci> Ka_P </ci>
             </apply>
           </math>
@@ -132,10 +132,10 @@
       </reaction>
       <reaction id="_J1" reversible="true">
         <listOfReactants>
-          <speciesReference species="AB_P" stoichiometry="1" constant="true"/>
+          <speciesReference species="ABlood_P" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="AL_P" stoichiometry="1" constant="true"/>
+          <speciesReference species="ALiver_P" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -143,8 +143,8 @@
               <divide/>
               <apply>
                 <times/>
-                <ci> QL </ci>
-                <ci> AB_P </ci>
+                <ci> QLiver </ci>
+                <ci> ABlood_P </ci>
               </apply>
               <ci> Blood </ci>
             </apply>
@@ -153,10 +153,10 @@
       </reaction>
       <reaction id="_J2" reversible="true">
         <listOfReactants>
-          <speciesReference species="AL_P" stoichiometry="1" constant="true"/>
+          <speciesReference species="ALiver_P" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="AB_P" stoichiometry="1" constant="true"/>
+          <speciesReference species="ABlood_P" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -164,24 +164,24 @@
               <divide/>
               <apply>
                 <times/>
-                <ci> QL </ci>
+                <ci> QLiver </ci>
                 <apply>
                   <divide/>
-                  <ci> AL_P </ci>
+                  <ci> ALiver_P </ci>
                   <ci> Liver </ci>
                 </apply>
               </apply>
-              <ci> PL_P </ci>
+              <ci> PCLiver_P </ci>
             </apply>
           </math>
         </kineticLaw>
       </reaction>
       <reaction id="_J3" reversible="true">
         <listOfReactants>
-          <speciesReference species="AB_M" stoichiometry="1" constant="true"/>
+          <speciesReference species="ABlood_M" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="AL_M" stoichiometry="1" constant="true"/>
+          <speciesReference species="ALiver_M" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -189,8 +189,8 @@
               <divide/>
               <apply>
                 <times/>
-                <ci> QL </ci>
-                <ci> AB_M </ci>
+                <ci> QLiver </ci>
+                <ci> ABlood_M </ci>
               </apply>
               <ci> Blood </ci>
             </apply>
@@ -199,10 +199,10 @@
       </reaction>
       <reaction id="_J4" reversible="true">
         <listOfReactants>
-          <speciesReference species="AL_M" stoichiometry="1" constant="true"/>
+          <speciesReference species="ALiver_M" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="AB_M" stoichiometry="1" constant="true"/>
+          <speciesReference species="ABlood_M" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -210,24 +210,24 @@
               <divide/>
               <apply>
                 <times/>
-                <ci> QL </ci>
+                <ci> QLiver </ci>
                 <apply>
                   <divide/>
-                  <ci> AL_M </ci>
+                  <ci> ALiver_M </ci>
                   <ci> Liver </ci>
                 </apply>
               </apply>
-              <ci> PL_M </ci>
+              <ci> PCLiver_M </ci>
             </apply>
           </math>
         </kineticLaw>
       </reaction>
       <reaction id="_J5" reversible="true">
         <listOfReactants>
-          <speciesReference species="AB_P" stoichiometry="1" constant="true"/>
+          <speciesReference species="ABlood_P" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="AR_P" stoichiometry="1" constant="true"/>
+          <speciesReference species="ARest_P" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -235,8 +235,8 @@
               <divide/>
               <apply>
                 <times/>
-                <ci> QR </ci>
-                <ci> AB_P </ci>
+                <ci> QRest </ci>
+                <ci> ABlood_P </ci>
               </apply>
               <ci> Blood </ci>
             </apply>
@@ -245,10 +245,10 @@
       </reaction>
       <reaction id="_J6" reversible="true">
         <listOfReactants>
-          <speciesReference species="AR_P" stoichiometry="1" constant="true"/>
+          <speciesReference species="ARest_P" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="AB_P" stoichiometry="1" constant="true"/>
+          <speciesReference species="ABlood_P" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -256,24 +256,24 @@
               <divide/>
               <apply>
                 <times/>
-                <ci> QR </ci>
+                <ci> QRest </ci>
                 <apply>
                   <divide/>
-                  <ci> AR_P </ci>
+                  <ci> ARest_P </ci>
                   <ci> Rest </ci>
                 </apply>
               </apply>
-              <ci> PR_P </ci>
+              <ci> PCRest_P </ci>
             </apply>
           </math>
         </kineticLaw>
       </reaction>
       <reaction id="_J7" reversible="true">
         <listOfReactants>
-          <speciesReference species="AB_M" stoichiometry="1" constant="true"/>
+          <speciesReference species="ABlood_M" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="AR_M" stoichiometry="1" constant="true"/>
+          <speciesReference species="ARest_M" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -281,8 +281,8 @@
               <divide/>
               <apply>
                 <times/>
-                <ci> QR </ci>
-                <ci> AB_M </ci>
+                <ci> QRest </ci>
+                <ci> ABlood_M </ci>
               </apply>
               <ci> Blood </ci>
             </apply>
@@ -291,10 +291,10 @@
       </reaction>
       <reaction id="_J8" reversible="true">
         <listOfReactants>
-          <speciesReference species="AR_M" stoichiometry="1" constant="true"/>
+          <speciesReference species="ARest_M" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="AB_M" stoichiometry="1" constant="true"/>
+          <speciesReference species="ABlood_M" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -302,21 +302,21 @@
               <divide/>
               <apply>
                 <times/>
-                <ci> QR </ci>
+                <ci> QRest </ci>
                 <apply>
                   <divide/>
-                  <ci> AR_M </ci>
+                  <ci> ARest_M </ci>
                   <ci> Rest </ci>
                 </apply>
               </apply>
-              <ci> PR_M </ci>
+              <ci> PCRest_M </ci>
             </apply>
           </math>
         </kineticLaw>
       </reaction>
       <reaction id="_J9" reversible="true">
         <listOfReactants>
-          <speciesReference species="AB_P" stoichiometry="1" constant="true"/>
+          <speciesReference species="ABlood_P" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="AUrine_P" stoichiometry="1" constant="true"/>
@@ -327,7 +327,7 @@
               <times/>
               <apply>
                 <divide/>
-                <ci> AB_P </ci>
+                <ci> ABlood_P </ci>
                 <ci> Blood </ci>
               </apply>
               <ci> CLurine_P </ci>
@@ -337,7 +337,7 @@
       </reaction>
       <reaction id="_J10" reversible="true">
         <listOfReactants>
-          <speciesReference species="AB_M" stoichiometry="1" constant="true"/>
+          <speciesReference species="ABlood_M" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
           <speciesReference species="AUrine_M" stoichiometry="1" constant="true"/>
@@ -348,7 +348,7 @@
               <times/>
               <apply>
                 <divide/>
-                <ci> AB_M </ci>
+                <ci> ABlood_M </ci>
                 <ci> Blood </ci>
               </apply>
               <ci> CLurine_M </ci>
@@ -358,10 +358,10 @@
       </reaction>
       <reaction id="_J11" reversible="true">
         <listOfReactants>
-          <speciesReference species="AL_P" stoichiometry="1" constant="true"/>
+          <speciesReference species="ALiver_P" stoichiometry="1" constant="true"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="AL_M" stoichiometry="1" constant="true"/>
+          <speciesReference species="ALiver_M" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -372,11 +372,11 @@
                 <ci> CLmet_P </ci>
                 <apply>
                   <divide/>
-                  <ci> AL_P </ci>
+                  <ci> ALiver_P </ci>
                   <ci> Liver </ci>
                 </apply>
               </apply>
-              <ci> PL_P </ci>
+              <ci> PCLiver_P </ci>
             </apply>
           </math>
         </kineticLaw>

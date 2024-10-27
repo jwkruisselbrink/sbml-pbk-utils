@@ -60,16 +60,15 @@ class PbkModelAnnotatorTests(unittest.TestCase):
             'yyy': [20, 21, 19, 18]
         })
         with self.assertRaises(ValueError):
-            _ = self.annotate_model('example.sbml', annotations_df, 'annotation_invalid_doc')
+            _ = self.annotate_model('simple.sbml', annotations_df, 'annotation_invalid_doc')
 
     def test_annotate_document_set_unit(self):
         annotations_df = self.fake_single_annotation_record()
         annotations_df.at[0, 'element_id'] = 'Blood'
         annotations_df.at[0, 'unit'] = 'mL'
-        document = self.annotate_model('example.sbml', annotations_df, 'annotation_set_unit')
+        document = self.annotate_model('simple.sbml', annotations_df, 'annotation_set_unit')
         self.assertIsNotNone(document)
         model = document.getModel()
-        unit_defs = []
         for i in range(0, model.getNumUnitDefinitions()):
             if (model.getUnitDefinition(i).getId() == 'MilliL'):
                 unit_def = model.getUnitDefinition(i)
@@ -81,19 +80,19 @@ class PbkModelAnnotatorTests(unittest.TestCase):
     def test_annotate_document_invalid_rdf(self):
         annotations_df = self.fake_single_annotation_record()
         annotations_df.at[0, 'annotation_type'] = 'xxx'
-        document = self.annotate_model('example.sbml', annotations_df, 'annotation_invalid_rdf')
+        document = self.annotate_model('simple.sbml', annotations_df, 'annotation_invalid_rdf')
         self.assertIsNotNone(document)
 
     def test_annotate_document_invalid_qualifier(self):
         annotations_df = self.fake_single_annotation_record()
         annotations_df.at[0, 'qualifier'] = 'BQB_IS_RELATED_TO'
-        document = self.annotate_model('example.sbml', annotations_df, 'annotation_invalid_qualifier')
+        document = self.annotate_model('simple.sbml', annotations_df, 'annotation_invalid_qualifier')
         self.assertIsNotNone(document)
 
     def test_annotate_document_invalid_uri(self):
         annotations_df = self.fake_single_annotation_record()
         annotations_df.at[0, 'URI'] = 'UBERON_0000111'
-        document = self.annotate_model('example.sbml', annotations_df, 'annotation_invalid_uri')
+        document = self.annotate_model('simple.sbml', annotations_df, 'annotation_invalid_uri')
         self.assertIsNotNone(document)
         #PbkModelAnnotator.print_element_terms(document, 'Blood')
 
