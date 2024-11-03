@@ -1,6 +1,9 @@
 import os.path
 import libsbml as ls
 from logging import Logger
+
+from sbmlpbkutils.pbk_model_annotations_validator import PbkModelAnnotationsValidator
+from sbmlpbkutils.validation_record import StatusLevel
 from . import TermDefinitions
 
 class PbkModelValidator:
@@ -10,6 +13,7 @@ class PbkModelValidator:
     self.compartments_bqm_is_resources = {}
     self.compartments_bqb_is_uris = {}
     self.parameters_bqm_is_resources = {}
+    self.annotations_validator = PbkModelAnnotationsValidator()
 
     for index, termDefinition in enumerate(TermDefinitions):
         if 'resources' in termDefinition.keys():
@@ -76,23 +80,16 @@ class PbkModelValidator:
     relation referring to a term of the PBPK ontology."""
     for i in range(0, sbmlDoc.model.getNumCompartments()):
       c = sbmlDoc.model.getCompartment(i)
-      cvTerms = c.getCVTerms()
-      if not cvTerms:
-          logger.error(f"No annotations found for compartment [{c.getId()}].")
-      else:
-        bqm_is_uris = []
-        for term in cvTerms:
-            num_resources = term.getNumResources()
-            for j in range(num_resources):
-                if term.getQualifierType() == ls.MODEL_QUALIFIER and \
-                    term.getModelQualifierType() == ls.BQM_IS:
-                    bqm_is_uris.append(term.getResourceURI(j))
-        if len(bqm_is_uris) == 0:
-            logger.error(f"No BQM resource annotations found for compartment [{c.getId()}].")
-        else:
-          for bqm_is_uri in bqm_is_uris:
-            if bqm_is_uri not in self.compartments_bqm_is_resources.keys():
-              logger.error(f"Invalid BQM resource [{bqm_is_uri}] found for compartment [{c.getId()}].")
+      (valid, messages) = self.annotations_validator.check_compartment_annotation(c)
+      for record in messages:
+        if record.level == StatusLevel.CRITICAL:
+          logger.critical(record.message)
+        if record.level == StatusLevel.ERROR:
+          logger.error(record.message)
+        elif record.level == StatusLevel.WARNING:
+          logger.warning(record.message)
+        elif record.level == StatusLevel.INFO:
+          logger.info(record.message)
 
   def validate_parameter_annotations(self, sbmlDoc: ls.SBMLDocument, logger: Logger):
     """Check parameter annotations. Each parameter should have a BQM_IS
