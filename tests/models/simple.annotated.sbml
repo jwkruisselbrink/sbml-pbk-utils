@@ -119,10 +119,58 @@
     </listOfCompartments>
     <listOfSpecies>
       <species id="ABlood" name="amount of chemical in blood" compartment="Blood" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="ALiver" compartment="Liver" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="ARest" compartment="Rest" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="AGut" compartment="Gut" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="AUrine" compartment="Urine" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species metaid="meta_ALiver" id="ALiver" name="amount of chemical in liver" compartment="Liver" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#meta_ALiver">
+              <bqmodel:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://purl.obolibrary.org/obo/PBPKO_00497"/>
+                </rdf:Bag>
+              </bqmodel:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species metaid="meta_ARest" id="ARest" name="amount of chemical in rest-of-body" compartment="Rest" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#meta_ARest">
+              <bqmodel:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://purl.obolibrary.org/obo/PBPKO_00501"/>
+                </rdf:Bag>
+              </bqmodel:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species metaid="meta_AGut" id="AGut" name="amount of chemical in gut" compartment="Gut" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#meta_AGut">
+              <bqmodel:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://purl.obolibrary.org/obo/PBPKO_00496"/>
+                </rdf:Bag>
+              </bqmodel:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species metaid="meta_AUrine" id="AUrine" name="amount of chemical in urine" compartment="Urine" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#meta_AUrine">
+              <bqmodel:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://purl.obolibrary.org/obo/PBPKO_00272"/>
+                </rdf:Bag>
+              </bqmodel:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
     </listOfSpecies>
     <listOfParameters>
       <parameter metaid="meta_BW" id="BW" name="body weight" value="70" units="KiloGM" constant="true">
@@ -143,9 +191,21 @@
           </rdf:RDF>
         </annotation>
       </parameter>
-      <parameter id="VRc" value="0.9003" units="UNITLESS" constant="true"/>
-      <parameter id="VLc" value="0.0257" units="UNITLESS" constant="true"/>
-      <parameter id="VBc" value="0.074" units="UNITLESS" constant="true"/>
+      <parameter id="VRc" name="rest-of-body as fraction of total bodyweight" value="0.9003" units="UNITLESS" constant="true"/>
+      <parameter id="VLc" name="liver as fraction of total bodyweight" value="0.0257" units="UNITLESS" constant="true"/>
+      <parameter metaid="meta_VBc" id="VBc" name="blood as fraction of total bodyweight" value="0.074" units="UNITLESS" constant="true">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#meta_VBc">
+              <bqmodel:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://purl.obolibrary.org/obo/PBPKO_00107"/>
+                </rdf:Bag>
+              </bqmodel:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </parameter>
       <parameter id="QRc" value="0.773" units="UNITLESS" constant="true"/>
       <parameter id="QLc" value="0.227" units="UNITLESS" constant="true"/>
       <parameter id="rho" value="1" units="KiloGM_PER_L" constant="true"/>

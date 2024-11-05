@@ -60,8 +60,11 @@ class PbkModelValidator:
     # Check compartment annotations
     self.validate_compartment_annotations(sbmlDoc, logger)
 
-    # Check compartment annotations
+    # Check parameter annotations
     self.validate_parameter_annotations(sbmlDoc, logger)
+
+    # Check species annotations
+    self.validate_species_annotations(sbmlDoc, logger)
 
   def validate_units(self, sbmlDoc: ls.SBMLDocument, logger: Logger):
     """Runs consistency checks on the units."""
@@ -95,21 +98,30 @@ class PbkModelValidator:
     """Check parameter annotations. Each parameter should have a BQM_IS
     relation referring to a term of the PBPK ontology."""
     for i in range(0, sbmlDoc.model.getNumParameters()):
-      parm = sbmlDoc.model.getParameter(i)
-      cvTerms = parm.getCVTerms()
-      if not cvTerms:
-          logger.error(f"No annotations found for parameter [{parm.getId()}].")
-      else:
-        bqm_is_uris = []
-        for term in cvTerms:
-            num_resources = term.getNumResources()
-            for j in range(num_resources):
-                if term.getQualifierType() == ls.MODEL_QUALIFIER and \
-                    term.getModelQualifierType() == ls.BQM_IS:
-                    bqm_is_uris.append(term.getResourceURI(j))
-        if len(bqm_is_uris) == 0:
-            logger.error(f"No BQM resource annotations found for parameter [{parm.getId()}].")
-        else:
-          for bqm_is_uri in bqm_is_uris:
-            if bqm_is_uri not in self.parameters_bqm_is_resources.keys():
-              logger.error(f"Invalid BQM resource [{bqm_is_uri}] found for parameter [{parm.getId()}].")
+      c = sbmlDoc.model.getParameter(i)
+      (valid, messages) = self.annotations_validator.check_parameter_annotation(c)
+      for record in messages:
+        if record.level == StatusLevel.CRITICAL:
+          logger.critical(record.message)
+        if record.level == StatusLevel.ERROR:
+          logger.error(record.message)
+        elif record.level == StatusLevel.WARNING:
+          logger.warning(record.message)
+        elif record.level == StatusLevel.INFO:
+          logger.info(record.message)
+
+  def validate_species_annotations(self, sbmlDoc: ls.SBMLDocument, logger: Logger):
+    """Check species annotations. Each species should have a BQM_IS
+    relation referring to a term of the PBPK ontology."""
+    for i in range(0, sbmlDoc.model.getNumSpecies()):
+      c = sbmlDoc.model.getSpecies(i)
+      (valid, messages) = self.annotations_validator.check_species_annotation(c)
+      for record in messages:
+        if record.level == StatusLevel.CRITICAL:
+          logger.critical(record.message)
+        if record.level == StatusLevel.ERROR:
+          logger.error(record.message)
+        elif record.level == StatusLevel.WARNING:
+          logger.warning(record.message)
+        elif record.level == StatusLevel.INFO:
+          logger.info(record.message)

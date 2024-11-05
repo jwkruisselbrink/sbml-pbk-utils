@@ -33,6 +33,10 @@ class OntologyChecker():
         element = self.get_class(iri, self.pbpko_namespaces)
         return element is not None and self.obo.PBPKO_00002 in element.ancestors()
 
+    def check_is_species(self, iri):
+        element = self.get_class(iri, self.pbpko_namespaces)
+        return element is not None and self.obo.PBPKO_00002 in element.ancestors()
+
     def get_class(self, iri, replacement_namespaces=None):
         # Check in classes, individuals, and properties
         result = self.onto.search_one(iri = iri) 
