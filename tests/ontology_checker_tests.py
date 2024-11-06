@@ -28,6 +28,14 @@ class OntologyCheckerTests(unittest.TestCase):
         result = checker.get_compartment_classes()
         self.assertTrue(list(result))
 
+    def test_get_element(self):
+        checker = OntologyChecker()
+        result = checker.get_class("http://purl.obolibrary.org/obo/PBPKO_00477")
+        print(result)
+        self.assertEqual(result.iri, "http://purl.obolibrary.org/obo/PBPKO_00477")
+        self.assertEqual(result.label[0], "Gut")
+        self.assertEqual(result.IAO_0000115[0], "It is a part of digestive system")
+
     def test_is_compartment(self):
         checker = OntologyChecker()
         result = checker.get_compartment_classes()
