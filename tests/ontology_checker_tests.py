@@ -28,6 +28,16 @@ class OntologyCheckerTests(unittest.TestCase):
         result = checker.get_compartment_classes()
         self.assertTrue(list(result))
 
+    def test_get_pbpko_parameters(self):
+        checker = OntologyChecker()
+        result = checker.get_parameter_classes()
+        self.assertTrue(list(result))
+
+    def test_get_pbpko_species(self):
+        checker = OntologyChecker()
+        result = checker.get_species_classes()
+        self.assertTrue(list(result))
+
     def test_get_element(self):
         checker = OntologyChecker()
         result = checker.get_class("http://purl.obolibrary.org/obo/PBPKO_00477")

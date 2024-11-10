@@ -19,11 +19,22 @@ class OntologyChecker():
     def check_in_pbpko(self, iri):
         return self.check_iri_in_ontology(iri, self.pbpko_namespaces)
 
+    def get_available_classes(self, element_type):
+        if element_type == 'compartment':
+            return self.get_compartment_classes()
+        if element_type == 'parameter':
+            return self.get_parameter_classes()
+        if element_type == 'species':
+            return self.get_species_classes()
+
     def get_parameter_classes(self):
         return list(self.obo.PBPKO_00002.descendants())
 
     def get_compartment_classes(self):
         return list(self.obo.PBPKO_00446.descendants())
+
+    def get_species_classes(self):
+        return list(self.obo.PBPKO_00252.descendants())
 
     def check_is_compartment(self, iri):
         element = self.get_class(iri, self.pbpko_namespaces)
