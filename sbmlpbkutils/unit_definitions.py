@@ -131,7 +131,22 @@ UnitDefinitions = [
             { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": -3 }
         ]
     },
-    # Concentration units
+    # Molas mass
+    {
+        "id" : "GM_PER_MOL",
+        "qudt" : "GM-PER-MOL",
+        "UCUM" : "g/mol",
+        "synonyms" : [
+            "g/mol",
+            "g.mol-1",
+            "g_per_mol"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": 0 },
+            { "kind": ls.UNIT_KIND_MOLE, "exponent": -1, "multiplier": 1, "scale": 0 }
+        ]
+    },
+    # Per mass concentrations units
     {
         "id" : "MicroGM_PER_KiloGM",
         "qudt" : "MicroGM-PER-KiloGM",
@@ -208,111 +223,6 @@ UnitDefinitions = [
         "units": [
             { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": 0 },
             { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "MicroGM_PER_L",
-        "qudt" : "MicroGM-PER-L",
-        "UCUM" : "ug/L",
-        "synonyms" : [
-            "ug_per_L",
-            "ug/L"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -6 },
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "MilliGM_PER_L",
-        "qudt" : "MilliGM-PER-L",
-        "UCUM" : "mg/L",
-        "synonyms" : [
-            "mg_per_L",
-            "mg/L"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -3 },
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "GM_PER_L",
-        "qudt" : "GM-PER-L",
-        "UCUM" : "g/L",
-        "synonyms" : [
-            "g_per_L",
-            "g/L"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": 0 },
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "KiloGM_PER_L",
-        "qudt" : "KiloGM-PER-L",
-        "UCUM" : "kg/L",
-        "synonyms" : [
-            "kg_per_L",
-            "kg/L",
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": 3 },
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "MOL_PER_L",
-        "qudt" : "MOL-PER-L",
-        "UCUM" : "mol/L",
-        "synonyms" : [
-            "mol_per_L",
-            "mol/L"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": 0 },
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "MilliMOL_PER_L",
-        "qudt" : "MilliMOL-PER-L",
-        "UCUM" : "mmol/L",
-        "synonyms" : [
-            "mmol_per_L",
-            "mmol/L"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -3 },
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "MicroMOL_PER_L",
-        "qudt" : "MicroMOL-PER-L",
-        "UCUM" : "umol/L",
-        "synonyms" : [
-            "umol_per_L",
-            "umol/L"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -6 },
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "GM_PER_MOL",
-        "qudt" : "GM-PER-MOL",
-        "UCUM" : "g/mol",
-        "synonyms" : [
-            "g/mol",
-            "g.mol-1",
-            "g_per_mol"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": 0 },
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": -1, "multiplier": 1, "scale": 0 }
         ]
     },
     {
@@ -445,6 +355,98 @@ UnitDefinitions = [
             { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": -3 }
         ]
     },
+    # Per volume concentrations units
+    {
+        "id" : "MicroGM_PER_L",
+        "qudt" : "MicroGM-PER-L",
+        "UCUM" : "ug/L",
+        "synonyms" : [
+            "ug_per_L",
+            "ug/L"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -6 },
+            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": 0 }
+        ]
+    },
+    {
+        "id" : "MilliGM_PER_L",
+        "qudt" : "MilliGM-PER-L",
+        "UCUM" : "mg/L",
+        "synonyms" : [
+            "mg_per_L",
+            "mg/L"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -3 },
+            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": 0 }
+        ]
+    },
+    {
+        "id" : "GM_PER_L",
+        "qudt" : "GM-PER-L",
+        "UCUM" : "g/L",
+        "synonyms" : [
+            "g_per_L",
+            "g/L"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": 0 },
+            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": 0 }
+        ]
+    },
+    {
+        "id" : "KiloGM_PER_L",
+        "qudt" : "KiloGM-PER-L",
+        "UCUM" : "kg/L",
+        "synonyms" : [
+            "kg_per_L",
+            "kg/L",
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": 3 },
+            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": 0 }
+        ]
+    },
+    {
+        "id" : "MOL_PER_L",
+        "qudt" : "MOL-PER-L",
+        "UCUM" : "mol/L",
+        "synonyms" : [
+            "mol_per_L",
+            "mol/L"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": 0 },
+            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": 0 }
+        ]
+    },
+    {
+        "id" : "MilliMOL_PER_L",
+        "qudt" : "MilliMOL-PER-L",
+        "UCUM" : "mmol/L",
+        "synonyms" : [
+            "mmol_per_L",
+            "mmol/L"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -3 },
+            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": 0 }
+        ]
+    },
+    {
+        "id" : "MicroMOL_PER_L",
+        "qudt" : "MicroMOL-PER-L",
+        "UCUM" : "umol/L",
+        "synonyms" : [
+            "umol_per_L",
+            "umol/L"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -6 },
+            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": 0 }
+        ]
+    },
     # Time units
     {
         "id" : "SEC",
@@ -456,6 +458,19 @@ UnitDefinitions = [
         ],
         "units": [
             { "kind": ls.UNIT_KIND_SECOND, "exponent": 1, "multiplier": 1, "scale": 0 }
+        ]
+    },
+    {
+        "id" : "MIN",
+        "qudt" : "MIN",
+        "UCUM" : "hmin",
+        "synonyms" : [
+            "minutes",
+            "minute",
+            "min"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": 1, "multiplier": 60, "scale": 0 }
         ]
     },
     {
@@ -480,6 +495,20 @@ UnitDefinitions = [
         ],
         "units": [
             { "kind": ls.UNIT_KIND_SECOND, "exponent": 1, "multiplier": 24 * 3600, "scale": 0 }
+        ]
+    },
+    {
+        "id" : "YR",
+        "qudt" : "YR",
+        "UCUM" : "y",
+        "synonyms" : [
+            "years",
+            "year",
+            "yr",
+            "y"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": 1, "multiplier": 365.25 * 24 * 3600, "scale": 0 }
         ]
     },
     # Rate units

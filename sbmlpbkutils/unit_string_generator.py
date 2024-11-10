@@ -85,6 +85,9 @@ class UnitStringGenerator:
                 case 86400:
                     base_unit_str = 'd'
                     multiplier = 1
+                case 31557600:
+                    base_unit_str = 'y'
+                    multiplier = 1
                 case _:
                     base_unit_str = 's'
         else:
