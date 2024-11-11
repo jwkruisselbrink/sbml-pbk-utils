@@ -27,7 +27,7 @@ class PbkModelAnnotationsValidator:
     ) -> tuple[bool, list[ValidationRecord]]:
         valid = True
         messages = []
-        cv_terms = self.get_cv_terms_by_type(element)
+        cv_terms = self._get_cv_terms_by_type(element)
         if 'BQM_IS' not in cv_terms:
             msg = f"No BQM_IS annotation found refering to a PBPKO term for compartment [{element.getId()}]."
             messages.append(ValidationRecord(StatusLevel.ERROR, ErrorCode.COMPARTMENT_MISSING_BQM_TERM, msg))
@@ -56,7 +56,7 @@ class PbkModelAnnotationsValidator:
     ) -> tuple[bool, list[ValidationRecord]]:
         valid = True
         messages = []
-        cv_terms = self.get_cv_terms_by_type(element)
+        cv_terms = self._get_cv_terms_by_type(element)
         if 'BQM_IS' not in cv_terms:
             msg = f"No BQM_IS annotation found refering to a PBPKO term for parameter [{element.getId()}]."
             messages.append(ValidationRecord(StatusLevel.ERROR, ErrorCode.PARAMETER_MISSING_BQM_TERM, msg))
@@ -85,7 +85,7 @@ class PbkModelAnnotationsValidator:
     ) -> tuple[bool, list[ValidationRecord]]:
         valid = True
         messages = []
-        cv_terms = self.get_cv_terms_by_type(element)
+        cv_terms = self._get_cv_terms_by_type(element)
         if 'BQM_IS' not in cv_terms:
             msg = f"No BQM_IS annotation found refering to a PBPKO term for species [{element.getId()}]."
             messages.append(ValidationRecord(StatusLevel.ERROR, ErrorCode.SPECIES_MISSING_BQM_TERM, msg))
@@ -108,10 +108,13 @@ class PbkModelAnnotationsValidator:
                     valid = False
         return (valid, messages)
 
-    def get_cv_terms_by_type(self, element):
+    def _get_cv_terms_by_type(
+        self,
+        element: ls.SBase
+    ):
         lookup = {}
-        cvTerms = element.getCVTerms()
-        for term in cvTerms:
+        cv_terms = element.getCVTerms()
+        for term in cv_terms:
             num_resources = term.getNumResources()
             for j in range(num_resources):
                 if term.getQualifierType() == ls.BIOLOGICAL_QUALIFIER:

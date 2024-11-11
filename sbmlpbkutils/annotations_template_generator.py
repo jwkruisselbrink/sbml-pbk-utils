@@ -1,5 +1,7 @@
 import libsbml as ls
 import pandas as pd
+
+from sbmlpbkutils.pbk_model_annotator import PbkModelAnnotator
 from . import TermDefinitions
 from . import UnitDefinitions
 from . import QualifierDefinitions
@@ -116,7 +118,7 @@ class AnnotationsTemplateGenerator:
             qualifier_id = qualifierDefinition['id']
 
             # Get current URIs defined in the model for this qualifier
-            uris = self.get_cv_terms(element, qualifier_type, qualifier)
+            uris = PbkModelAnnotator.get_cv_terms(element, qualifier_type, qualifier)
 
             # Add URIs from matched term-definition
             if (try_fill and matched_term_resources is not None):
@@ -146,21 +148,6 @@ class AnnotationsTemplateGenerator:
                 rows += 1
 
         return dt
-
-    def get_cv_terms(self, element, qualifier_type, qualifier):
-        uris = []
-        cvTerms = element.getCVTerms()
-        for term in cvTerms:
-            num_resources = term.getNumResources()
-            for j in range(num_resources):
-                if term.getQualifierType() == qualifier_type:
-                    if qualifier_type == ls.BIOLOGICAL_QUALIFIER \
-                        and term.getBiologicalQualifierType() == qualifier:
-                        uris.append(term.getResourceURI(j))
-                    elif qualifier_type == ls.MODEL_QUALIFIER \
-                        and term.getModelQualifierType() == qualifier:
-                        uris.append(term.getResourceURI(j))
-        return uris
 
     def find_term_definition(self, element, element_type):
         """Tries to find a resource definition for the specified element."""

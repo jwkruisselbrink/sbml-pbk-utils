@@ -607,8 +607,8 @@ class PbkModelAnnotator:
         df.dropna(axis="index", inplace=True, how="all")
         return df
 
+    @staticmethod
     def get_cv_terms(
-        self,
         element: ls.SBase,
         qualifier_type = None,
         qualifier = None

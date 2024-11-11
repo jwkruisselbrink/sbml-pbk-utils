@@ -152,7 +152,7 @@ class PbkModelAnnotatorTests(unittest.TestCase):
         # Assert
         model = document.getModel()
         element = model.getElementBySId(element_id)
-        cv_terms = annotator.get_cv_terms(element, ls.MODEL_QUALIFIER, ls.BQM_IS)
+        cv_terms = PbkModelAnnotator.get_cv_terms(element, ls.MODEL_QUALIFIER, ls.BQM_IS)
         self.assertEqual(cv_terms[0]['uri'], "http://purl.obolibrary.org/obo/PBPKO_00477")
 
     def test_set_element_annotation_overwrite(self):
@@ -183,7 +183,7 @@ class PbkModelAnnotatorTests(unittest.TestCase):
         # Assert
         model = document.getModel()
         element = model.getElementBySId(element_id)
-        cv_terms = annotator.get_cv_terms(element, ls.MODEL_QUALIFIER, ls.BQM_IS)
+        cv_terms = PbkModelAnnotator.get_cv_terms(element, ls.MODEL_QUALIFIER, ls.BQM_IS)
         self.assertEqual(cv_terms[0]['uri'], "http://purl.obolibrary.org/obo/PBPKO_00477")
 
     def fake_single_annotation_record(self) -> pd.DataFrame:

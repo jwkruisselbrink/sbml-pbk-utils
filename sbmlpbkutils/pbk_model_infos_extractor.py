@@ -2,6 +2,7 @@ import libsbml as ls
 
 from sbmlpbkutils.qualifier_definitions import BiologicalQualifierIdsLookup, ModelQualifierIdsLookup
 from sbmlpbkutils.term_definitions import TermDefinitions
+from sbmlpbkutils.pbk_model_annotator import PbkModelAnnotator
 
 class PbkModelInfosExtractor:
 
@@ -26,7 +27,7 @@ class PbkModelInfosExtractor:
         input_compartments = {}
         for i in range(0, self.model.getNumCompartments()):
             compartment = self.model.getCompartment(i)
-            cv_terms = self.get_cv_terms(compartment)
+            cv_terms = PbkModelAnnotator.get_cv_terms(compartment)
             for cv_term in cv_terms:
                 lookup_key = f'{cv_term['qualifier']}#{cv_term['uri']}'
                 if (lookup_key in self.terms_by_uri_lookup.keys()):
@@ -50,27 +51,6 @@ class PbkModelInfosExtractor:
                     species.getId() : input_compartments[compartment]
                 })
         return input_species
-
-    def get_cv_terms(self, element, qualifier_type = None, qualifier = None):
-        uris = []
-        cvTerms = element.getCVTerms()
-        for term in cvTerms:
-            num_resources = term.getNumResources()
-            for j in range(num_resources):
-                if qualifier_type == None or term.getQualifierType() == qualifier_type:
-                    if term.getQualifierType() == ls.BIOLOGICAL_QUALIFIER \
-                        and (qualifier is None or term.getBiologicalQualifierType() == qualifier):
-                        uris.append({
-                            'qualifier': BiologicalQualifierIdsLookup[term.getBiologicalQualifierType()],
-                            'uri': term.getResourceURI(j) 
-                        })
-                    elif term.getQualifierType() == ls.MODEL_QUALIFIER \
-                        and (qualifier is None or term.getBiologicalQualifierType() == qualifier):
-                        uris.append({
-                            'qualifier': ModelQualifierIdsLookup[term.getModelQualifierType()],
-                            'uri': term.getResourceURI(j) 
-                        })
-        return uris
 
     def find_term_definition(self, element, element_type):
         """Tries to find a resource definition for the specified element."""
