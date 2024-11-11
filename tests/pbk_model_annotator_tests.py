@@ -96,13 +96,13 @@ class PbkModelAnnotatorTests(unittest.TestCase):
         self.assertIsNotNone(document)
         #PbkModelAnnotator.print_element_terms(document, 'Blood')
 
-    def test_update_element_info_set_name(self):
+    def test_set_element_name(self):
         # Arrange
-        sbml_file = os.path.join(__test_models_path__, 'euromix.annotated.sbml') 
+        sbml_file = os.path.join(__test_models_path__, 'simple.sbml') 
         annotator = PbkModelAnnotator()
         document = ls.readSBML(sbml_file)
         logger = logging.getLogger(__name__)
-        element_id = 'Air'
+        element_id = 'Gut'
         new_name = 'XXX'
 
         # Act
@@ -114,23 +114,77 @@ class PbkModelAnnotatorTests(unittest.TestCase):
         element_name = element.getName()
         self.assertEqual(element_name, new_name)
 
-    def test_update_element_info_set_unit(self):
+    def test_set_element_unit(self):
         # Arrange
-        sbml_file = os.path.join(__test_models_path__, 'euromix.annotated.sbml') 
+        sbml_file = os.path.join(__test_models_path__, 'simple.sbml') 
         annotator = PbkModelAnnotator()
         document = ls.readSBML(sbml_file)
         logger = logging.getLogger(__name__)
-        element_id = 'Air'
+        element_id = 'Gut'
         new_unit = 'MilliL'
 
         # Act
-        annotator.update_element_info(document, element_id, logger, unit_id=new_unit)
+        annotator.set_element_unit(document, element_id, new_unit, logger)
 
         # Assert
         model = document.getModel()
         element = model.getElementBySId(element_id)
         element_unit = element.getUnits()
         self.assertEqual(element_unit, new_unit)
+
+    def test_set_element_annotation(self):
+        # Arrange
+        sbml_file = os.path.join(__test_models_path__, 'simple.sbml') 
+        annotator = PbkModelAnnotator()
+        document = ls.readSBML(sbml_file)
+        logger = logging.getLogger(__name__)
+        element_id = 'Gut'
+
+        # Act
+        annotator.set_element_annotation(
+            document,
+            element_id,
+            'BQM_IS',
+            "http://purl.obolibrary.org/obo/PBPKO_00477",
+            logger
+        )
+
+        # Assert
+        model = document.getModel()
+        element = model.getElementBySId(element_id)
+        cv_terms = annotator.get_cv_terms(element, ls.MODEL_QUALIFIER, ls.BQM_IS)
+        self.assertEqual(cv_terms[0]['uri'], "http://purl.obolibrary.org/obo/PBPKO_00477")
+
+    def test_set_element_annotation_overwrite(self):
+        # Arrange
+        sbml_file = os.path.join(__test_models_path__, 'simple.sbml') 
+        annotator = PbkModelAnnotator()
+        document = ls.readSBML(sbml_file)
+        logger = logging.getLogger(__name__)
+        element_id = 'Gut'
+
+        # Act
+        annotator.set_element_annotation(
+            document,
+            element_id,
+            'BQM_IS',
+            "http://purl.obolibrary.org/obo/PBPKO_00450",
+            logger
+        )
+        annotator.set_element_annotation(
+            document,
+            element_id,
+            'BQM_IS',
+            "http://purl.obolibrary.org/obo/PBPKO_00477",
+            logger,
+            True
+        )
+
+        # Assert
+        model = document.getModel()
+        element = model.getElementBySId(element_id)
+        cv_terms = annotator.get_cv_terms(element, ls.MODEL_QUALIFIER, ls.BQM_IS)
+        self.assertEqual(cv_terms[0]['uri'], "http://purl.obolibrary.org/obo/PBPKO_00477")
 
     def fake_single_annotation_record(self) -> pd.DataFrame:
         return pd.DataFrame({
