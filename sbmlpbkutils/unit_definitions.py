@@ -355,6 +355,19 @@ UnitDefinitions = [
             { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": -3 }
         ]
     },
+    {
+        "id" : "L_PER_KiloGM",
+        "qudt" : "L-PER-KiloGM",
+        "UCUM" : "L/kg",
+        "synonyms" : [
+            "L/kg",
+            "L_per_kg"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": 0 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 3 }
+        ]
+    },
     # Per volume concentrations units
     {
         "id" : "MicroGM_PER_L",
