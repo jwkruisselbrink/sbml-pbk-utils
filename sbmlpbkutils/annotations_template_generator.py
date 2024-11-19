@@ -118,7 +118,8 @@ class AnnotationsTemplateGenerator:
             qualifier_id = qualifierDefinition['id']
 
             # Get current URIs defined in the model for this qualifier
-            uris = PbkModelAnnotator.get_cv_terms(element, qualifier_type, qualifier)
+            resources = PbkModelAnnotator.get_cv_terms(element, qualifier_type, qualifier)
+            uris = [resource['uri'] for resource in resources]
 
             # Add URIs from matched term-definition
             if (try_fill and matched_term_resources is not None):
