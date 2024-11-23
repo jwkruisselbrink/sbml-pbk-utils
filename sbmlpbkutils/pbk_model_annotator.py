@@ -343,6 +343,12 @@ class PbkModelAnnotator:
                     model.setSubstanceUnits(u_def.getId())
                 elif model.isSetSubstanceUnits():
                     logger.info(f"Did not set model substances unit [{unit_id}]: unit already set.")
+            elif element_id == "extentUnits":
+                if not model.isSetExtentUnits() or overwrite:
+                    logger.info(f"Set model extent unit [{unit_id}].")
+                    model.setExtentUnits(u_def.getId())
+                elif model.isSetExtentUnits():
+                    logger.info(f"Did not set model extent unit [{unit_id}]: unit already set.")
             elif element_id == "volumeUnits":
                 if not model.isSetVolumeUnits() or overwrite:
                     logger.info(f"Set model volume unit [{unit_id}].")
