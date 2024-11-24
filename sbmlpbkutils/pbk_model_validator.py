@@ -4,30 +4,12 @@ from logging import Logger
 
 from sbmlpbkutils.pbk_model_annotations_validator import PbkModelAnnotationsValidator
 from sbmlpbkutils.validation_record import StatusLevel
-from . import TermDefinitions
 
 class PbkModelValidator:
 
   def __init__(self):
     self.ucheck = True
-    self.compartments_bqm_is_resources = {}
-    self.compartments_bqb_is_uris = {}
-    self.parameters_bqm_is_resources = {}
     self.annotations_validator = PbkModelAnnotationsValidator()
-
-    for index, termDefinition in enumerate(TermDefinitions):
-        if 'resources' in termDefinition.keys():
-          resources = termDefinition['resources']
-          if termDefinition['element_type'] == "compartment":
-            for index, resource in enumerate(resources):
-              if resource['qualifier'] == "BQM_IS":
-                self.compartments_bqm_is_resources[resource['URI']] = termDefinition
-              elif resource['qualifier'] == "BQB_IS":
-                self.compartments_bqb_is_uris[resource['URI']] = termDefinition
-          elif termDefinition['element_type'] == "parameter":
-            for index, resource in enumerate(resources):
-              if resource['qualifier'] == "BQM_IS":
-                self.parameters_bqm_is_resources[resource['URI']] = termDefinition
 
   def validate(self, file: str, logger: Logger):
     """Runs all validation checks."""

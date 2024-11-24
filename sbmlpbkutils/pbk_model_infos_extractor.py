@@ -1,6 +1,5 @@
 import libsbml as ls
 
-from sbmlpbkutils.qualifier_definitions import BiologicalQualifierIdsLookup, ModelQualifierIdsLookup
 from sbmlpbkutils.term_definitions import TermDefinitions
 from sbmlpbkutils.pbk_model_annotator import PbkModelAnnotator
 

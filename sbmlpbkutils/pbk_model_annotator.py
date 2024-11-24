@@ -5,11 +5,12 @@ import libsbml as ls
 import numpy as np
 import pandas as pd
 from logging import Logger
+
 from sbmlutils import utils
 from sbmlutils.metadata.annotator import ModelAnnotator, ExternalAnnotation
-from sbmlpbkutils.qualifier_definitions import BiologicalQualifierIdsLookup, ModelQualifierIdsLookup
 from pymetadata.core.annotation import RDFAnnotation as Annotation
-from pymetadata.identifiers.miriam import BQB, BQM
+
+from sbmlpbkutils.qualifier_definitions import BiologicalQualifierIdsLookup, ModelQualifierIdsLookup
 from . import UnitDefinitions, set_unit_definition
 
 class PbkModelAnnotator:
