@@ -1,12 +1,12 @@
 import libsbml as ls
 from sbmlpbkutils.qualifier_definitions import BiologicalQualifierIdsLookup, ModelQualifierIdsLookup
 
-from sbmlpbkutils.ontology_checker import OntologyChecker
+from sbmlpbkutils.pbk_ontology_checker import PbkOntologyChecker
 from sbmlpbkutils.validation_record import ErrorCode, StatusLevel, ValidationRecord
 
 class PbkModelAnnotationsValidator:
     def __init__(self):
-        self.ontology_checker = OntologyChecker()
+        self.ontology_checker = PbkOntologyChecker()
 
     def check_element_annotation(
         self,

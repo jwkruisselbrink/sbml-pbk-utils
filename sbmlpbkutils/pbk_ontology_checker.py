@@ -1,6 +1,6 @@
 from owlready2 import *
 
-class OntologyChecker():
+class PbkOntologyChecker():
 
     pbpko_namespaces = [{
         "key": "obo",

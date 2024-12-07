@@ -13,15 +13,6 @@ __test_outputs_path__ = './tests/__testoutputs__'
 
 class PbkModelValidatorTests(unittest.TestCase):
 
-    def create_file_logger(self, logfile: str) -> logging.Logger:
-        logger = logging.getLogger(uuid.uuid4().hex)
-        logger.setLevel(logging.INFO)
-        fh = logging.FileHandler(logfile, 'w+')
-        formatter = logging.Formatter('[%(levelname)s] - %(message)s')
-        fh.setFormatter(formatter)
-        logger.addHandler(fh)
-        return logger
-
     def setUp(self):
         from pathlib import Path
         Path(__test_outputs_path__).mkdir(parents=True, exist_ok=True)
@@ -31,7 +22,7 @@ class PbkModelValidatorTests(unittest.TestCase):
         validator = PbkModelValidator()
         sbml_basename = os.path.basename(sbml_file)
         log_file = os.path.join(__test_outputs_path__, Path(sbml_basename).with_suffix('.validation.log'))
-        logger = self.create_file_logger(log_file)
+        logger = self._create_file_logger(log_file)
         validator.validate(sbml_file, logger)
 
     def test_validate_simple_annotated(self):
@@ -39,8 +30,17 @@ class PbkModelValidatorTests(unittest.TestCase):
         validator = PbkModelValidator()
         sbml_basename = os.path.basename(sbml_file)
         log_file = os.path.join(__test_outputs_path__, Path(sbml_basename).with_suffix('.validation.log'))
-        logger = self.create_file_logger(log_file)
+        logger = self._create_file_logger(log_file)
         validator.validate(sbml_file, logger)
+
+    def _create_file_logger(self, logfile: str) -> logging.Logger:
+        logger = logging.getLogger(uuid.uuid4().hex)
+        logger.setLevel(logging.INFO)
+        fh = logging.FileHandler(logfile, 'w+')
+        formatter = logging.Formatter('[%(levelname)s] - %(message)s')
+        fh.setFormatter(formatter)
+        logger.addHandler(fh)
+        return logger
 
 if __name__ == '__main__':
     unittest.main()
