@@ -35,21 +35,11 @@ class PbkModelAnnotatorTests(unittest.TestCase):
             if file.endswith('.sbml') and not file.endswith('annotated.sbml'):
                 cls.sbml_files.append(__test_models_path__ + file)
 
-    def test_annotate(self):
-        annotator = PbkModelAnnotator()
-        for sbml_file in self.sbml_files:
-            sbml_basename = os.path.basename(sbml_file)
-            annotations_file = Path(sbml_file).with_suffix('.annotations.csv')
-            log_file = os.path.join(__test_outputs_path__, Path(sbml_basename).with_suffix('.annotation.log'))
-            logger = self.create_file_logger(log_file)
-            document = annotator.annotate(sbml_file, annotations_file, logger)
-            self.assertIsNotNone(document)
-
     def test_remove_all_annotations(self):
         sbml_file = os.path.join(__test_models_path__, 'euromix.annotated.sbml') 
         annotator = PbkModelAnnotator()
         document = ls.readSBML(sbml_file)
-        annotator.remove_all_annotations(document)
+        annotator.clear_all_element_annotations(document)
         sbml_basename = os.path.basename(sbml_file)
         out_file = os.path.join(__test_outputs_path__, Path(sbml_basename).with_suffix('.clean.sbml'))
         ls.writeSBML(document, out_file)
@@ -101,12 +91,11 @@ class PbkModelAnnotatorTests(unittest.TestCase):
         sbml_file = os.path.join(__test_models_path__, 'simple.sbml') 
         annotator = PbkModelAnnotator()
         document = ls.readSBML(sbml_file)
-        logger = logging.getLogger(__name__)
         element_id = 'Gut'
         new_name = 'XXX'
 
         # Act
-        annotator.update_element_info(document, element_id, logger, new_name)
+        annotator.set_element_name(document, element_id, new_name)
 
         # Assert
         model = document.getModel()
@@ -132,7 +121,7 @@ class PbkModelAnnotatorTests(unittest.TestCase):
         element_unit = element.getUnits()
         self.assertEqual(element_unit, new_unit)
 
-    def test_set_element_annotation(self):
+    def test_set_element_rdf_annotation(self):
         # Arrange
         sbml_file = os.path.join(__test_models_path__, 'simple.sbml') 
         annotator = PbkModelAnnotator()
@@ -141,7 +130,7 @@ class PbkModelAnnotatorTests(unittest.TestCase):
         element_id = 'Gut'
 
         # Act
-        annotator.set_element_annotation(
+        annotator.set_element_rdf_annotation(
             document,
             element_id,
             'BQM_IS',
@@ -155,7 +144,7 @@ class PbkModelAnnotatorTests(unittest.TestCase):
         cv_terms = PbkModelAnnotator.get_cv_terms(element, ls.MODEL_QUALIFIER, ls.BQM_IS)
         self.assertEqual(cv_terms[0]['uri'], "http://purl.obolibrary.org/obo/PBPKO_00477")
 
-    def test_set_element_annotation_overwrite(self):
+    def test_set_element_rdf_annotation_overwrite(self):
         # Arrange
         sbml_file = os.path.join(__test_models_path__, 'simple.sbml') 
         annotator = PbkModelAnnotator()
@@ -164,14 +153,14 @@ class PbkModelAnnotatorTests(unittest.TestCase):
         element_id = 'Gut'
 
         # Act
-        annotator.set_element_annotation(
+        annotator.set_element_rdf_annotation(
             document,
             element_id,
             'BQM_IS',
             "http://purl.obolibrary.org/obo/PBPKO_00450",
             logger
         )
-        annotator.set_element_annotation(
+        annotator.set_element_rdf_annotation(
             document,
             element_id,
             'BQM_IS',
@@ -209,8 +198,68 @@ class PbkModelAnnotatorTests(unittest.TestCase):
         log_file = os.path.join(__test_outputs_path__, Path(sbml_basename).with_suffix(f'.{test_id}.log'))
         logger = self.create_file_logger(log_file)
         annotator = PbkModelAnnotator()
-        document = annotator.annotate_document(document, annotations_df, logger)
+        document = annotator.set_model_annotations(document, annotations_df, logger)
         return document
+
+    def test_set_model_annotations_from_file(self):
+        annotator = PbkModelAnnotator()
+        for sbml_file in self.sbml_files:
+            sbml_basename = os.path.basename(sbml_file)
+            annotations_file = Path(sbml_file).with_suffix('.annotations.csv')
+            log_file = os.path.join(__test_outputs_path__, Path(sbml_basename).with_suffix('.annotation.log'))
+            logger = self.create_file_logger(log_file)
+            document = ls.readSBML(sbml_file)
+            annotator.set_model_annotations_from_file(document, annotations_file, logger)
+            self.assertIsNotNone(document)
+
+    def test_set_model_creators_from_cff_file(self):
+        # Arrange
+        sbml_file = os.path.join(__test_models_path__, 'simple.sbml') 
+        document = ls.readSBML(sbml_file)
+        cff_file = './CITATION.cff'
+        annotator = PbkModelAnnotator()
+
+        # Act
+        annotator.set_model_creators_from_file(document, cff_file)
+
+        # Assert
+        model = document.getModel()
+        model_history = model.getModelHistory()
+        model_creators = model_history.getListCreators()
+        self.assertGreaterEqual(len(model_creators), 1)
+
+        # Write annotated SBML file to test results
+        sbml_basename = os.path.basename(sbml_file)
+        out_file = os.path.join(__test_outputs_path__, Path(sbml_basename).with_suffix('.cff.sbml'))
+        ls.writeSBML(document, out_file)
+
+    def test_set_model_creators(self):
+        # Arrange
+        creators = [
+             {
+                  'given-names': 'John',
+                  'family-names': 'Doe',
+                  'affiliation': 'ACME PBK models',
+                  'email': 'john.doe@acme-pbk.org'
+             }
+        ]
+        sbml_file = os.path.join(__test_models_path__, 'simple.sbml') 
+        document = ls.readSBML(sbml_file)
+        annotator = PbkModelAnnotator()
+
+        # Act
+        annotator.set_model_creators(document, creators)
+
+        # Assert
+        model = document.getModel()
+        model_history = model.getModelHistory()
+        model_creators = model_history.getListCreators()
+        self.assertEqual(len(model_creators), 1)
+        self.assertEqual(model_creators[0].getFamilyName(), "Doe")
+        self.assertEqual(model_creators[0].getGivenName(), "John")
+        self.assertEqual(model_creators[0].getOrganization(), "ACME PBK models")
+        self.assertEqual(model_creators[0].getEmail(), "john.doe@acme-pbk.org")
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -14,13 +14,13 @@ __test_models_path__ = './tests/models/'
 class PbkModelAnnotationsValidatorTests(unittest.TestCase):
 
     def test_validate_compartment_valid(self):
-        annotations_df = self.fake_single_annotation_record(
+        annotations_df = self._fake_single_annotation_record(
             'Gut',
             'compartment',
             'BQM_IS',
             'http://purl.obolibrary.org/obo/PBPKO_00477'
         )
-        document = self.annotate_model('simple.sbml', annotations_df)
+        document = self._annotate_model('simple.sbml', annotations_df)
         validator = PbkModelAnnotationsValidator()
         element = document.getElementBySId('Gut')
         result = validator.check_element_annotation(element)
@@ -28,13 +28,13 @@ class PbkModelAnnotationsValidatorTests(unittest.TestCase):
         self.assertFalse(result[1])
 
     def test_validate_compartment_not_valid(self):
-        annotations_df = self.fake_single_annotation_record(
+        annotations_df = self._fake_single_annotation_record(
             'Gut',
             'compartment',
             'BQB_IS',
             'http://purl.obolibrary.org/obo/PBPKO_00477'
         )
-        document = self.annotate_model('simple.sbml', annotations_df)
+        document = self._annotate_model('simple.sbml', annotations_df)
         validator = PbkModelAnnotationsValidator()
         element = document.getElementBySId('Gut')
         result = validator.check_element_annotation(element)
@@ -42,13 +42,13 @@ class PbkModelAnnotationsValidatorTests(unittest.TestCase):
         self.assertEqual(result[1][0].code, ErrorCode.COMPARTMENT_MISSING_BQM_TERM)
 
     def test_validate_parameter_valid(self):
-        annotations_df = self.fake_single_annotation_record(
+        annotations_df = self._fake_single_annotation_record(
             'PCLiver',
             'parameter',
             'BQM_IS',
             'http://purl.obolibrary.org/obo/PBPKO_00165'
         )
-        document = self.annotate_model('simple.sbml', annotations_df)
+        document = self._annotate_model('simple.sbml', annotations_df)
         validator = PbkModelAnnotationsValidator()
         element = document.getElementBySId('PCLiver')
         result = validator.check_element_annotation(element)
@@ -56,13 +56,13 @@ class PbkModelAnnotationsValidatorTests(unittest.TestCase):
         self.assertFalse(result[1])
 
     def test_validate_parameter_invalid(self):
-        annotations_df = self.fake_single_annotation_record(
+        annotations_df = self._fake_single_annotation_record(
             'PCLiver',
             'parameter',
             'BQB_IS',
             'http://purl.obolibrary.org/obo/PBPKO_00165'
         )
-        document = self.annotate_model('simple.sbml', annotations_df)
+        document = self._annotate_model('simple.sbml', annotations_df)
         validator = PbkModelAnnotationsValidator()
         element = document.getElementBySId('PCLiver')
         result = validator.check_element_annotation(element)
@@ -70,7 +70,7 @@ class PbkModelAnnotationsValidatorTests(unittest.TestCase):
         self.assertEqual(result[1][0].level, StatusLevel.ERROR)
         self.assertEqual(result[1][0].code, ErrorCode.PARAMETER_MISSING_BQM_TERM)
 
-    def fake_single_annotation_record(
+    def _fake_single_annotation_record(
         self,
         element_id = 'Gut',
         element_type = 'compartment',
@@ -87,7 +87,7 @@ class PbkModelAnnotationsValidatorTests(unittest.TestCase):
             'URI': [f'{iri}']
         })
 
-    def annotate_model(
+    def _annotate_model(
         self,
         filename: str,
         annotations_df: pd.DataFrame
@@ -96,7 +96,7 @@ class PbkModelAnnotationsValidatorTests(unittest.TestCase):
         document = ls.readSBML(sbml_file)
         annotator = PbkModelAnnotator()
         logger = logging.getLogger(__name__)
-        document = annotator.annotate_document(document, annotations_df, logger)
+        document = annotator.set_model_annotations(document, annotations_df, logger)
         return document
 
 if __name__ == '__main__':

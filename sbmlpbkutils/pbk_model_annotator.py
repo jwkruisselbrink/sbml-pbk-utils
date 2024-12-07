@@ -2,6 +2,7 @@ import os
 import libsbml as ls
 import numpy as np
 import pandas as pd
+import yaml
 from pathlib import Path
 from typing import List, Union
 from logging import Logger
@@ -15,41 +16,12 @@ from . import UnitDefinitions, set_unit_definition
 
 class PbkModelAnnotator:
 
-    def annotate(
-        self,
-        sbml_file: str,
-        annotations_file: str,
-        logger: Logger
-    ) -> ls.SBMLDocument:
-        try:
-            document = ls.readSBML(sbml_file)
-        except Exception as error:
-            file_basename = os.path.basename(sbml_file)
-            logger.critical(f'Failed to read SBML file [{file_basename}]: {error}')
-            raise
-
-        # Read annotations file
-        try:
-            df = PbkModelAnnotator._read_annotations_df(annotations_file, logger)
-            df = df.replace(np.nan, None)
-        except Exception as error:
-            file_basename = os.path.basename(annotations_file)
-            logger.critical(f'Failed to read annotations file [{file_basename}]: {error}')
-            raise
-
-        # Annotate
-        return self.annotate_document(
-            document,
-            df,
-            logger
-        )
-
-    def annotate_document(
+    def set_model_annotations(
         self,
         document: ls.SBMLDocument,
         annotations_df: pd.DataFrame,
         logger: Logger
-    ) -> ls.SBMLDocument:
+    ) -> None:
         """Annotate the units of the SBML file using the annotations
         file and write results to the specified out file."""
         model = document.getModel()
@@ -141,19 +113,17 @@ class PbkModelAnnotator:
                     )
 
                 # If name is not empty, try to set element name
-                if (element_name is not None
-                    and sbml_type != "document"):
+                if (element_name is not None and sbml_type != "document"):
                     # If description field is not empty, try set element name
-                    self._set_element_name(
-                        element,
-                        element_name,
-                        True,
-                        logger
-                    )
+                    if not element.isSetName():
+                        logger.info(f'Set name of {element} to "{element_name}".')
+                        element.setName(element_name)
+                    else:
+                        logger.info(f"Name for {element} already set, not overwriting.")
 
                 # Set annotations
                 if annotation is not None:
-                    self._set_element_annotation(
+                    self._set_element_rdf_annotation(
                         element,
                         annotation,
                         logger
@@ -161,10 +131,65 @@ class PbkModelAnnotator:
 
         return document
 
-    def remove_all_annotations(
+    def set_model_creators(
+        self,
+        document: ls.SBMLDocument,
+        creators: dict
+    ) -> None:
+        """Sets the model creators in the SBML document based on the provided
+        creators dictionary. The creators dictionary follows the structure of
+        the citation file format (CFF). Overwrites existing model creators."""
+        model = document.getModel()
+        history = ls.ModelHistory()
+        for record in creators:
+            creator = ls.ModelCreator()
+            if 'given-names' in record:
+                creator.setGivenName(record['given-names'])
+            if 'family-names' in record:
+                creator.setFamilyName(record['family-names'])
+            if 'affiliation' in record:
+                creator.setOrganisation(record['affiliation'])
+            if 'email' in record:
+                creator.setEmail(record['email'])
+            history.addCreator(creator)
+        model.setModelHistory(history)
+
+    def set_model_annotations_from_file(
+        self,
+        document: ls.SBMLDocument,
+        annotations_file: str,
+        logger: Logger
+    ) -> None:
+        # Read annotations file
+        try:
+            df = PbkModelAnnotator._read_annotations_df(annotations_file, logger)
+            df = df.replace(np.nan, None)
+        except Exception as error:
+            file_basename = os.path.basename(annotations_file)
+            logger.critical(f'Failed to read annotations file [{file_basename}]: {error}')
+            raise
+
+        # Annotate
+        self.set_model_annotations(
+            document,
+            df,
+            logger
+        )
+
+    def set_model_creators_from_file(
+        self,
+        document: ls.SBMLDocument,
+        cff_file: str
+    ) -> None:
+        """Sets the model creators in the SBML document based on the specified
+        CFF file (citation file format). Overwrites existing model creators."""
+        creators = PbkModelAnnotator._read_cff_authors(cff_file)
+        self.set_model_creators(document, creators)
+
+    def clear_all_element_annotations(
         self,
         document: ls.SBMLDocument
-    ):
+    ) -> None:
         model = document.getModel()
         model.unsetAnnotation()
 
@@ -243,17 +268,16 @@ class PbkModelAnnotator:
         logger: Logger,
         element_name: str = None,
         unit_id: str = None
-    ):
+    ) -> None:
         model = document.getModel()
         element = model.getElementBySId(element_id)
         units_dict = self._get_model_units_dict(model)
         if element_name is not None:
-            self._set_element_name(
-                element,
-                element_name,
-                True,
-                logger
-            )
+            if not element.isSetName():
+                logger.info(f'Set name of {element} to "{element_name}".')
+                element.setName(element_name)
+            else:
+                logger.info(f"Name for {element} already set, not overwriting.")
         if unit_id is not None:
             self._set_element_unit(
                 document,
@@ -269,31 +293,11 @@ class PbkModelAnnotator:
         self,
         document: ls.SBMLDocument,
         element_id: str,
-        element_name: str,
-        logger: Logger
-    ):
+        element_name: str
+    ) -> None:
         model = document.getModel()
         element = model.getElementBySId(element_id)
-        self._set_element_name(
-            element,
-            element_name,
-            True,
-            logger
-        )
-
-    def _set_element_name(
-        self,
-        element: ls.SBase,
-        name: str,
-        overwrite: bool,
-        logger: Logger
-    ) -> None:
-        """Sets the name of the provided element."""
-        if not element.isSetName() or overwrite:
-            logger.info(f'Set name of {element} to "{name}".')
-            element.setName(name)
-        else:
-            logger.info(f"Name for {element} already set, not overwriting.")
+        element.setName(element_name)
 
     def set_element_unit(
         self,
@@ -301,7 +305,7 @@ class PbkModelAnnotator:
         element_id: str,
         unit_id: str,
         logger: Logger,
-    ):
+    ) -> None:
         model = document.getModel()
         element = model.getElementBySId(element_id)
         units_dict = self._get_model_units_dict(model)
@@ -315,6 +319,30 @@ class PbkModelAnnotator:
             logger
         )
 
+    def set_element_rdf_annotation(
+        self,
+        document: ls.SBMLDocument,
+        element_id: str,
+        qualifier: str,
+        iri: str,
+        logger: Logger,
+        overwrite: bool = True,
+    ) -> None:
+        """Annotate SBase element based on the provided qualifier and resource IRI.
+        """
+        model = document.getModel()
+        element = model.getElementBySId(element_id)
+        annotation = Annotation(
+            qualifier=ExternalAnnotation._parse_qualifier_str(qualifier),
+            resource=iri
+        )
+        self._set_element_rdf_annotation(
+            element,
+            annotation,
+            logger,
+            overwrite
+        )
+
     def _set_element_unit(
         self,
         document: ls.SBMLDocument,
@@ -324,7 +352,7 @@ class PbkModelAnnotator:
         units_dict: dict,
         overwrite: bool,
         logger: Logger
-    ):
+    ) -> None:
         """Set element unit of element with specified id and type to the specfied unit."""
         if element.getTypeCode() == ls.SBML_DOCUMENT \
             or element.getTypeCode() == ls.SBML_MODEL:
@@ -367,31 +395,7 @@ class PbkModelAnnotator:
             else:
                 logger.info(f"Name for {element} already set, not overwriting.")
 
-    def set_element_annotation(
-        self,
-        document: ls.SBMLDocument,
-        element_id: str,
-        qualifier: str,
-        iri: str,
-        logger: Logger,
-        overwrite: bool = True,
-    ) -> None:
-        """Annotate SBase element based on the provided qualifier and resource IRI.
-        """
-        model = document.getModel()
-        element = model.getElementBySId(element_id)
-        annotation = Annotation(
-            qualifier=ExternalAnnotation._parse_qualifier_str(qualifier),
-            resource=iri
-        )
-        self._set_element_annotation(
-            element,
-            annotation,
-            logger,
-            overwrite
-        )
-
-    def _set_element_annotation(
+    def _set_element_rdf_annotation(
         self,
         element: ls.SBase,
         annotation: Union[ExternalAnnotation|Annotation],
@@ -539,7 +543,7 @@ class PbkModelAnnotator:
         unit_id: str,
         units_dict: dict,
         logger: Logger
-    ):
+    ) -> ls.UnitDefinition:
         """Tries to get the unit definition for the specified unit id from the SBML document.
         The unit definition will be created and added to the document if it does not yet exist.
         """
@@ -563,7 +567,7 @@ class PbkModelAnnotator:
     def _find_unit_definition(
         self,
         str: str
-    ):
+    ) -> dict:
         """Find unit definition matching the provided string."""
         res = None
         for index, value in enumerate(UnitDefinitions):
@@ -572,6 +576,23 @@ class PbkModelAnnotator:
                 res = value
                 break
         return res
+
+    @staticmethod
+    def _read_cff_authors(
+        cff_file: str
+    ) -> dict:
+        """Reads in the authors from a cff file with the specified file path. """
+        try:
+            # Open and load the CFF file
+            with open(cff_file, 'r', encoding='utf-8') as file:
+                cff_data = yaml.safe_load(file)
+            # Extract the list of creators from the 'authors' field
+            creators = cff_data.get('authors', [])
+        except FileNotFoundError:
+            raise Exception("CFF file not found.")
+        except yaml.YAMLError as e:
+            raise Exception(f"Error reading CFF file: {e}")
+        return creators
 
     @staticmethod
     def _read_annotations_df(

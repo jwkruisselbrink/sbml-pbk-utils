@@ -9,4 +9,3 @@ from .pbk_model_validator import PbkModelValidator
 from .pbk_model_infos_extractor import PbkModelInfosExtractor
 from .annotations_template_generator import AnnotationsTemplateGenerator
 from .parametrisations_template_generator import ParametrisationsTemplateGenerator
-from .sbml_model_creators_annotator import SbmlModelCreatorsAnnotator
