@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+title: The sbmlpbkutils package is a small Python package that contains utility functions for FAIR PBK model implementation in SBML. It provides a number of utility functions and classes for annotating, validating and running SBML PBK models.
+abstract: GitHub workflow for automated creation and validation of annotated SBML file from Antimony PBK model implementations.
+version: 0.10.0
+authors:
+  - family-names: Kruisselbrink
+    given-names: Johannes
+    email: johannes.kruisselbrink@wur.nl
+    affiliation: WUR
+    orcid: "0000-0003-1673-5725"

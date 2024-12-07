@@ -54,7 +54,7 @@ class UnitStringGenerator:
         self,
         unit: ls.UnitDefinition,
         ext: bool = False
-    ):
+    ) -> str:
         unit_string_parts = []
         for i in range(unit.getNumUnits()):
             unit_part = unit.getUnit(i)
@@ -69,7 +69,7 @@ class UnitStringGenerator:
         u: ls.Unit,
         ext: bool = False,
         is_first: bool = False,
-    ):
+    ) -> str:
         kind = u.getKind()
         scale = u.getScale()
         exponent = u.getExponentAsDouble()

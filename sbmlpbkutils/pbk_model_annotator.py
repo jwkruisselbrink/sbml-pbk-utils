@@ -1,16 +1,16 @@
 import os
-from pathlib import Path
-from typing import List, Union
 import libsbml as ls
 import numpy as np
 import pandas as pd
+from pathlib import Path
+from typing import List, Union
 from logging import Logger
 
 from sbmlutils import utils
 from sbmlutils.metadata.annotator import ModelAnnotator, ExternalAnnotation
 from pymetadata.core.annotation import RDFAnnotation as Annotation
 
-from sbmlpbkutils.qualifier_definitions import BiologicalQualifierIdsLookup, ModelQualifierIdsLookup
+from . import BiologicalQualifierIdsLookup, ModelQualifierIdsLookup
 from . import UnitDefinitions, set_unit_definition
 
 class PbkModelAnnotator:
@@ -21,7 +21,6 @@ class PbkModelAnnotator:
         annotations_file: str,
         logger: Logger
     ) -> ls.SBMLDocument:
-        # Open SBML document using libSBML
         try:
             document = ls.readSBML(sbml_file)
         except Exception as error:
@@ -49,11 +48,10 @@ class PbkModelAnnotator:
         self,
         document: ls.SBMLDocument,
         annotations_df: pd.DataFrame,
-        my_logger: Logger
+        logger: Logger
     ) -> ls.SBMLDocument:
         """Annotate the units of the SBML file using the annotations
         file and write results to the specified out file."""
-        logger = my_logger
         model = document.getModel()
 
         logger.info(f'Start model annoation: total {len(annotations_df.index)} annotation records')
@@ -97,7 +95,7 @@ class PbkModelAnnotator:
                 annotations_df['resource'] = annotations_df['URI']
 
         # Iterate over annotation records
-        for index, row in annotations_df.iterrows():
+        for _, row in annotations_df.iterrows():
             element_id = str(row["element_id"]).strip() if "element_id" in row and row["element_id"] else None
             element_name = str(row["element_name"]).strip() if "element_name" in row and row["element_name"] else None
             sbml_type = str(row["sbml_type"]).strip() if "sbml_type" in row and row["sbml_type"] else None
