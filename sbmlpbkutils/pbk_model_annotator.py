@@ -16,6 +16,46 @@ from . import UnitDefinitions, set_unit_definition
 
 class PbkModelAnnotator:
 
+    def annotate(
+        self,
+        document: ls.SBMLDocument,
+        annotations_file: str = None,
+        cff_file: str = None,
+        logger: Logger = None
+    ) -> None:
+        if annotations_file is not None:
+            # Read annotations file
+            try:
+                df = PbkModelAnnotator._read_annotations_df(annotations_file, logger)
+                df = df.replace(np.nan, None)
+            except Exception as error:
+                file_basename = os.path.basename(annotations_file)
+                logger.critical(f'Failed to read annotations file [{file_basename}]: {error}')
+                raise
+
+            # Annotate
+            self.set_model_annotations(
+                document,
+                df,
+                logger
+            )
+
+        if cff_file is not None:
+            try:
+                # Read CFF file 
+                creators = PbkModelAnnotator._read_cff_authors(cff_file)
+            except Exception as error:
+                file_basename = os.path.basename(cff_file)
+                logger.critical(f'Failed to read CFF file [{file_basename}]: {error}')
+
+            try:
+                self.set_model_creators(
+                    document,
+                    creators
+                )
+            except Exception as error:
+                logger.error(f'Failed to set creators from CFF file')
+
     def set_model_annotations(
         self,
         document: ls.SBMLDocument,
@@ -128,7 +168,6 @@ class PbkModelAnnotator:
                         annotation,
                         logger
                     )
-
         return document
 
     def set_model_creators(
@@ -153,38 +192,6 @@ class PbkModelAnnotator:
                 creator.setEmail(record['email'])
             history.addCreator(creator)
         model.setModelHistory(history)
-
-    def set_model_annotations_from_file(
-        self,
-        document: ls.SBMLDocument,
-        annotations_file: str,
-        logger: Logger
-    ) -> None:
-        # Read annotations file
-        try:
-            df = PbkModelAnnotator._read_annotations_df(annotations_file, logger)
-            df = df.replace(np.nan, None)
-        except Exception as error:
-            file_basename = os.path.basename(annotations_file)
-            logger.critical(f'Failed to read annotations file [{file_basename}]: {error}')
-            raise
-
-        # Annotate
-        self.set_model_annotations(
-            document,
-            df,
-            logger
-        )
-
-    def set_model_creators_from_file(
-        self,
-        document: ls.SBMLDocument,
-        cff_file: str
-    ) -> None:
-        """Sets the model creators in the SBML document based on the specified
-        CFF file (citation file format). Overwrites existing model creators."""
-        creators = PbkModelAnnotator._read_cff_authors(cff_file)
-        self.set_model_creators(document, creators)
 
     def clear_all_element_annotations(
         self,

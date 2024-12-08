@@ -30,21 +30,6 @@ Given the experimental nature of this package, there currently no plans to publi
 
 The [PbkModelAnnotator](sbmlpbkutils/pbk_model_annotator.py) class can be used to annotate the elements and units of a PBK model implementation in SBML using a separate CSV file. This class is based on, and uses parts of, the annotation script of [SBMLutils](https://sbmlutils.readthedocs.io/en/latest/notebooks/sbml_annotator.html#Annotate-existing-model). However, in addition to annotation of the model using RDF triples, it also sets the model units and element names. 
 
-```python
-from sbmlpbkutils import PbkModelAnnotator
-
-# Create a new annotator instance
-annotator = PbkModelAnnotator()
-
-# Annotate the SBML file using the annotations CSV file
-# and write annotated SBML to specified output file
-annotator.annotate(
-  'path/to/sbml_file.xml',
-  'path/to/annotations_file.csv',
-  'path/to/annotated_sbml_file.xml'
-)
-```
-
 The structure of the CSV file is also based on the external annotations file format of [SBMLutils](https://sbmlutils.readthedocs.io/en/latest/notebooks/sbml_annotator.html#Annotate-existing-model), but again with some changes to also allow for annotation of units.
 
 | Field           | Description                                              |
