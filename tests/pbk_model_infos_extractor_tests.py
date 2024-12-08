@@ -1,6 +1,7 @@
-import unittest
-import sys
+import libsbml as ls
 import os
+import sys
+import unittest
 from sbmlpbkutils.pbk_model_infos_extractor import PbkModelInfosExtractor
 sys.path.append('../sbmlpbkutils/')
 
@@ -15,15 +16,17 @@ class PbkModelInfosExtractorTests(unittest.TestCase):
 
     def test_get_input_compartments_simple(self):
         sbml_file = os.path.join(__test_models_path__, 'simple.annotated.sbml')
-        infosExporter = PbkModelInfosExtractor(sbml_file)
-        result = infosExporter.get_input_compartments()
+        document = ls.readSBML(sbml_file)
+        infos_extractor = PbkModelInfosExtractor(document)
+        result = infos_extractor.get_input_compartments()
         self.assertEqual(len(result), 1)
         self.assertIn('Gut', result.keys())
 
     def test_get_input_compartments_euromix(self):
         sbml_file = os.path.join(__test_models_path__, 'euromix.annotated.sbml')
-        infosExporter = PbkModelInfosExtractor(sbml_file)
-        result = infosExporter.get_input_compartments()
+        document = ls.readSBML(sbml_file)
+        infos_extractor = PbkModelInfosExtractor(document)
+        result = infos_extractor.get_input_compartments()
         self.assertEqual(len(result), 3)
         self.assertIn('Gut', result.keys())
         self.assertIn('Air', result.keys())
@@ -31,15 +34,17 @@ class PbkModelInfosExtractorTests(unittest.TestCase):
 
     def test_get_input_species_simple(self):
         sbml_file = os.path.join(__test_models_path__, 'simple.annotated.sbml')
-        infosExporter = PbkModelInfosExtractor(sbml_file)
-        result = infosExporter.get_input_species()
+        document = ls.readSBML(sbml_file)
+        infos_extractor = PbkModelInfosExtractor(document)
+        result = infos_extractor.get_input_species()
         self.assertEqual(len(result), 1)
         self.assertIn('AGut', result.keys())
 
     def test_get_input_species_euromix(self):
         sbml_file = os.path.join(__test_models_path__, 'euromix.annotated.sbml')
-        infosExporter = PbkModelInfosExtractor(sbml_file)
-        result = infosExporter.get_input_species()
+        document = ls.readSBML(sbml_file)
+        infos_extractor = PbkModelInfosExtractor(document)
+        result = infos_extractor.get_input_species()
         self.assertEqual(len(result), 3)
         self.assertIn('QGut', result.keys())
         self.assertIn('QAir', result.keys())

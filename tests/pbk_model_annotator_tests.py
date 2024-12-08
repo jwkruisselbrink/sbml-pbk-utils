@@ -14,15 +14,6 @@ __test_models_path__ = './tests/models/'
 
 class PbkModelAnnotatorTests(unittest.TestCase):
 
-    def create_file_logger(self, logfile: str) -> logging.Logger:
-        logger = logging.getLogger(uuid.uuid4().hex)
-        logger.setLevel(logging.DEBUG)
-        fh = logging.FileHandler(logfile, 'w+')
-        formatter = logging.Formatter('[%(levelname)s] - %(message)s')
-        fh.setFormatter(formatter)
-        logger.addHandler(fh)
-        return logger
-
     def setUp(self):
         from pathlib import Path
         Path(__test_outputs_path__).mkdir(parents=True, exist_ok=True)
@@ -50,13 +41,13 @@ class PbkModelAnnotatorTests(unittest.TestCase):
             'yyy': [20, 21, 19, 18]
         })
         with self.assertRaises(ValueError):
-            _ = self.annotate_model('simple.sbml', annotations_df, 'annotation_invalid_doc')
+            _ = self._annotate_model('simple.sbml', annotations_df, 'annotation_invalid_doc')
 
     def test_annotate_document_set_unit(self):
-        annotations_df = self.fake_single_annotation_record()
+        annotations_df = self._fake_single_annotation_record()
         annotations_df.at[0, 'element_id'] = 'Blood'
         annotations_df.at[0, 'unit'] = 'mL'
-        document = self.annotate_model('simple.sbml', annotations_df, 'annotation_set_unit')
+        document = self._annotate_model('simple.sbml', annotations_df, 'annotation_set_unit')
         self.assertIsNotNone(document)
         model = document.getModel()
         for i in range(0, model.getNumUnitDefinitions()):
@@ -68,21 +59,21 @@ class PbkModelAnnotatorTests(unittest.TestCase):
         self.assertEqual(element.getUnits(), 'MilliL')
 
     def test_annotate_document_invalid_rdf(self):
-        annotations_df = self.fake_single_annotation_record()
+        annotations_df = self._fake_single_annotation_record()
         annotations_df.at[0, 'annotation_type'] = 'xxx'
-        document = self.annotate_model('simple.sbml', annotations_df, 'annotation_invalid_rdf')
+        document = self._annotate_model('simple.sbml', annotations_df, 'annotation_invalid_rdf')
         self.assertIsNotNone(document)
 
     def test_annotate_document_invalid_qualifier(self):
-        annotations_df = self.fake_single_annotation_record()
+        annotations_df = self._fake_single_annotation_record()
         annotations_df.at[0, 'qualifier'] = 'BQB_IS_RELATED_TO'
-        document = self.annotate_model('simple.sbml', annotations_df, 'annotation_invalid_qualifier')
+        document = self._annotate_model('simple.sbml', annotations_df, 'annotation_invalid_qualifier')
         self.assertIsNotNone(document)
 
     def test_annotate_document_invalid_uri(self):
-        annotations_df = self.fake_single_annotation_record()
+        annotations_df = self._fake_single_annotation_record()
         annotations_df.at[0, 'URI'] = 'UBERON_0000111'
-        document = self.annotate_model('simple.sbml', annotations_df, 'annotation_invalid_uri')
+        document = self._annotate_model('simple.sbml', annotations_df, 'annotation_invalid_uri')
         self.assertIsNotNone(document)
         #PbkModelAnnotator.print_element_terms(document, 'Blood')
 
@@ -175,39 +166,13 @@ class PbkModelAnnotatorTests(unittest.TestCase):
         cv_terms = PbkModelAnnotator.get_cv_terms(element, ls.MODEL_QUALIFIER, ls.BQM_IS)
         self.assertEqual(cv_terms[0]['uri'], "http://purl.obolibrary.org/obo/PBPKO_00477")
 
-    def fake_single_annotation_record(self) -> pd.DataFrame:
-        return pd.DataFrame({
-            'element_id': ['Blood'],
-            'sbml_type': ['compartment'],
-            'element_name': ['Blood'],
-            'unit': ['L'],
-            'annotation_type': ['rdf'],
-            'qualifier': ['BQB_IS'],
-            'URI': ['http://purl.obolibrary.org/obo/UBERON_0000178']
-        })
-
-    def annotate_model(
-        self,
-        filename: str,
-        annotations_df: pd.DataFrame,
-        test_id: str
-    ) -> ls.SBMLDocument:
-        sbml_file = os.path.join(__test_models_path__, filename) 
-        document = ls.readSBML(sbml_file)
-        sbml_basename = os.path.basename(sbml_file)
-        log_file = os.path.join(__test_outputs_path__, Path(sbml_basename).with_suffix(f'.{test_id}.log'))
-        logger = self.create_file_logger(log_file)
-        annotator = PbkModelAnnotator()
-        document = annotator.set_model_annotations(document, annotations_df, logger)
-        return document
-
     def test_set_model_annotations_from_file(self):
         annotator = PbkModelAnnotator()
         for sbml_file in self.sbml_files:
             sbml_basename = os.path.basename(sbml_file)
             annotations_file = Path(sbml_file).with_suffix('.annotations.csv')
             log_file = os.path.join(__test_outputs_path__, Path(sbml_basename).with_suffix('.annotation.log'))
-            logger = self.create_file_logger(log_file)
+            logger = self._create_file_logger(log_file)
             document = ls.readSBML(sbml_file)
             annotator.set_model_annotations_from_file(document, annotations_file, logger)
             self.assertIsNotNone(document)
@@ -260,6 +225,40 @@ class PbkModelAnnotatorTests(unittest.TestCase):
         self.assertEqual(model_creators[0].getOrganization(), "ACME PBK models")
         self.assertEqual(model_creators[0].getEmail(), "john.doe@acme-pbk.org")
 
+    def _fake_single_annotation_record(self) -> pd.DataFrame:
+        return pd.DataFrame({
+            'element_id': ['Blood'],
+            'sbml_type': ['compartment'],
+            'element_name': ['Blood'],
+            'unit': ['L'],
+            'annotation_type': ['rdf'],
+            'qualifier': ['BQB_IS'],
+            'URI': ['http://purl.obolibrary.org/obo/UBERON_0000178']
+        })
+
+    def _annotate_model(
+        self,
+        filename: str,
+        annotations_df: pd.DataFrame,
+        test_id: str
+    ) -> ls.SBMLDocument:
+        sbml_file = os.path.join(__test_models_path__, filename) 
+        document = ls.readSBML(sbml_file)
+        sbml_basename = os.path.basename(sbml_file)
+        log_file = os.path.join(__test_outputs_path__, Path(sbml_basename).with_suffix(f'.{test_id}.log'))
+        logger = self._create_file_logger(log_file)
+        annotator = PbkModelAnnotator()
+        document = annotator.set_model_annotations(document, annotations_df, logger)
+        return document
+
+    def _create_file_logger(self, logfile: str) -> logging.Logger:
+        logger = logging.getLogger(uuid.uuid4().hex)
+        logger.setLevel(logging.DEBUG)
+        fh = logging.FileHandler(logfile, 'w+')
+        formatter = logging.Formatter('[%(levelname)s] - %(message)s')
+        fh.setFormatter(formatter)
+        logger.addHandler(fh)
+        return logger
 
 if __name__ == '__main__':
     unittest.main()

@@ -48,7 +48,11 @@ class PbkModelValidator:
     # Check species annotations
     self.validate_species_annotations(sbmlDoc, logger)
 
-  def validate_units(self, sbmlDoc: ls.SBMLDocument, logger: Logger):
+  def validate_units(
+    self,
+    sbmlDoc: ls.SBMLDocument,
+    logger: Logger
+  ):
     """Runs consistency checks on the units."""
     sbmlDoc.setConsistencyChecks(ls.LIBSBML_CAT_UNITS_CONSISTENCY, self.ucheck)
     failures = sbmlDoc.checkConsistency()
@@ -60,7 +64,11 @@ class PbkModelValidator:
         else:
           logger.warning(sbmlDoc.getError(i).getMessage())
 
-  def validate_compartment_annotations(self, sbmlDoc: ls.SBMLDocument, logger: Logger):
+  def validate_compartment_annotations(
+    self,
+    sbmlDoc: ls.SBMLDocument,
+    logger: Logger
+  ):
     """Check compartment annotations. Each compartment should have a BQM_IS
     relation referring to a term of the PBPK ontology."""
     for i in range(0, sbmlDoc.model.getNumCompartments()):
@@ -76,7 +84,11 @@ class PbkModelValidator:
         elif record.level == StatusLevel.INFO:
           logger.info(record.message)
 
-  def validate_parameter_annotations(self, sbmlDoc: ls.SBMLDocument, logger: Logger):
+  def validate_parameter_annotations(
+    self,
+    sbmlDoc: ls.SBMLDocument,
+    logger: Logger
+  ):
     """Check parameter annotations. Each parameter should have a BQM_IS
     relation referring to a term of the PBPK ontology."""
     for i in range(0, sbmlDoc.model.getNumParameters()):
@@ -92,7 +104,11 @@ class PbkModelValidator:
         elif record.level == StatusLevel.INFO:
           logger.info(record.message)
 
-  def validate_species_annotations(self, sbmlDoc: ls.SBMLDocument, logger: Logger):
+  def validate_species_annotations(
+    self,
+    sbmlDoc: ls.SBMLDocument,
+    logger: Logger
+  ):
     """Check species annotations. Each species should have a BQM_IS
     relation referring to a term of the PBPK ontology."""
     for i in range(0, sbmlDoc.model.getNumSpecies()):
