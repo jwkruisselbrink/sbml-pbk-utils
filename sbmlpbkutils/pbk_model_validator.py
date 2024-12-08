@@ -2,16 +2,21 @@ import os.path
 import libsbml as ls
 from logging import Logger
 
-from sbmlpbkutils.pbk_model_annotations_validator import PbkModelAnnotationsValidator
-from sbmlpbkutils.validation_record import StatusLevel
+from sbmlpbkutils.pbk_ontology_checker import PbkOntologyChecker
+from sbmlpbkutils.qualifier_definitions import BiologicalQualifierIdsLookup, ModelQualifierIdsLookup
+from sbmlpbkutils.validation_record import ErrorCode, StatusLevel, ValidationRecord
 
 class PbkModelValidator:
 
   def __init__(self):
     self.ucheck = True
-    self.annotations_validator = PbkModelAnnotationsValidator()
+    self.ontology_checker = PbkOntologyChecker()
 
-  def validate(self, file: str, logger: Logger):
+  def validate(
+    self,
+    file: str,
+    logger: Logger
+  ):
     """Runs all validation checks."""
     if not os.path.exists(file):
       logger.error(f'File [{file}] not found.')
@@ -73,7 +78,7 @@ class PbkModelValidator:
     relation referring to a term of the PBPK ontology."""
     for i in range(0, sbmlDoc.model.getNumCompartments()):
       c = sbmlDoc.model.getCompartment(i)
-      (valid, messages) = self.annotations_validator.check_compartment_annotation(c)
+      (valid, messages) = self.check_compartment_annotation(c)
       for record in messages:
         if record.level == StatusLevel.CRITICAL:
           logger.critical(record.message)
@@ -93,7 +98,7 @@ class PbkModelValidator:
     relation referring to a term of the PBPK ontology."""
     for i in range(0, sbmlDoc.model.getNumParameters()):
       c = sbmlDoc.model.getParameter(i)
-      (valid, messages) = self.annotations_validator.check_parameter_annotation(c)
+      (valid, messages) = self.check_parameter_annotation(c)
       for record in messages:
         if record.level == StatusLevel.CRITICAL:
           logger.critical(record.message)
@@ -113,7 +118,7 @@ class PbkModelValidator:
     relation referring to a term of the PBPK ontology."""
     for i in range(0, sbmlDoc.model.getNumSpecies()):
       c = sbmlDoc.model.getSpecies(i)
-      (valid, messages) = self.annotations_validator.check_species_annotation(c)
+      (valid, messages) = self.check_species_annotation(c)
       for record in messages:
         if record.level == StatusLevel.CRITICAL:
           logger.critical(record.message)
@@ -123,3 +128,121 @@ class PbkModelValidator:
           logger.warning(record.message)
         elif record.level == StatusLevel.INFO:
           logger.info(record.message)
+
+  def check_element_annotation(
+      self,
+      element: ls.SBase
+  ) -> tuple[bool, list[ValidationRecord]]:
+      if (element.getTypeCode() == ls.SBML_COMPARTMENT):
+          return self.check_compartment_annotation(element)
+      if (element.getTypeCode() == ls.SBML_PARAMETER):
+          return self.check_parameter_annotation(element)
+      if (element.getTypeCode() == ls.SBML_SPECIES):
+          return self.check_species_annotation(element)
+      else:
+          return None
+
+  def check_compartment_annotation(
+      self,
+      element: ls.Compartment
+  ) -> tuple[bool, list[ValidationRecord]]:
+      valid = True
+      messages = []
+      cv_terms = self._get_cv_terms_by_type(element)
+      if 'BQM_IS' not in cv_terms:
+          msg = f"No BQM_IS annotation found refering to a PBPKO term for compartment [{element.getId()}]."
+          messages.append(ValidationRecord(StatusLevel.ERROR, ErrorCode.COMPARTMENT_MISSING_BQM_TERM, msg))
+          valid = False
+      else:
+          pbpko_terms = [term for term in cv_terms['BQM_IS'] if self.ontology_checker.check_in_pbpko(term)]
+          if not pbpko_terms:
+              msg = f"No BQM_IS annotation found refering to a PBPKO term for compartment [{element.getId()}]."
+              messages.append(ValidationRecord(StatusLevel.ERROR, ErrorCode.COMPARTMENT_MISSING_PBPKO_BQM_TERM, msg))
+              valid = False
+          elif len(pbpko_terms) > 1:
+              msg = f"Found multiple BQM_IS annotations refering to a PBPKO term for compartment [{element.getId()}]."
+              messages.append(ValidationRecord(StatusLevel.ERROR, ErrorCode.COMPARTMENT_MULTIPLE_PBPKO_BQM_TERMS, msg))
+              valid = False
+          else:
+              pbpko_term = pbpko_terms[0]
+              if not self.ontology_checker.check_is_compartment(pbpko_term):
+                  msg = f"Specified BQM_IS resource [{pbpko_term}] for compartment [{element.getId()}] does not refer to a compartment."
+                  messages.append(ValidationRecord(StatusLevel.ERROR, ErrorCode.COMPARTMENT_INVALID_PBPKO_BQM_TERM, msg))
+                  valid = False
+      return (valid, messages)
+
+  def check_parameter_annotation(
+      self,
+      element: ls.Parameter
+  ) -> tuple[bool, list[ValidationRecord]]:
+      valid = True
+      messages = []
+      cv_terms = self._get_cv_terms_by_type(element)
+      if 'BQM_IS' not in cv_terms:
+          msg = f"No BQM_IS annotation found refering to a PBPKO term for parameter [{element.getId()}]."
+          messages.append(ValidationRecord(StatusLevel.ERROR, ErrorCode.PARAMETER_MISSING_BQM_TERM, msg))
+          valid = False
+      else:
+          pbpko_terms = [term for term in cv_terms['BQM_IS'] if self.ontology_checker.check_in_pbpko(term)]
+          if not pbpko_terms:
+              msg = f"No BQM_IS annotation found refering to a PBPKO term for parameter [{element.getId()}]."
+              messages.append(ValidationRecord(StatusLevel.ERROR, ErrorCode.PARAMETER_MISSING_PBPKO_BQM_TERM, msg))
+              valid = False
+          elif len(pbpko_terms) > 1:
+              msg = f"Found multiple BQM_IS annotations refering to a PBPKO term for parameter [{element.getId()}]."
+              messages.append(ValidationRecord(StatusLevel.ERROR, ErrorCode.PARAMETER_MULTIPLE_PBPKO_BQM_TERMS, msg))
+              valid = False
+          else:
+              pbpko_term = pbpko_terms[0]
+              if not self.ontology_checker.check_is_parameter(pbpko_term):
+                  msg = f"Specified BQM_IS resource [{pbpko_term}] for parameter [{element.getId()}] does not refer to a parameter."
+                  messages.append(ValidationRecord(StatusLevel.ERROR, ErrorCode.PARAMETER_INVALID_PBPKO_BQM_TERM, msg))
+                  valid = False
+      return (valid, messages)
+
+  def check_species_annotation(
+      self,
+      element: ls.Species
+  ) -> tuple[bool, list[ValidationRecord]]:
+      valid = True
+      messages = []
+      cv_terms = self._get_cv_terms_by_type(element)
+      if 'BQM_IS' not in cv_terms:
+          msg = f"No BQM_IS annotation found refering to a PBPKO term for species [{element.getId()}]."
+          messages.append(ValidationRecord(StatusLevel.ERROR, ErrorCode.SPECIES_MISSING_BQM_TERM, msg))
+          valid = False
+      else:
+          pbpko_terms = [term for term in cv_terms['BQM_IS'] if self.ontology_checker.check_in_pbpko(term)]
+          if not pbpko_terms:
+              msg = f"No BQM_IS annotation found refering to a PBPKO term for species [{element.getId()}]."
+              messages.append(ValidationRecord(StatusLevel.ERROR, ErrorCode.SPECIES_MISSING_PBPKO_BQM_TERM, msg))
+              valid = False
+          elif len(pbpko_terms) > 1:
+              msg = f"Found multiple BQM_IS annotations refering to a PBPKO term for species [{element.getId()}]."
+              messages.append(ValidationRecord(StatusLevel.ERROR, ErrorCode.SPECIES_MULTIPLE_PBPKO_BQM_TERMS, msg))
+              valid = False
+          else:
+              pbpko_term = pbpko_terms[0]
+              if not self.ontology_checker.check_is_species(pbpko_term):
+                  msg = f"Specified BQM_IS resource [{pbpko_term}] for species [{element.getId()}] does not refer to a species."
+                  messages.append(ValidationRecord(StatusLevel.ERROR, ErrorCode.SPECIES_INVALID_PBPKO_BQM_TERM, msg))
+                  valid = False
+      return (valid, messages)
+
+  def _get_cv_terms_by_type(
+      self,
+      element: ls.SBase
+  ):
+      lookup = {}
+      cv_terms = element.getCVTerms()
+      for term in cv_terms:
+          num_resources = term.getNumResources()
+          for j in range(num_resources):
+              if term.getQualifierType() == ls.BIOLOGICAL_QUALIFIER:
+                  qualifier_type = BiologicalQualifierIdsLookup[term.getBiologicalQualifierType()]
+              elif term.getQualifierType() == ls.MODEL_QUALIFIER:
+                  qualifier_type = ModelQualifierIdsLookup[term.getModelQualifierType()]
+              if qualifier_type not in lookup:
+                  lookup[qualifier_type] = []
+              lookup[qualifier_type].append(term.getResourceURI(j))
+      return lookup
