@@ -1,6 +1,8 @@
 # SBML PBK Utils
 
-![build](https://img.shields.io/github/actions/workflow/status/jwkruisselbrink/sbml-pbk-utils/build.yml)
+[![Licence](https://img.shields.io/github/license/jwkruisselbrink/sbml-pbk-utils)](https://github.com/jwkruisselbrink/sbml-pbk-utils/blob/main/LICENSE)
+[![Build](https://img.shields.io/github/actions/workflow/status/jwkruisselbrink/sbml-pbk-utils/build.yml?label=build)](https://github.com/jwkruisselbrink/sbml-pbk-utils/actions/workflows/build.yml)
+[![Unit-test](https://img.shields.io/github/actions/workflow/status/jwkruisselbrink/sbml-pbk-utils/unit-test.yml?label=unit-test)](https://github.com/jwkruisselbrink/sbml-pbk-utils/actions/workflows/unit-test.yml)
 
 The `sbmlpbkutils` package is a small Python package that contains utility functions for FAIR PBK model implementation in SBML. It provides a number of utility functions and classes for annotating, validating and running SBML PBK models. It is currently being developed in an explorative manner to evaluate the use of SBML as a harmonized exchange format for FAIR PBK models, and to develop and test a strategy/standard for annotation of terms and units specifically for PBK models. In its current state it should therefore be regarded as an experimental toolset.
 
