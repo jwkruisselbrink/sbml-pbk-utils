@@ -10,10 +10,10 @@ The `sbmlpbkutils` package is a small Python package that contains utility funct
 
 ### Install from GitHub
 
-To install a specific version, use the version tag. For instance, for version `v0.11.0`, use:
+To install a specific version, use the version tag. For instance, for version `v0.12.0`, use:
 
 ````
-pip install git+https://github.com/jwkruisselbrink/sbml-pbk-utils.git@v0.11.0
+pip install git+https://github.com/jwkruisselbrink/sbml-pbk-utils.git@v0.12.0
 ````
 
 To install the latest version available on the main Git branch, type:
@@ -28,9 +28,7 @@ Given the experimental nature of this package, there currently no plans to publi
 
 ### SBML model annotation
 
-The [PbkModelAnnotator](sbmlpbkutils/pbk_model_annotator.py) class can be used to annotate the elements and units of a PBK model implementation in SBML using a separate CSV file. This class is based on, and uses parts of, the annotation script of [SBMLutils](https://sbmlutils.readthedocs.io/en/latest/notebooks/sbml_annotator.html#Annotate-existing-model). However, in addition to annotation of the model using RDF triples, it also sets the model units and element names. 
-
-The structure of the CSV file is also based on the external annotations file format of [SBMLutils](https://sbmlutils.readthedocs.io/en/latest/notebooks/sbml_annotator.html#Annotate-existing-model), but again with some changes to also allow for annotation of units.
+The [PbkModelAnnotator](sbmlpbkutils/pbk_model_annotator.py) class can be used to annotate the elements and units of an SBML PBK model implementation using a separate CSV file. This class is based on, and uses parts of, the annotation script of [SBMLutils](https://sbmlutils.readthedocs.io/en/latest/notebooks/sbml_annotator.html#Annotate-existing-model). However, in addition to annotation of the model using RDF triples, it also sets the model units and element names. The structure of the CSV file is also based on the external annotations file format of [SBMLutils](https://sbmlutils.readthedocs.io/en/latest/notebooks/sbml_annotator.html#Annotate-existing-model), but again with some changes to also allow for annotation of units.
 
 | Field           | Description                                              |
 |-----------------|----------------------------------------------------------|
@@ -50,16 +48,6 @@ For an example of an annotations file, see the [annotations file](https://github
 
 Having a harmonized standard for implementation of PBK models allows for various types of automated tooling. Automatic validation can be included to check for model errors, model consistency, consitency of units, and also on more PBK-model specific aspects (such as mass balance). The [PbkModelValidator](sbmlpbkutils/pbk_model_validator.py) class provides functionality to run validation checks on PBK model implementations in SBML.
 
-```python
-from sbmlpbkutils import PbkModelValidator
-
-# Create a new validator instance
-validator = PbkModelValidator(True)
-
-# Validate the annotated SBML PBK model implementation
-validator.validate('path/to/sbml_file.xml')
-```
-
 This is a first version in which some rudimentary file and consistency checks are performed. The validation report is printed to the console. This first version is inspired by the [example](https://synonym.caltech.edu/software/libsbml/5.18.0/docs/formatted/python-api/validate_s_b_m_l_8py-example.html) presented in the libSBML documentation.
 
 - Every compartment should have a BQM_IS annotation linking associating the compartment with a known compartment of the PBPK ontology.
@@ -68,7 +56,7 @@ This is a first version in which some rudimentary file and consistency checks ar
 
 ## About the development
 
-As mentioned, this pacakage is currently being developed in an explorative manner to evaluate the use of SBML as a harmonized exchange format for FAIR PBK models, and to develop and test a strategy/standard for annotation of terms and units specifically for PBK models. The aim is to adopt and/or align with already existing initiatives as much as possible.
+As mentioned, this pacakage is currently being developed in an explorative manner to evaluate the use of SBML as a harmonized exchange format for FAIR PBK models, and to develop and test a strategy/standard for annotation of terms and units specifically for PBK models. The aim is to adopt and/or align with already existing initiatives as much as possible. 
 
 At present, the following elements are considered essential elements for building up a standard for FAIR PBK modelling:
 
