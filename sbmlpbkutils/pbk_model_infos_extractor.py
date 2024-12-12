@@ -28,12 +28,12 @@ class PbkModelInfosExtractor:
             if (model_history.getNumCreators() > 0):
                 model_creators = model_history.getListCreators()
                 for creator in model_creators:
-                    dt.append(
-                        creator.getFamilyName(),
+                    dt.append([
                         creator.getGivenName(),
+                        creator.getFamilyName(),
                         creator.getOrganization(),
                         creator.getEmail()
-                    )
+                    ])
                 result = pd.DataFrame(dt, columns=col_names)
                 return result
 
