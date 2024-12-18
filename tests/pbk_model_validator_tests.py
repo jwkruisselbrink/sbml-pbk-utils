@@ -35,6 +35,7 @@ class PbkModelValidatorTests(unittest.TestCase):
         sbml_basename = os.path.basename(sbml_file)
         log_file = os.path.join(__test_outputs_path__, Path(sbml_basename).with_suffix('.validation.log'))
         logger = self._create_file_logger(log_file)
+        validator.validate(sbml_file, logger)
 
     def test_validate_compartment_valid(self):
         annotations_df = self._fake_single_annotation_record(
@@ -93,6 +94,19 @@ class PbkModelValidatorTests(unittest.TestCase):
         self.assertEqual(result[1][0].level, StatusLevel.ERROR)
         self.assertEqual(result[1][0].code, ErrorCode.PARAMETER_MISSING_BQM_TERM)
 
+    def test_validate_parameter_warning(self):
+        '''
+        Annotation of internal parameters is not mandatory. Validation should yield a warning.
+        '''
+        sbml_file = os.path.join(__test_models_path__, 'simple.sbml') 
+        document = ls.readSBML(sbml_file)
+        element = document.getElementBySId('QC')
+        validator = PbkModelValidator()
+        result = validator.check_element_annotation(element)
+        self.assertTrue(result[0])
+        self.assertEqual(result[1][0].level, StatusLevel.WARNING)
+        self.assertEqual(result[1][0].code, ErrorCode.PARAMETER_MISSING_BQM_TERM)
+
     def _fake_single_annotation_record(
         self,
         element_id = 'Gut',
@@ -121,7 +135,6 @@ class PbkModelValidatorTests(unittest.TestCase):
         logger = logging.getLogger(__name__)
         document = annotator.set_model_annotations(document, annotations_df, logger)
         return document
-        validator.validate(sbml_file, logger)
 
     def _create_file_logger(self, logfile: str) -> logging.Logger:
         logger = logging.getLogger(uuid.uuid4().hex)

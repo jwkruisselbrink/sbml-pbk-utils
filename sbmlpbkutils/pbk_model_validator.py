@@ -180,8 +180,9 @@ class PbkModelValidator:
       cv_terms = self._get_cv_terms_by_type(element)
       if 'BQM_IS' not in cv_terms:
           msg = f"No BQM_IS annotation found refering to a PBPKO term for parameter [{element.getId()}]."
-          messages.append(ValidationRecord(StatusLevel.ERROR, ErrorCode.PARAMETER_MISSING_BQM_TERM, msg))
-          valid = False
+          status = StatusLevel.ERROR if element.getConstant() else StatusLevel.WARNING
+          messages.append(ValidationRecord(status, ErrorCode.PARAMETER_MISSING_BQM_TERM, msg))
+          valid = not element.getConstant()
       else:
           pbpko_terms = [term for term in cv_terms['BQM_IS'] if self.ontology_checker.check_in_pbpko(term)]
           if not pbpko_terms:
