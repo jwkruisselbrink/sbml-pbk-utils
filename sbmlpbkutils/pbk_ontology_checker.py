@@ -1,5 +1,7 @@
 from owlready2 import *
 
+pbpko_path = "https://raw.githubusercontent.com/Crispae/pbpko/refs/heads/main/Robot/ontologies/pbpko.owl"
+
 class PbkOntologyChecker():
 
     pbpko_namespaces = [{
@@ -9,7 +11,7 @@ class PbkOntologyChecker():
     }]
 
     def __init__(self) -> None:
-        self.onto = get_ontology("https://raw.githubusercontent.com/Crispae/pbpko/refs/heads/main/Robot/ontologies/pbpko.owl")
+        self.onto = get_ontology(pbpko_path)
         self.onto.load()
         self.obo = get_namespace("http://purl.obolibrary.org/obo/")
 
