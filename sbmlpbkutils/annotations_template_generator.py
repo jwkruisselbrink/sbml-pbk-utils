@@ -1,10 +1,10 @@
 import libsbml as ls
 import pandas as pd
 
-from sbmlpbkutils.pbk_model_annotator import PbkModelAnnotator
+from . import PbkModelAnnotator
 from . import TermDefinitions
-from . import UnitDefinitions
 from . import QualifierDefinitions
+from . import get_ucum_unit_string
 
 class AnnotationsTemplateGenerator:
 
@@ -33,7 +33,7 @@ class AnnotationsTemplateGenerator:
             "substanceUnits",
             element_type,
             "model substances unit",
-            self.get_unit_string(model.getSubstanceUnits()),
+            get_ucum_unit_string(model.getSubstanceUnits()),
             "",
             "",
             "",
@@ -44,7 +44,7 @@ class AnnotationsTemplateGenerator:
             "timeUnits",
             element_type,
             "model time unit",
-            self.get_unit_string(model.getTimeUnits()),
+            get_ucum_unit_string(model.getTimeUnits()),
             "",
             "",
             "",
@@ -55,7 +55,7 @@ class AnnotationsTemplateGenerator:
             "volumeUnits",
             element_type,
             "model volume unit",
-            self.get_unit_string(model.getVolumeUnits()),
+            get_ucum_unit_string(model.getVolumeUnits()),
             "",
             "",
             "",
@@ -74,7 +74,11 @@ class AnnotationsTemplateGenerator:
             dt.extend(element_terms)
         return dt
 
-    def get_species_terms(self, model, try_fill):
+    def get_species_terms(
+        self,
+        model,
+        try_fill
+    ):
         element_type="species"
         required_qualifiers = ['BQM_IS']
         dt = []
@@ -84,7 +88,11 @@ class AnnotationsTemplateGenerator:
             dt.extend(element_terms)
         return dt
 
-    def get_parameter_terms(self, model, try_fill):
+    def get_parameter_terms(
+        self,
+        model,
+        try_fill: bool
+    ) -> list[str]:
         element_type="parameter"
         required_qualifiers = ['BQM_IS']
         dt = []
@@ -94,7 +102,13 @@ class AnnotationsTemplateGenerator:
             dt.extend(element_terms)
         return dt
 
-    def get_element_terms(self, element, element_type, required_qualifiers, try_fill):
+    def get_element_terms(
+        self,
+        element: ls.SBase,
+        element_type: str,
+        required_qualifiers: list[str],
+        try_fill: bool
+    ) -> list[str]:
         dt = []
         name = element.getName()
         description = ''
@@ -139,7 +153,7 @@ class AnnotationsTemplateGenerator:
                     element.getId(),
                     element_type,
                     (name if rows == 0 else ''),
-                    (self.get_unit_string(element.getUnits()) if rows == 0 else ''),
+                    (get_ucum_unit_string(element.getUnits()) if rows == 0 else ''),
                     "rdf",
                     qualifier_id,
                     uri,
@@ -162,12 +176,3 @@ class AnnotationsTemplateGenerator:
                     and any(element_id.lower() == val.lower() for val in value['common_ids']):
                     return value
         return None
-
-    def get_unit_string(self, unit):
-        """Tries to get the (UCUM formated) unit string of the specified element."""
-        if (unit):
-            for index, value in enumerate(UnitDefinitions):
-                if unit.lower() == value['id'].lower() \
-                    or any(val.lower() == unit.lower() for val in value['synonyms']):
-                    return value['UCUM'] if value['UCUM'] else value['id']
-        return ""

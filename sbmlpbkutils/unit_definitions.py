@@ -1,24 +1,75 @@
+import enum
 import libsbml as ls
 
-def set_unit_definition(
-    unit_definition,
-    definition
-):
-    """ Sets the libSBML unit definition according to the unit definition."""
-    id = definition["id"]
-    unit_definition.setId(id)
-    for unitPart in definition["units"]:
-        u = unit_definition.createUnit()
-        u.setKind(unitPart["kind"])
-        u.setExponent(unitPart["exponent"])
-        u.setMultiplier(unitPart["multiplier"])
-        u.setScale(unitPart["scale"])
+class UnitTypes(enum.Enum):
+    DIMENSIONLESS = 1           # Unitless/dimensionless
+    MASS_UNIT = 2               # Grams or moles
+    VOLUME_UNIT = 3             # Liters
+    TIME_UNIT = 4               # Seconds
+    CONCENTRATION_UNIT = 5,     # Grams per mass or volume
+    OTHER = 99                  # Anything other than the above
+
+_si_prefix_string = {
+    3: 'k',
+    2: 'h',
+    1: 'da',
+    0: '',
+    -1: 'd',
+    -2: 'c',
+    -3: 'm',
+    -6: 'u',
+    -9: 'n',
+    -12: 'p',
+}
+
+_si_prefix_strings_ext = {
+    3: 'kilo',
+    2: 'hecto',
+    1: 'deca',
+    0: '',
+    -1: 'deci',
+    -2: 'centi',
+    -3: 'milli',
+    -6: 'micro',
+    -9: 'nano',
+    -12: 'pico',
+}
+
+_time_unit_multipliers = {
+    1: 's',
+    60: 'min',
+    3600: 'h',
+    86400: 'd',
+    31557600: 'y'
+}
+
+_base_unit_strings = {
+    ls.UNIT_KIND_DIMENSIONLESS: '',
+    ls.UNIT_KIND_SECOND: 's',
+    ls.UNIT_KIND_GRAM: 'g',
+    ls.UNIT_KIND_LITER: 'L',
+    ls.UNIT_KIND_LITRE: 'L',
+    ls.UNIT_KIND_METER: 'm',
+    ls.UNIT_KIND_METRE: 'm',
+    ls.UNIT_KIND_MOLE: 'mol'
+}
+
+_base_unit_strings_ext = {
+    ls.UNIT_KIND_DIMENSIONLESS: '',
+    ls.UNIT_KIND_SECOND: 'second',
+    ls.UNIT_KIND_GRAM: 'gram',
+    ls.UNIT_KIND_LITER: 'liter',
+    ls.UNIT_KIND_LITRE: 'liter',
+    ls.UNIT_KIND_METER: 'meter',
+    ls.UNIT_KIND_METRE: 'meter',
+    ls.UNIT_KIND_MOLE: 'mole'
+}
 
 # Unit definitions, translating a unit string to the elementary unit
 # compositions following the SBML structure.
 # Unit IDs should match up with vocabulary of QUDT (https://qudt.org/2.1/vocab/unit) 
 # except that the '-' character is replaced by '_' due to restrictions of SBML.
-UnitDefinitions = [
+unit_definitions = [
     {
         "id" : "UNITLESS",
         "qudt" : "UNITLESS",
@@ -66,6 +117,28 @@ UnitDefinitions = [
         ]
     },
     {
+        "id" : "NanoMOL",
+        "qudt" : "NanoMOL",
+        "UCUM" : "nmol",
+        "synonyms" : [
+            "nmol"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -9 }
+        ]
+    },
+    {
+        "id" : "PicoMOL",
+        "qudt" : "PicoMOL",
+        "UCUM" : "pmol",
+        "synonyms" : [
+            "pmol"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -12 }
+        ]
+    },
+    {
         "id" : "KiloGM",
         "qudt" : "KiloGM",
         "UCUM" : "kg",
@@ -110,6 +183,28 @@ UnitDefinitions = [
         ]
     },
     {
+        "id" : "NanoGM",
+        "qudt" : "NanoGM",
+        "UCUM" : "ng",
+        "synonyms" : [
+            "ng"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -9 }
+        ]
+    },
+    {
+        "id" : "PicoGM",
+        "qudt" : "PicoGM",
+        "UCUM" : "pg",
+        "synonyms" : [
+            "pg"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -12 }
+        ]
+    },
+    {
         "id" : "L",
         "qudt" : "L",
         "UCUM" : "L",
@@ -129,6 +224,39 @@ UnitDefinitions = [
         ],
         "units": [
             { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": -3 }
+        ]
+    },
+    {
+        "id" : "CentiL",
+        "qudt" : "CentiL",
+        "UCUM" : "cL",
+        "synonyms" : [
+            "cL"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": -2 }
+        ]
+    },
+    {
+        "id" : "DeciL",
+        "qudt" : "DeciL",
+        "UCUM" : "dL",
+        "synonyms" : [
+            "dL"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": -1 }
+        ]
+    },
+    {
+        "id" : "MicroL",
+        "qudt" : "MicroL",
+        "UCUM" : "uL",
+        "synonyms" : [
+            "uL"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": -6 }
         ]
     },
     # Molas mass
@@ -476,7 +604,7 @@ UnitDefinitions = [
     {
         "id" : "MIN",
         "qudt" : "MIN",
-        "UCUM" : "hmin",
+        "UCUM" : "min",
         "synonyms" : [
             "minutes",
             "minute",
@@ -795,3 +923,161 @@ UnitDefinitions = [
         ]
     }
 ]
+
+def get_volume_unit_definitions() -> list[dict]:
+    res = []
+    for index, unit_def in enumerate(unit_definitions):
+        if len(unit_def['units']) == 1 \
+            and _is_volume_unit_part(unit_def['units'][0]):
+            res.append(unit_def)
+    return res
+
+def get_mass_unit_definitions() -> list[dict]:
+    res = []
+    for index, unit_def in enumerate(unit_definitions):
+        if len(unit_def['units']) == 1 \
+            and _is_mass_unit_part(unit_def['units'][0]):
+            res.append(unit_def)
+    return res
+
+def get_time_unit_definitions() -> list[dict]:
+    res = []
+    for index, unit_def in enumerate(unit_definitions):
+        if len(unit_def['units']) == 1 \
+            and _is_time_unit_part(unit_def['units'][0]):
+            res.append(unit_def)
+    return res
+
+def get_unit_definition(
+    unit_str: str
+) -> dict:
+    """
+    Find unit definition that corresponds with the provided string.
+    Returns none if no matching unit definition was found.
+    """
+    res = None
+    for index, value in enumerate(unit_definitions):
+        if value['id'].lower() == unit_str.lower() \
+            or any(val.lower() == unit_str.lower() for val in value['synonyms']):
+            res = value
+            break
+    return res
+
+def get_ucum_unit_string(
+    unit_str: str
+) -> str:
+    """Tries to get the (UCUM formated) unit string of the specified element."""
+    if (unit_str):
+        for index, value in enumerate(unit_definitions):
+            if unit_str.lower() == value['id'].lower() \
+                or any(val.lower() == unit_str.lower() for val in value['synonyms']):
+                return value['UCUM'] if value['UCUM'] else value['id']
+    return ""
+
+def set_unit_definition(
+    sbml_unit_definition: ls.UnitDefinition,
+    definition
+):
+    """ Sets the libSBML unit definition according to the unit definition."""
+    id = definition["id"]
+    sbml_unit_definition.setId(id)
+    for unitPart in definition["units"]:
+        u = sbml_unit_definition.createUnit()
+        u.setKind(unitPart["kind"])
+        u.setExponent(unitPart["exponent"])
+        u.setMultiplier(unitPart["multiplier"])
+        u.setScale(unitPart["scale"])
+
+def create_unit_string(
+    unit: ls.UnitDefinition,
+    ext: bool = False
+) -> str:
+    unit_string_parts = []
+    for i in range(unit.getNumUnits()):
+        unit_part = unit.getUnit(i)
+        unit_part_string = _create_unit_part_string(unit_part, ext, i == 0)
+        if unit_part_string:
+            unit_string_parts.append(unit_part_string)
+    result = ''.join(unit_string_parts) if unit_string_parts else 'dimensionless'
+    return result
+
+def _create_unit_part_string(
+    u: ls.Unit,
+    ext: bool = False,
+    is_first: bool = False,
+) -> str:
+    kind = u.getKind()
+    scale = u.getScale()
+    exponent = u.getExponentAsDouble()
+    multiplier = u.getMultiplier()
+    if kind == ls.UNIT_KIND_SECOND:
+        if multiplier in _time_unit_multipliers.keys():
+            base_unit_str = _time_unit_multipliers[multiplier]
+            multiplier = 1
+        else:
+            base_unit_str = 's'
+    else:
+        base_unit_str = _base_unit_strings_ext.get(kind) if ext else _base_unit_strings.get(kind)
+
+    scale_str = _si_prefix_strings_ext.get(scale) if ext else _si_prefix_string.get(scale)
+    if exponent >= 0:
+        if is_first:
+            operator_str = ''
+        else:
+            operator_str = '.'
+    else:
+        operator_str = '/'
+        exponent = -exponent
+    exponent_str = f"^{exponent:g}" if exponent != 1 else ''
+    multiplier_str = f"{multiplier}." if multiplier != 1 else ''
+    ucum_unit = f"{operator_str}{multiplier_str}{scale_str}{base_unit_str}{exponent_str}"
+    return ucum_unit
+
+def get_unit_type(unit_def: dict) -> UnitTypes:
+    if len(unit_def['units']) == 1:
+        unit = unit_def['units'][0]
+        if unit['kind'] == ls.UNIT_KIND_DIMENSIONLESS:
+            return UnitTypes.DIMENSIONLESS
+        elif _is_mass_unit_part(unit):
+            return UnitTypes.MASS_UNIT
+        elif _is_volume_unit_part(unit):
+            return UnitTypes.VOLUME_UNIT
+        elif _is_time_unit_part(unit):
+            return UnitTypes.TIME_UNIT
+        else:
+            return UnitTypes.OTHER
+    elif len(unit_def['units']) == 2:
+        if any(_is_mass_unit_part(part) for part in unit_def['units']) \
+            and (any(_is_per_volume_unit_part(part) for part in unit_def['units']) \
+            or any(_is_per_mass_unit_part(part) for part in unit_def['units'])):
+                return UnitTypes.CONCENTRATION_UNIT
+    else:
+        return UnitTypes.OTHER
+
+def _is_mass_unit_part(unit_part: dict):
+    return (unit_part['kind'] == ls.UNIT_KIND_GRAM \
+        or unit_part['kind'] == ls.UNIT_KIND_MOLE) \
+        and unit_part['exponent'] == 1
+
+def _is_per_mass_unit_part(unit_part: dict):
+    return (unit_part['kind'] == ls.UNIT_KIND_GRAM \
+        or unit_part['kind'] == ls.UNIT_KIND_MOLE) \
+        and unit_part['exponent'] == -1
+
+def _is_volume_unit_part(unit_part: dict):
+    return (unit_part['kind'] == ls.UNIT_KIND_LITRE \
+        or unit_part['kind'] == ls.UNIT_KIND_LITER) \
+        and unit_part['exponent'] == 1
+
+def _is_per_volume_unit_part(unit_part: dict):
+    return (unit_part['kind'] == ls.UNIT_KIND_LITRE \
+        or unit_part['kind'] == ls.UNIT_KIND_LITER) \
+        and unit_part['exponent'] == -1
+
+def _is_time_unit_part(unit_part: dict):
+    return unit_part['kind'] == ls.UNIT_KIND_SECOND \
+        and unit_part['exponent'] == 1
+
+def _is_per_time_unit_part(unit_part: dict):
+    return unit_part['kind'] == ls.UNIT_KIND_SECOND \
+        and unit_part['exponent'] == -1

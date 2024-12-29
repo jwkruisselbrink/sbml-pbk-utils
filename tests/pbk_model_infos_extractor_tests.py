@@ -2,7 +2,9 @@ import libsbml as ls
 import os
 import sys
 import unittest
-from sbmlpbkutils.pbk_model_infos_extractor import PbkModelInfosExtractor
+
+from sbmlpbkutils import PbkModelInfosExtractor
+
 sys.path.append('../sbmlpbkutils/')
 
 __test_outputs_path__ = './tests/__testoutputs__'

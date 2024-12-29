@@ -3,7 +3,9 @@ import sys
 import os
 import libsbml as ls
 from pathlib import Path
+
 from sbmlpbkutils import AnnotationsTemplateGenerator
+
 sys.path.append('../sbmlpbkutils/')
 
 __test_outputs_path__ = './tests/__testoutputs__'

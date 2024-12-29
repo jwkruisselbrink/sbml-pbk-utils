@@ -2,10 +2,10 @@ import libsbml as ls
 import pandas as pd
 from sbmlutils.report.mathml import astnode_to_latex
 
-from sbmlpbkutils.pbk_ontology_checker import PbkOntologyChecker
-from sbmlpbkutils.term_definitions import TermDefinitions
-from sbmlpbkutils.pbk_model_annotator import PbkModelAnnotator
-from sbmlpbkutils.unit_string_generator import UnitStringGenerator
+from . import PbkOntologyChecker
+from . import PbkModelAnnotator
+from . import TermDefinitions
+from . import create_unit_string
 
 class PbkModelInfosExtractor:
 
@@ -302,6 +302,5 @@ class PbkModelInfosExtractor:
         """Tries to get the (UCUM) formated unit string of the specified element."""
         unit_def = self.model.getUnitDefinition(unit_id)
         if unit_def is not None:
-            generator = UnitStringGenerator()
-            return generator.create_unit_string(unit_def)
+            return create_unit_string(unit_def)
         return ""

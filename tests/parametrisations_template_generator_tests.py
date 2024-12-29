@@ -2,7 +2,9 @@ import unittest
 import sys
 import os
 import libsbml as ls
+
 from sbmlpbkutils import ParametrisationsTemplateGenerator
+
 sys.path.append('../sbmlpbkutils/')
 
 __test_models_path__ = './tests/models/'

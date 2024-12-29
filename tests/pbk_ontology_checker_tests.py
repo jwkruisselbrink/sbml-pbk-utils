@@ -1,7 +1,7 @@
 import unittest
 import sys
 
-from sbmlpbkutils.pbk_ontology_checker import PbkOntologyChecker
+from sbmlpbkutils import PbkOntologyChecker
 
 sys.path.append('../sbmlpbkutils/')
 

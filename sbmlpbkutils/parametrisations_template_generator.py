@@ -1,7 +1,7 @@
 import pandas as pd
 import libsbml as ls
 
-from sbmlpbkutils.unit_string_generator import UnitStringGenerator
+from sbmlpbkutils import create_unit_string
 
 class ParametrisationsTemplateGenerator:
 
@@ -12,14 +12,13 @@ class ParametrisationsTemplateGenerator:
         include_element_name: bool = True
     ):
         dt = []
-        unit_string_generator = UnitStringGenerator()
         for i in range(0,model.getNumParameters()):
             element = model.getParameter(i)
             if (element.getConstant()):
                 unit_id = element.getUnits()
                 if unit_id:
                     unit_definition = model.getUnitDefinition(unit_id)
-                    unit_string = unit_string_generator.create_unit_string(unit_definition)
+                    unit_string = create_unit_string(unit_definition)
                 else:
                     unit_string = ""
                 row = [

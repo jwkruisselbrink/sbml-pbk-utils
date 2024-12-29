@@ -11,8 +11,8 @@ from sbmlutils import utils
 from sbmlutils.metadata.annotator import ModelAnnotator, ExternalAnnotation
 from pymetadata.core.annotation import RDFAnnotation as Annotation
 
+from . import get_unit_definition, set_unit_definition
 from . import BiologicalQualifierIdsLookup, ModelQualifierIdsLookup
-from . import UnitDefinitions, set_unit_definition
 
 class PbkModelAnnotator:
 
@@ -143,7 +143,7 @@ class PbkModelAnnotator:
                 # If unit field is not empty, try set element unit
                 if (unit is not None):
                     self._set_element_unit(
-                        document,
+                        model,
                         element,
                         element_id,
                         unit,
@@ -287,7 +287,7 @@ class PbkModelAnnotator:
                 logger.info(f"Name for {element} already set, not overwriting.")
         if unit_id is not None:
             self._set_element_unit(
-                document,
+                model,
                 element,
                 element_id,
                 unit_id,
@@ -317,7 +317,7 @@ class PbkModelAnnotator:
         element = model.getElementBySId(element_id)
         units_dict = self._get_model_units_dict(model)
         self._set_element_unit(
-            document,
+            model,
             element,
             element_id,
             unit_id,
@@ -352,7 +352,7 @@ class PbkModelAnnotator:
 
     def _set_element_unit(
         self,
-        document: ls.SBMLDocument,
+        model: ls.Model,
         element: ls.SBase,
         element_id: str,
         unit_id: str,
@@ -361,42 +361,42 @@ class PbkModelAnnotator:
         logger: Logger
     ) -> None:
         """Set element unit of element with specified id and type to the specfied unit."""
+        model = model.getModel()
         if element.getTypeCode() == ls.SBML_DOCUMENT \
             or element.getTypeCode() == ls.SBML_MODEL:
-            model = document.getModel()
-            u_def = self._get_or_add_unit_definition(document, unit_id, units_dict, logger)
+            unit_definition = self._get_or_add_unit_definition(model, unit_id, units_dict, logger)
             if element_id == "timeUnits":
                 if not model.isSetTimeUnits() or overwrite:
                     logger.info(f"Set model time unit [{unit_id}].")
-                    model.setTimeUnits(u_def.getId())
+                    model.setTimeUnits(unit_definition.getId())
                 elif model.isSetTimeUnits():
                     logger.info(f"Did not set model time unit [{unit_id}]: unit already set.")
             elif element_id == "substanceUnits":
                 if not model.isSetSubstanceUnits() or overwrite:
                     logger.info(f"Set model substances unit [{unit_id}].")
-                    model.setSubstanceUnits(u_def.getId())
+                    model.setSubstanceUnits(unit_definition.getId())
                 elif model.isSetSubstanceUnits():
                     logger.info(f"Did not set model substances unit [{unit_id}]: unit already set.")
             elif element_id == "extentUnits":
                 if not model.isSetExtentUnits() or overwrite:
                     logger.info(f"Set model extent unit [{unit_id}].")
-                    model.setExtentUnits(u_def.getId())
+                    model.setExtentUnits(unit_definition.getId())
                 elif model.isSetExtentUnits():
                     logger.info(f"Did not set model extent unit [{unit_id}]: unit already set.")
             elif element_id == "volumeUnits":
                 if not model.isSetVolumeUnits() or overwrite:
                     logger.info(f"Set model volume unit [{unit_id}].")
-                    model.setVolumeUnits(u_def.getId())
+                    model.setVolumeUnits(unit_definition.getId())
                 elif model.isSetVolumeUnits():
                     logger.info(f"Did not set model volume unit [{unit_id}]: unit already set.")
             else:
                 logger.info(f"Did not set unit [{unit_id}] for root level element [{element_id}]: not a valid document level element identifier.")
         else:
             if not element.isSetUnits() or overwrite:
-                u_def = self._get_or_add_unit_definition(document, unit_id, units_dict, logger)
-                if (u_def):
+                unit_definition = self._get_or_add_unit_definition(model, unit_id, units_dict, logger)
+                if (unit_definition):
                     logger.info(f"Set unit of {element} to [{unit_id}].")
-                    element.setUnits(u_def.getId())
+                    element.setUnits(unit_definition.getId())
                 elif element.isSetUnits():
                     logger.info(f"Did not set unit [{unit_id}] for {element}: unit already set.")
             else:
@@ -546,7 +546,7 @@ class PbkModelAnnotator:
 
     def _get_or_add_unit_definition(
         self,
-        doc: ls.SBMLDocument,
+        model: ls.Model,
         unit_id: str,
         units_dict: dict,
         logger: Logger
@@ -555,34 +555,20 @@ class PbkModelAnnotator:
         The unit definition will be created and added to the document if it does not yet exist.
         """
         if (unit_id not in units_dict):
-            unit_def = self._find_unit_definition(unit_id)
-            if (unit_def is None):
+            unit_definition = get_unit_definition(unit_id)
+            if (unit_definition is None):
                 logger.error(f"Failed to set unit [{unit_id}]: unknown unit definition!")
                 return
-            model = doc.getModel()
-            unit_definition = model.getUnitDefinition(unit_def["id"])
-            if (not unit_definition):
+            sbml_unit_definition = model.getUnitDefinition(unit_definition["id"])
+            if (not sbml_unit_definition):
                 logger.info(f"Add unit definition [{unit_id}].")
-                unit_definition = model.createUnitDefinition()
+                sbml_unit_definition = model.createUnitDefinition()
                 set_unit_definition(
-                    unit_definition,
-                    unit_def
+                    sbml_unit_definition,
+                    unit_definition
                 )
-            units_dict[unit_id] = unit_definition
+            units_dict[unit_id] = sbml_unit_definition
         return units_dict[unit_id]
-
-    def _find_unit_definition(
-        self,
-        str: str
-    ) -> dict:
-        """Find unit definition matching the provided string."""
-        res = None
-        for index, value in enumerate(UnitDefinitions):
-            if value['id'].lower() == str.lower() \
-                or any(val.lower() == str.lower() for val in value['synonyms']):
-                res = value
-                break
-        return res
 
     @staticmethod
     def _read_cff_authors(

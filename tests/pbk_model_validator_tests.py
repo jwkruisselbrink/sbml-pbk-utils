@@ -6,8 +6,8 @@ import sys
 import unittest
 import uuid
 from pathlib import Path
-from sbmlpbkutils import PbkModelValidator
-from sbmlpbkutils.pbk_model_annotator import PbkModelAnnotator
+
+from sbmlpbkutils import PbkModelValidator, PbkModelAnnotator
 from sbmlpbkutils.validation_record import ErrorCode, StatusLevel
 
 sys.path.append('../sbmlpbkutils/')

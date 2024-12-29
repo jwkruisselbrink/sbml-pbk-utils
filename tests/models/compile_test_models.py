@@ -8,9 +8,9 @@ import sys
 
 sys.path.append("./")
 
-from sbmlpbkutils.pbk_model_validator import PbkModelValidator
-from sbmlpbkutils.annotations_template_generator import AnnotationsTemplateGenerator
-from sbmlpbkutils.pbk_model_annotator import PbkModelAnnotator
+from sbmlpbkutils import PbkModelValidator
+from sbmlpbkutils import AnnotationsTemplateGenerator
+from sbmlpbkutils import PbkModelAnnotator
 
 def create_file_logger(logfile: str) -> logging.Logger:
     logger = logging.getLogger(uuid.uuid4().hex)
@@ -31,11 +31,12 @@ for file in os.listdir('./tests/models/'):
 for file in os.listdir('./tests/models/'):
     if file.endswith('.sbml') and not file.endswith('annotated.sbml'):
         sbml_file = os.path.join('./tests/models', file)
+        document = ls.readSBML(sbml_file)
+        model = document.getModel()
+
         annotations_file = Path(sbml_file).with_suffix('.annotations.csv')
         if not os.path.exists(annotations_file):
             # create annotations (csv) file if it does not exist
-            document = ls.readSBML(sbml_file)
-            model = document.getModel()
             annotations_template_generator = AnnotationsTemplateGenerator()
             annotations = annotations_template_generator.generate(model)
             annotations.to_csv(annotations_file, index=False)
@@ -44,7 +45,11 @@ for file in os.listdir('./tests/models/'):
         annotated_sbml_file = Path(sbml_file).with_suffix('.annotated.sbml')
         annotator = PbkModelAnnotator()
         logger = create_file_logger(annotations_log_file)
-        document = annotator.annotate(sbml_file, annotations_file, logger)
+        document = annotator.annotate(
+            document,
+            annotations_file,
+            logger = logger
+        )
         ls.writeSBML(document, str(annotated_sbml_file))
 
         validation_log_file = Path(sbml_file).with_suffix('.validation.log')
