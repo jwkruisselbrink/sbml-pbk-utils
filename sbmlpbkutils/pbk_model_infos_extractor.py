@@ -4,7 +4,7 @@ from sbmlutils.report.mathml import astnode_to_latex
 
 from . import PbkOntologyChecker
 from . import PbkModelAnnotator
-from . import TermDefinitions
+from . import term_definitions
 from . import create_unit_string
 
 class PbkModelInfosExtractor:
@@ -256,13 +256,13 @@ class PbkModelInfosExtractor:
     def find_term_definition(self, element, element_type):
         """Tries to find a resource definition for the specified element."""
         element_id = element.getId()
-        for index, value in enumerate(TermDefinitions):
+        for index, value in enumerate(term_definitions):
             if value['element_type'] == element_type:
                 if 'recommended_id' in value.keys() \
                     and element_id.lower() == value['recommended_id'].lower():
                     return value
-                elif 'common_ids' in value.keys() \
-                    and any(element_id.lower() == val.lower() for val in value['common_ids']):
+                elif 'common_identifiers' in value.keys() \
+                    and any(element_id.lower() == val.lower() for val in value['common_identifiers']):
                     return value
         return None
 
@@ -284,7 +284,7 @@ class PbkModelInfosExtractor:
     def _init_terms_by_uri_lookup(self):
         """Tries to find a resource definition for the specified element."""
         result = {}
-        for value in TermDefinitions:
+        for value in term_definitions:
             if ('resources' in value.keys()):
                 for resource in value['resources']:
                     result.update({

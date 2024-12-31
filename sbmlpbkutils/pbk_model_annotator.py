@@ -12,7 +12,32 @@ from sbmlutils.metadata.annotator import ModelAnnotator, ExternalAnnotation
 from pymetadata.core.annotation import RDFAnnotation as Annotation
 
 from . import get_unit_definition, set_unit_definition
-from . import BiologicalQualifierIdsLookup, ModelQualifierIdsLookup
+
+_model_qualifier_ids_lookup = {
+    ls.BQM_IS : "BQM_IS",
+    ls.BQM_IS_DESCRIBED_BY : "BQM_IS_DESCRIBED_BY",
+    ls.BQM_IS_DERIVED_FROM : "BQM_IS_DERIVED_FROM",
+    ls.BQM_IS_INSTANCE_OF : "BQM_IS_INSTANCE_OF",
+    ls.BQM_HAS_INSTANCE : "BQM_HAS_INSTANCE",
+    ls.BQM_UNKNOWN : "BQM_UNKNOWN"
+}
+
+_biological_qualifier_ids_lookup = {
+    ls.BQB_IS : "BQB_IS",
+    ls.BQB_HAS_PART : "BQB_HAS_PART",
+    ls.BQB_IS_PART_OF : "BQB_IS_PART_OF",
+    ls.BQB_IS_VERSION_OF : "BQB_IS_VERSION_OF",
+    ls.BQB_HAS_VERSION : "BQB_HAS_VERSION",
+    ls.BQB_IS_HOMOLOG_TO : "BQB_IS_HOMOLOG_TO",
+    ls.BQB_IS_DESCRIBED_BY : "BQB_IS_DESCRIBED_BY",
+    ls.BQB_IS_ENCODED_BY : "BQB_IS_ENCODED_BY",
+    ls.BQB_ENCODES : "BQB_ENCODES",
+    ls.BQB_OCCURS_IN : "BQB_OCCURS_IN",
+    ls.BQB_HAS_PROPERTY : "BQB_HAS_PROPERTY",
+    ls.BQB_IS_PROPERTY_OF : "BQB_IS_PROPERTY_OF",
+    ls.BQB_HAS_TAXON : "BQB_HAS_TAXON",
+    ls.BQB_UNKNOWN : "BQB_UNKNOWN"
+}
 
 class PbkModelAnnotator:
 
@@ -641,13 +666,13 @@ class PbkModelAnnotator:
                     if term.getQualifierType() == ls.BIOLOGICAL_QUALIFIER \
                         and (qualifier is None or term.getBiologicalQualifierType() == qualifier):
                         uris.append({
-                            'qualifier': BiologicalQualifierIdsLookup[term.getBiologicalQualifierType()],
+                            'qualifier': _biological_qualifier_ids_lookup[term.getBiologicalQualifierType()],
                             'uri': term.getResourceURI(j)
                         })
                     elif term.getQualifierType() == ls.MODEL_QUALIFIER \
                         and (qualifier is None or term.getModelQualifierType() == qualifier):
                         uris.append({
-                            'qualifier': ModelQualifierIdsLookup[term.getModelQualifierType()],
+                            'qualifier': _model_qualifier_ids_lookup[term.getModelQualifierType()],
                             'uri': term.getResourceURI(j)
                         })
         return uris

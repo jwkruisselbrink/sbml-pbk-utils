@@ -1,10 +1,42 @@
 import os.path
 import libsbml as ls
 from logging import Logger
+from enum import Enum
 
-from sbmlpbkutils.pbk_ontology_checker import PbkOntologyChecker
-from sbmlpbkutils.qualifier_definitions import BiologicalQualifierIdsLookup, ModelQualifierIdsLookup
-from sbmlpbkutils.validation_record import ErrorCode, StatusLevel, ValidationRecord
+from . import PbkOntologyChecker
+from .pbk_model_annotator import _biological_qualifier_ids_lookup, _model_qualifier_ids_lookup
+
+class StatusLevel(Enum):
+    INFO = 20
+    WARNING = 30
+    ERROR = 40
+    CRITICAL = 50
+
+class ErrorCode(Enum):
+    UNDEFINED = -1
+    COMPARTMENT_MISSING_BQM_TERM = 10
+    COMPARTMENT_MISSING_PBPKO_BQM_TERM = 11
+    COMPARTMENT_MULTIPLE_PBPKO_BQM_TERMS = 12
+    COMPARTMENT_INVALID_PBPKO_BQM_TERM = 13
+    PARAMETER_MISSING_BQM_TERM = 20
+    PARAMETER_MISSING_PBPKO_BQM_TERM = 21
+    PARAMETER_MULTIPLE_PBPKO_BQM_TERMS = 22
+    PARAMETER_INVALID_PBPKO_BQM_TERM = 23
+    SPECIES_MISSING_BQM_TERM = 30
+    SPECIES_MISSING_PBPKO_BQM_TERM = 31
+    SPECIES_MULTIPLE_PBPKO_BQM_TERMS = 32
+    SPECIES_INVALID_PBPKO_BQM_TERM = 33
+
+class ValidationRecord(object):
+    def __init__(
+        self,
+        level: StatusLevel,
+        code: ErrorCode,
+        message: str
+    ):
+        self.level = level
+        self.message = message
+        self.code = code
 
 class PbkModelValidator:
 
@@ -240,9 +272,9 @@ class PbkModelValidator:
           num_resources = term.getNumResources()
           for j in range(num_resources):
               if term.getQualifierType() == ls.BIOLOGICAL_QUALIFIER:
-                  qualifier_type = BiologicalQualifierIdsLookup[term.getBiologicalQualifierType()]
+                  qualifier_type = _biological_qualifier_ids_lookup[term.getBiologicalQualifierType()]
               elif term.getQualifierType() == ls.MODEL_QUALIFIER:
-                  qualifier_type = ModelQualifierIdsLookup[term.getModelQualifierType()]
+                  qualifier_type = _model_qualifier_ids_lookup[term.getModelQualifierType()]
               if qualifier_type not in lookup:
                   lookup[qualifier_type] = []
               lookup[qualifier_type].append(term.getResourceURI(j))

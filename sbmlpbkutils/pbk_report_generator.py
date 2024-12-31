@@ -1,6 +1,6 @@
 import libsbml as ls
 
-from sbmlpbkutils.pbk_model_infos_extractor import PbkModelInfosExtractor
+from . import PbkModelInfosExtractor
 
 class PbkReportGenerator:
 

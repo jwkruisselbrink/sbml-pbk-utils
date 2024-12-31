@@ -1,132 +1,8 @@
-TermDefinitions = [
-    {
-        "name": "mus sp.",
-        "element_type": "model",
-        "description": "",
-        "synonyms": [
-            "mice"
-        ],
-        "resources": [
-            {
-                "qualifier": "BQB_HAS_TAXON",
-                "URI": "https://identifiers.org/taxonomy/10095"
-            }
-        ]
-    },
-    {
-        "name": "homo sapiens",
-        "element_type": "model",
-        "description": "",
-        "synonyms": [
-            "human"
-        ],
-        "resources": [
-            {
-                "qualifier": "BQB_HAS_TAXON",
-                "URI": "https://identifiers.org/taxonomy/9606"
-            }
-        ]
-    },
-    {
-        "name": "mammalia",
-        "element_type": "model",
-        "description": "",
-        "synonyms": [
-            "mammals"
-        ],
-        "resources": [
-            {
-                "qualifier": "BQB_HAS_TAXON",
-                "URI": "https://identifiers.org/taxonomy/40674"
-            }
-        ]
-    },
-    {
-        "name": "physiologically based pharmacokinetic model",
-        "element_type": "model",
-        "description": "",
-        "resources": [
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://identifiers.org/mamo/MAMO_0000203"
-            }
-        ]
-    },
-    {
-        "name": "ordinary differential equation model",
-        "element_type": "model",
-        "description": "",
-        "resources": [
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://identifiers.org/mamo/MAMO_0000046"
-            }
-        ]
-    },
-    {
-        "name": "perfusion limited PBK model",
-        "element_type": "model",
-        "description": "",
-        "resources": []
-    },
-    {
-        "name": "permeability limited PBK model",
-        "element_type": "model",
-        "description": "",
-        "resources": []
-    },
-    {
-        "name": "hybrid perfusion limited/permeability PBK model (transfer model?)",
-        "element_type": "model",
-        "description": "",
-        "resources": []
-    },
-    {
-        "name": "lifetime model",
-        "element_type": "model",
-        "description": "",
-        "resources": []
-    },
-    {
-        "name": "adipose tissue compartment",
-        "element_type": "compartment",
-        "description": "PBK model compartment representing adipose tissue (or fat).",
-        "synonyms": [
-            "fat tissue"
-        ],
-        "common_ids": [
-            "Adipose"
-        ],
-        "resources": [
-            {
-                "qualifier": "BQM_IS",
-                "URI": "http://purl.obolibrary.org/obo/PBPKO_00460"
-            },
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON_0001013"
-            }
-        ]
-    },
-    {
-        "name": "administrative compartment",
-        "element_type": "compartment",
-        "description": "PBK model compartment not related to a physical entity but introduced for administrative purposes (e.g., mass balance).",
-        "resources": [
-            {
-                "qualifier": "BQM_IS",
-                "URI": "http://purl.obolibrary.org/obo/PBPKO_00457"
-            }
-        ]
-    },
+term_definitions = [
     {
         "name": "alveolar air compartment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing alveolar air (i.e., air in the lungs).",
-        "synonyms": [
-            "air in the lungs"
-        ],
-        "common_ids": [
+        "common_identifiers": [
             "Air"
         ],
         "exposure_route": "inhalation",
@@ -144,8 +20,7 @@ TermDefinitions = [
     {
         "name": "arterial blood compartment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing arterial blood.",
-        "common_ids": [
+        "common_identifiers": [
             "Art"
         ],
         "resources": [
@@ -162,8 +37,7 @@ TermDefinitions = [
     {
         "name": "arterial blood plasma",
         "element_type": "compartment",
-        "description": "PBK model compartment representing blood plasma.",
-        "common_ids": [
+        "common_identifiers": [
             "Art_Plasma"
         ],
         "resources": [
@@ -176,8 +50,7 @@ TermDefinitions = [
     {
         "name": "bladder compartment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing the bladder (used e.g., as a urine delay compartment).",
-        "common_ids": [
+        "common_identifiers": [
             "Bladder"
         ],
         "resources": [
@@ -194,8 +67,7 @@ TermDefinitions = [
     {
         "name": "blood compartment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing blood (whole blood).",
-        "common_ids": [
+        "common_identifiers": [
             "Blood"
         ],
         "resources": [
@@ -208,8 +80,7 @@ TermDefinitions = [
     {
         "name": "blood plasma compartment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing blood plasma.",
-        "common_ids": [
+        "common_identifiers": [
             "Plasma"
         ],
         "resources": [
@@ -226,8 +97,7 @@ TermDefinitions = [
     {
         "name": "brain compartment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing brain tissue.",
-        "common_ids": [
+        "common_identifiers": [
             "Brain"
         ],
         "resources": [
@@ -244,10 +114,6 @@ TermDefinitions = [
     {
         "name": "digestive tract compartment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing the digestive tract.",
-        "synonyms": [
-            "digestive tract"
-        ],
         "resources": [
             {
                 "qualifier": "BQB_IS",
@@ -258,7 +124,6 @@ TermDefinitions = [
     {
         "name": "digestive system compartment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing the digestive system.",
         "resources": [
             {
                 "qualifier": "BQB_IS",
@@ -269,11 +134,7 @@ TermDefinitions = [
     {
         "name": "excreta compartment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing excreta (e.g., urine and feces). ",
-        "synonyms": [
-            "excretion"
-        ],
-        "common_ids": [
+        "common_identifiers": [
             "Excretion"
         ],
         "resources": [
@@ -286,8 +147,7 @@ TermDefinitions = [
     {
         "name": "feces compartment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing feces.",
-        "common_ids": [
+        "common_identifiers": [
             "Feces"
         ],
         "resources": [
@@ -300,8 +160,7 @@ TermDefinitions = [
     {
         "name": "filtrate compartment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing the filtrate.",
-        "common_ids": [
+        "common_identifiers": [
             "Filtrate"
         ],
         "resources": [
@@ -314,8 +173,7 @@ TermDefinitions = [
     {
         "name": "gut compartment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing the gut.",
-        "common_ids": [
+        "common_identifiers": [
             "Gut"
         ],
         "exposure_route": "oral",
@@ -333,8 +191,7 @@ TermDefinitions = [
     {
         "name": "gut lumen compartment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing the lumen of digestive tract.",
-        "common_ids": [
+        "common_identifiers": [
             "Lumen"
         ],
         "resources": [
@@ -351,8 +208,7 @@ TermDefinitions = [
     {
         "name": "gonads compaterment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing the gonads.",
-        "common_ids": [
+        "common_identifiers": [
             "Gonads"
         ],
         "resources": [
@@ -365,8 +221,7 @@ TermDefinitions = [
     {
         "name": "heart compartment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing the heart.",
-        "common_ids": [
+        "common_identifiers": [
             "Heart"
         ],
         "resources": [
@@ -383,8 +238,7 @@ TermDefinitions = [
     {
         "name": "intestine compartment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing the intestine.",
-        "common_ids": [
+        "common_identifiers": [
             "Intestine"
         ],
         "resources": [
@@ -397,8 +251,7 @@ TermDefinitions = [
     {
         "name": "kidney compartment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing the kidney.",
-        "common_ids": [
+        "common_identifiers": [
             "Kidney"
         ],
         "resources": [
@@ -411,8 +264,7 @@ TermDefinitions = [
     {
         "name": "liver compartment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing the liver.",
-        "common_ids": [
+        "common_identifiers": [
             "Liver"
         ],
         "resources": [
@@ -425,8 +277,7 @@ TermDefinitions = [
     {
         "name": "lung compartment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing the lung.",
-        "common_ids": [
+        "common_identifiers": [
             "Lung"
         ],
         "resources": [
@@ -439,8 +290,7 @@ TermDefinitions = [
     {
         "name": "poorly perfused tissue compartment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing the poorly perfused tissue.",
-        "common_ids": [
+        "common_identifiers": [
             "Poor"
         ],
         "resources": [
@@ -453,8 +303,7 @@ TermDefinitions = [
     {
         "name": "systemic exposure compartment",
         "element_type": "compartment",
-        "description": "Administrative PBK model compartment representing systemic exposure (aggregated from multiple routes).",
-        "common_ids": [
+        "common_identifiers": [
             "Systemic"
         ],
         "resources": [
@@ -467,13 +316,9 @@ TermDefinitions = [
     {
         "name": "rest-of-body compartment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing the rest of the body (periphery).",
-        "synonyms": [
-            "rest-of-body",
-            "periphery"
-        ],
-        "common_ids": [
-            "Rest"
+        "common_identifiers": [
+            "Rest",
+            "Periphery"
         ],
         "resources": [
             {
@@ -485,8 +330,7 @@ TermDefinitions = [
     {
         "name": "richly perfused tissue compartment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing richly perfused tissue.",
-        "common_ids": [
+        "common_identifiers": [
             "Rich"
         ],
         "resources": [
@@ -499,8 +343,7 @@ TermDefinitions = [
     {
         "name": "skin compartment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing the skin.",
-        "common_ids": [
+        "common_identifiers": [
             "Skin"
         ],
         "exposure_route": "dermal",
@@ -518,8 +361,7 @@ TermDefinitions = [
     {
         "name": "spleen compartment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing the spleen.",
-        "common_ids": [
+        "common_identifiers": [
             "Spleen"
         ],
         "resources": [
@@ -536,8 +378,7 @@ TermDefinitions = [
     {
         "name": "stomach compartment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing the stomach.",
-        "common_ids": [
+        "common_identifiers": [
             "Stomach"
         ],
         "resources": [
@@ -550,8 +391,7 @@ TermDefinitions = [
     {
         "name": "stratum corneum unexposed skin compartment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing the stratum corneum (the outermost layer of the epidermis) of unexposed skin.",
-        "common_ids": [
+        "common_identifiers": [
             "Skin_SC_u"
         ],
         "resources": [
@@ -564,8 +404,7 @@ TermDefinitions = [
     {
         "name": "stratum corneum exposed skin compartment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing the stratum corneum (the outermost layer of the epidermis) of exposed skin.",
-        "common_ids": [
+        "common_identifiers": [
             "Skin_SC_e"
         ],
         "exposure_route": "dermal",
@@ -579,11 +418,7 @@ TermDefinitions = [
     {
         "name": "stratum corneum compartment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing the stratum corneum (the outermost layer of the epidermis).",
-        "synonyms": [
-            "outer layer of the skin"
-        ],
-        "common_ids": [
+        "common_identifiers": [
             "Skin_SC"
         ],
         "resources": [
@@ -596,8 +431,7 @@ TermDefinitions = [
     {
         "name": "urine compartment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing urine.",
-        "common_ids": [
+        "common_identifiers": [
             "Urine"
         ],
         "resources": [
@@ -610,8 +444,7 @@ TermDefinitions = [
     {
         "name": "uterus compartment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing the uterus.",
-        "common_ids": [
+        "common_identifiers": [
             "Uterus"
         ],
         "resources": [
@@ -624,8 +457,7 @@ TermDefinitions = [
     {
         "name": "venous blood compartment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing venous blood.",
-        "common_ids": [
+        "common_identifiers": [
             "Ven"
         ],
         "resources": [
@@ -642,8 +474,7 @@ TermDefinitions = [
     {
         "name": "venous blood plasma compartment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing venous blood plasma.",
-        "common_ids": [
+        "common_identifiers": [
             "Ven_Plasma"
         ],
         "resources": [
@@ -656,8 +487,7 @@ TermDefinitions = [
     {
         "name": "viable epidermis compartment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing the viable epidermis.",
-        "common_ids": [
+        "common_identifiers": [
             "Skin_VE"
         ],
         "resources": []
@@ -665,8 +495,7 @@ TermDefinitions = [
     {
         "name": "viable epidermis exposed skin compartment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing the viable epidermis of exposed skin.",
-        "common_ids": [
+        "common_identifiers": [
             "Skin_VE_e"
         ],
         "resources": [
@@ -679,8 +508,7 @@ TermDefinitions = [
     {
         "name": "viable epidermis unexposed skin compartment",
         "element_type": "compartment",
-        "description": "PBK model compartment representing the viable epidermis of unexposed skin.",
-        "common_ids": [
+        "common_identifiers": [
             "Skin_VE_u"
         ],
         "resources": [
@@ -693,20 +521,17 @@ TermDefinitions = [
     {
         "name": "amount of chemical in adipose tissue",
         "element_type": "species",
-        "description": "The amount of a chemical substance in adipose tissue (fat).",
         "resources": []
     },
     {
         "name": "amount of chemical in arterial blood",
         "element_type": "species",
-        "description": "The amount of a chemical substance in arterial blood.",
         "resources": []
     },
     {
         "name": "amount of chemical in blood",
         "element_type": "species",
-        "description": "The amount of a chemical substance in blood.",
-        "common_ids": [
+        "common_identifiers": [
             "ABlood"
         ],
         "resources": []
@@ -714,62 +539,52 @@ TermDefinitions = [
     {
         "name": "amount of chemical in gut",
         "element_type": "species",
-        "description": "The amount of a chemical substance in the gut.",
         "resources": []
     },
     {
         "name": "amount of chemical in kidney",
         "element_type": "species",
-        "description": "The amount of a chemical substance in the kidney.",
         "resources": []
     },
     {
         "name": "amount of chemical in liver",
         "element_type": "species",
-        "description": "The amount of a chemical substance in the liver.",
         "resources": []
     },
     {
         "name": "amount of chemical in plasma",
         "element_type": "species",
-        "description": "The amount of a chemical substance in plasma.",
         "resources": []
     },
     {
         "name": "amount of chemical in poorly perfused tissue",
         "element_type": "species",
-        "description": "The amount of a chemical substance in poorly perfused tissue.",
         "resources": []
     },
     {
         "name": "amount of chemical in rest-of-body",
         "element_type": "species",
-        "description": "The amount of a chemical substance in the rest-of-body",
         "resources": []
     },
     {
         "name": "amount of chemical in richly perfused tissue",
         "element_type": "species",
-        "description": "The amount of a chemical substance in richly perfused tissue.",
         "resources": []
     },
     {
         "name": "amount of chemical in skin",
         "element_type": "species",
-        "description": "The amount of a chemical substance in skin tissue.",
         "resources": []
     },
     {
         "name": "amount of chemical in urine",
         "element_type": "species",
-        "description": "The amount of a chemical substance in urine.",
         "resources": []
     },
     {
         "name": "amount of chemical in venous blood",
         "element_type": "species",
-        "description": "The amount of a chemical substance in venous blood.",
-        "common_ids": [
+        "common_identifiers": [
             "AVen"
         ],
         "resources": []
@@ -777,7 +592,6 @@ TermDefinitions = [
     {
         "name": "physiological parameter",
         "element_type": "parameter",
-        "description": "",
         "resources": [
             {
                 "qualifier": "BQM_IS",
@@ -788,10 +602,6 @@ TermDefinitions = [
     {
         "name": "age",
         "element_type": "parameter",
-        "description": "PBK model parameter representing the (initial) age of the modelled entity.",
-        "synonyms": [
-            "age"
-        ],
         "resources": [
             {
                 "qualifier": "BQB_IS",
@@ -802,11 +612,7 @@ TermDefinitions = [
     {
         "name": "body weight",
         "element_type": "parameter",
-        "description": "PBK model parameter representing the (initial) body weight of the modelled entity.",
-        "synonyms": [
-            "body mass"
-        ],
-        "common_ids": [
+        "common_identifiers": [
             "BW",
             "BM"
         ],
@@ -824,8 +630,7 @@ TermDefinitions = [
     {
         "name": "body surface area",
         "element_type": "parameter",
-        "description": "PBK model parameter representing the (initial) body surface area of the modelled entity.",
-        "common_ids": [
+        "common_identifiers": [
             "BSA"
         ],
         "resources": [
@@ -838,8 +643,7 @@ TermDefinitions = [
     {
         "name": "sex",
         "element_type": "parameter",
-        "description": "PBK model parameter representing the (initial) sex of the modelled entity.",
-        "common_ids": [
+        "common_identifiers": [
             "Sex"
         ],
         "resources": [
@@ -856,11 +660,7 @@ TermDefinitions = [
     {
         "name": "absorption rate constant gut",
         "element_type": "parameter",
-        "description": "",
-        "synonyms": [
-            "oral absorption rate"
-        ],
-        "common_ids": [
+        "common_identifiers": [
             "kGut"
         ],
         "resources": [
@@ -873,7 +673,6 @@ TermDefinitions = [
     {
         "name": "creatinine excretion rate",
         "element_type": "parameter",
-        "description": "",
         "resources": [
             {
                 "qualifier": "BQB_IS",
@@ -884,7 +683,6 @@ TermDefinitions = [
     {
         "name": "excretion rate",
         "element_type": "parameter",
-        "description": "",
         "resources": [
             {
                 "qualifier": "BQB_IS",
@@ -895,14 +693,12 @@ TermDefinitions = [
     {
         "name": "urinary excretion rate",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "hepatic clearance rate",
         "element_type": "parameter",
-        "description": "",
-        "common_ids": [
+        "common_identifiers": [
             "CLH"
         ],
         "resources": [
@@ -915,7 +711,6 @@ TermDefinitions = [
     {
         "name": "renal elimination rate constant",
         "element_type": "parameter",
-        "description": "",
         "resources": [
             {
                 "qualifier": "BQM_IS",
@@ -926,7 +721,6 @@ TermDefinitions = [
     {
         "name": "alveolar ventilation rate",
         "element_type": "parameter",
-        "description": "",
         "resources": [
             {
                 "qualifier": "BQM_IS",
@@ -937,7 +731,6 @@ TermDefinitions = [
     {
         "name": "blood flow rate",
         "element_type": "parameter",
-        "description": "Total blood flow.",
         "resources": [
             {
                 "qualifier": "BQB_IS",
@@ -948,13 +741,11 @@ TermDefinitions = [
     {
         "name": "blood flow going to physiological compartment",
         "element_type": "parameter",
-        "description": "Blood flow going to a physiological compartment.",
         "resources": []
     },
     {
         "name": "blood flow going to adipose tissue",
         "element_type": "parameter",
-        "description": "",
         "resources": [
             {
                 "qualifier": "BQM_IS",
@@ -965,13 +756,11 @@ TermDefinitions = [
     {
         "name": "blood flow going to liver",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "blood flow going to the kidney",
         "element_type": "parameter",
-        "description": "",
         "resources": [
             {
                 "qualifier": "BQM_IS",
@@ -982,121 +771,101 @@ TermDefinitions = [
     {
         "name": "blood flow going to poorly perfused tissue",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "blood flow going to rest-of-body",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "blood flow going to richly perfused tissue",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "blood flow going to skin",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "blood flow going to exposed skin",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "blood flow going to unexposed skin",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "fraction of total blood flow going to physiological compartment",
         "element_type": "parameter",
-        "description": "Fraction of the total blood flow going to a physiological compartment.",
         "resources": []
     },
     {
         "name": "fraction of total blood flow going to adipose tissue",
         "element_type": "parameter",
-        "description": "Fraction of the total blood flow going to the adipose tissue (fat).",
         "resources": []
     },
     {
         "name": "fraction of total blood flow going to liver",
         "element_type": "parameter",
-        "description": "Fraction of the total blood flow going to the liver.",
         "resources": []
     },
     {
         "name": "fraction of total blood flow going to poorly perfused tissue",
         "element_type": "parameter",
-        "description": "Fraction of the total blood flow going to poorly perfused tissue.",
         "resources": []
     },
     {
         "name": "fraction of total blood flow going to rest-of-body",
         "element_type": "parameter",
-        "description": "Fraction of the total blood flow going to the rest-of-body.",
         "resources": []
     },
     {
         "name": "fraction of total blood flow going to richly perfused tissue",
         "element_type": "parameter",
-        "description": "Fraction of the total blood flow going to richly perfused tissue.",
         "resources": []
     },
     {
         "name": "fraction of total blood flow going to skin",
         "element_type": "parameter",
-        "description": "Fraction of the total blood flow going to the skin.",
         "resources": []
     },
     {
         "name": "fraction of total blood flow going to exposed skin",
         "element_type": "parameter",
-        "description": "Fraction of the total blood flow going to the exposed skin.",
         "resources": []
     },
     {
         "name": "fraction of total blood flow going to unexposed skin",
         "element_type": "parameter",
-        "description": "Fraction of the total blood flow going to the unexposed skin.",
         "resources": []
     },
     {
         "name": "ratio blood to total body mass",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "ratio blood to total body volume",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "ratio gut to total body mass",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "ratio gut to total body volume",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "ratio fat to total body mass",
         "element_type": "parameter",
-        "description": "",
         "resources": [
             {
                 "qualifier": "BQB_IS",
@@ -1107,67 +876,56 @@ TermDefinitions = [
     {
         "name": "ratio fat to total body volume",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "ratio kidney to total body mass",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "ratio kidney to total body volume",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "ratio liver to total body mass",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "ratio liver to total body volume",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "ratio plasma to total body mass",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "ratio plasma to total body volume",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "ratio rest-of-body to total body mass",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "ratio rest-of-body to total body volume",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "tissue density",
         "element_type": "parameter",
-        "description": "Density of tissue expressed as a ratio mass over volume.",
         "resources": []
     },
     {
         "name": "skin thickness",
         "element_type": "parameter",
-        "description": "Thickness of the skin in metres (SI base unit metres).",
         "resources": [
             {
                 "qualifier": "BQB_IS",
@@ -1178,26 +936,22 @@ TermDefinitions = [
     {
         "name": "thickness stratum corneum",
         "element_type": "parameter",
-        "description": "Thickness of the stratum corneum (SI base unit metres).",
         "resources": []
     },
     {
         "name": "thickness viable epidermis",
         "element_type": "parameter",
-        "description": "Thickness of the viable epidermis (SI base unit metres).",
         "resources": []
     },
     {
         "name": "compartment volume",
         "element_type": "parameter",
-        "description": "Total volume of a physiological compartment (specified in litres or cubic metres).",
         "resources": []
     },
     {
         "name": "volume adipose tissue",
         "element_type": "parameter",
-        "description": "Total volume of adipose tissue (specified in litres or cubic metres).",
-        "common_ids": [
+        "common_identifiers": [
             "V_Fat"
         ],
         "resources": [
@@ -1210,19 +964,16 @@ TermDefinitions = [
     {
         "name": "volume arterial blood",
         "element_type": "parameter",
-        "description": "Total volume of the arterial blood (specified in litres or cubic metres).",
         "resources": []
     },
     {
         "name": "volume arterial blood plasma",
         "element_type": "parameter",
-        "description": "Total volume of the arterial blood plasma (specified in litres or cubic metres).",
         "resources": []
     },
     {
         "name": "volume of bone",
         "element_type": "parameter",
-        "description": "Total volume of the bone (specified in litres or cubic metres).",
         "resources": [
             {
                 "qualifier": "BQM_IS",
@@ -1233,7 +984,6 @@ TermDefinitions = [
     {
         "name": "volume blood",
         "element_type": "parameter",
-        "description": "Total volume of the blood (specified in litres or cubic metres).",
         "resources": [
             {
                 "qualifier": "BQM_IS",
@@ -1244,20 +994,17 @@ TermDefinitions = [
     {
         "name": "volume blood plasma",
         "element_type": "parameter",
-        "description": "Total volume of the blood plasma (specified in litres or cubic metres).",
         "resources": []
     },
     {
         "name": "volume gut",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "volume liver",
         "element_type": "parameter",
-        "description": "Total volume of the liver (specified in litres or cubic metres).",
-        "common_ids": [
+        "common_identifiers": [
             "V_Liver"
         ],
         "resources": [
@@ -1270,8 +1017,7 @@ TermDefinitions = [
     {
         "name": "volume poorly perfused tissue",
         "element_type": "parameter",
-        "description": "Total volume of the poorly perfused tissue (specified in litres or cubic metres).",
-        "common_ids": [
+        "common_identifiers": [
             "V_Poor"
         ],
         "resources": [
@@ -1284,8 +1030,7 @@ TermDefinitions = [
     {
         "name": "volume richly perfused tissue",
         "element_type": "parameter",
-        "description": "Total volume of the richly perfused tissue (specified in litres or cubic metres).",
-        "common_ids": [
+        "common_identifiers": [
             "V_Rich"
         ],
         "resources": [
@@ -1298,43 +1043,36 @@ TermDefinitions = [
     {
         "name": "volume skin",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "volume skin exposed",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "volume skin unexposed",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "volume stratum corneum",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "volume stratum corneum exposed",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "volume stratum corneum unexposed",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "volume venous blood",
         "element_type": "parameter",
-        "description": "",
         "resources": [
             {
                 "qualifier": "BQM_IS",
@@ -1345,31 +1083,26 @@ TermDefinitions = [
     {
         "name": "volume venous blood plasma",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "volume viable epidermis",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "volume viable epidermis exposed",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "volume viable epidermis unexposed",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "physicochemical parameter",
         "element_type": "parameter",
-        "description": "",
         "resources": [
             {
                 "qualifier": "BQM_IS",
@@ -1380,10 +1113,6 @@ TermDefinitions = [
     {
         "name": "diffusion coefficient",
         "element_type": "parameter",
-        "description": "",
-        "synonyms": [
-            "diffusion rate"
-        ],
         "resources": [
             {
                 "qualifier": "BQM_IS",
@@ -1398,8 +1127,7 @@ TermDefinitions = [
     {
         "name": "fraction unbound in blood",
         "element_type": "parameter",
-        "description": "",
-        "common_ids": [
+        "common_identifiers": [
             "fub"
         ],
         "resources": [
@@ -1412,10 +1140,6 @@ TermDefinitions = [
     {
         "name": "partition coefficient",
         "element_type": "parameter",
-        "description": "The ratio of the concentration of a drug/chemical in a particular tissue to its concentration in plasma at equilibrium.",
-        "synonyms": [
-            "partition coefficient"
-        ],
         "resources": [
             {
                 "qualifier": "BQM_IS",
@@ -1430,8 +1154,7 @@ TermDefinitions = [
     {
         "name": "partition coefficient adipose tissue over blood",
         "element_type": "parameter",
-        "description": "",
-        "common_ids": [
+        "common_identifiers": [
             "PC_Fat_Plasma"
         ],
         "resources": []
@@ -1439,8 +1162,7 @@ TermDefinitions = [
     {
         "name": "partition coefficient adipose tissue over plasma",
         "element_type": "parameter",
-        "description": "",
-        "common_ids": [
+        "common_identifiers": [
             "PC_Fat_Plasma"
         ],
         "resources": [
@@ -1453,8 +1175,7 @@ TermDefinitions = [
     {
         "name": "partition coefficient blood over air",
         "element_type": "parameter",
-        "description": "",
-        "common_ids": [
+        "common_identifiers": [
             "PC_Blood_Air"
         ],
         "resources": [
@@ -1467,20 +1188,17 @@ TermDefinitions = [
     {
         "name": "partition coefficient muscle over blood (poorly perfused tissue)",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "partition coefficient viscera over blood (richly perfused tissue)",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "partition coefficient liver over blood",
         "element_type": "parameter",
-        "description": "",
-        "common_ids": [
+        "common_identifiers": [
             "PC_Liver_Blood"
         ],
         "resources": []
@@ -1488,8 +1206,7 @@ TermDefinitions = [
     {
         "name": "partition coefficient viable skin over blood",
         "element_type": "parameter",
-        "description": "",
-        "common_ids": [
+        "common_identifiers": [
             "PC_Skin_Blood"
         ],
         "resources": []
@@ -1497,8 +1214,7 @@ TermDefinitions = [
     {
         "name": "partition coefficient viable skin over stratum corneum",
         "element_type": "parameter",
-        "description": "",
-        "common_ids": [
+        "common_identifiers": [
             "PC_Skin_Sc"
         ],
         "resources": []
@@ -1506,8 +1222,7 @@ TermDefinitions = [
     {
         "name": "partition coefficient liver over blood",
         "element_type": "parameter",
-        "description": "",
-        "common_ids": [
+        "common_identifiers": [
             "PC_Liver_Plasma"
         ],
         "resources": []
@@ -1515,8 +1230,7 @@ TermDefinitions = [
     {
         "name": "partition coefficient liver over plasma",
         "element_type": "parameter",
-        "description": "",
-        "common_ids": [
+        "common_identifiers": [
             "PC_Liver_Plasma"
         ],
         "resources": []
@@ -1524,8 +1238,7 @@ TermDefinitions = [
     {
         "name": "partition coefficient kidney over blood",
         "element_type": "parameter",
-        "description": "",
-        "common_ids": [
+        "common_identifiers": [
             "PC_Kidney_Plasma"
         ],
         "resources": []
@@ -1533,8 +1246,7 @@ TermDefinitions = [
     {
         "name": "partition coefficient kidney over plasma",
         "element_type": "parameter",
-        "description": "",
-        "common_ids": [
+        "common_identifiers": [
             "PC_Kidney_Plasma"
         ],
         "resources": [
@@ -1547,7 +1259,6 @@ TermDefinitions = [
     {
         "name": "partition coefficient poorly perfused tissue over blood",
         "element_type": "parameter",
-        "description": "",
         "resources": [
             {
                 "qualifier": "BQM_IS",
@@ -1558,14 +1269,12 @@ TermDefinitions = [
     {
         "name": "partition coefficient poorly perfused tissue over plasma",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "partition coefficient skin over blood",
         "element_type": "parameter",
-        "description": "",
-        "common_ids": [
+        "common_identifiers": [
             "PC_Skin_Plasma"
         ],
         "resources": []
@@ -1573,8 +1282,7 @@ TermDefinitions = [
     {
         "name": "partition coefficient skin over plasma",
         "element_type": "parameter",
-        "description": "",
-        "common_ids": [
+        "common_identifiers": [
             "PC_Skin_Plasma"
         ],
         "resources": [
@@ -1587,8 +1295,7 @@ TermDefinitions = [
     {
         "name": "partition coefficient rest-of-body over blood",
         "element_type": "parameter",
-        "description": "",
-        "common_ids": [
+        "common_identifiers": [
             "PC_Rest_Plasma"
         ],
         "resources": []
@@ -1596,8 +1303,7 @@ TermDefinitions = [
     {
         "name": "partition coefficient rest-of-body over plasma",
         "element_type": "parameter",
-        "description": "",
-        "common_ids": [
+        "common_identifiers": [
             "PC_Rest_Plasma"
         ],
         "resources": []
@@ -1605,7 +1311,6 @@ TermDefinitions = [
     {
         "name": "partition coefficient richly perfused tissue over blood",
         "element_type": "parameter",
-        "description": "",
         "resources": [
             {
                 "qualifier": "BQM_IS",
@@ -1616,38 +1321,32 @@ TermDefinitions = [
     {
         "name": "partition coefficient richly perfused tissue over plasma",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "partition coefficient stratum corneum over blood",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "partition coefficient stratum corneum over plasma",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "partition coefficient viable epidermis over blood",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "partition coefficient viable epidermis over plasma",
         "element_type": "parameter",
-        "description": "",
         "resources": []
     },
     {
         "name": "particion coefficient gut over plasma",
         "element_type": "parameter",
-        "description": "",
-        "common_ids": [
+        "common_identifiers": [
             "PC_Gut_Blood"
         ],
         "resources": []
@@ -1655,8 +1354,7 @@ TermDefinitions = [
     {
         "name": "partition coefficient lung over plasma",
         "element_type": "parameter",
-        "description": "",
-        "common_ids": [
+        "common_identifiers": [
             "PC_Lung_Plasma"
         ],
         "resources": []
@@ -1664,7 +1362,6 @@ TermDefinitions = [
     {
         "name": "maximal velocity",
         "element_type": "parameter",
-        "description": "",
         "resources": [
             {
                 "qualifier": "BQB_IS",
@@ -1675,7 +1372,6 @@ TermDefinitions = [
     {
         "name": "biochemical parameter",
         "element_type": "parameter",
-        "description": "Biochemical parameters refer to the various chemical and biological measurements that can be analyzed in bodily fluids, such as blood, urine, or cerebrospinal fluid",
         "resources": [
             {
                 "qualifier": "BQM_IS",
@@ -1686,7 +1382,6 @@ TermDefinitions = [
     {
         "name": "PBK model parameter",
         "element_type": "parameter",
-        "description": "Different types of parameters involved in PBK modelling.",
         "resources": [
             {
                 "qualifier": "BQM_IS",
@@ -1701,8 +1396,7 @@ TermDefinitions = [
     {
         "name": "hematocrit",
         "element_type": "parameter",
-        "description": "Percentage (or fraction) of total blood volume that is made up of red blood cells.",
-        "common_ids": [
+        "common_identifiers": [
             "Htc"
         ],
         "resources": [

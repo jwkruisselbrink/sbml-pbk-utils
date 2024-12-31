@@ -2,9 +2,111 @@ import libsbml as ls
 import pandas as pd
 
 from . import PbkModelAnnotator
-from . import TermDefinitions
-from . import QualifierDefinitions
+from . import term_definitions
 from . import get_ucum_unit_string
+
+_qualifier_definitions = [
+    {
+        "id": "BQM_IS",
+        "qualifier": ls.BQM_IS,
+        "type": ls.MODEL_QUALIFIER
+    },
+    {
+        "id": "BQM_IS_DESCRIBED_BY",
+        "qualifier": ls.BQM_IS_DESCRIBED_BY,
+        "type": ls.MODEL_QUALIFIER
+    },
+    {
+        "id": "BQM_IS_DERIVED_FROM",
+        "qualifier": ls.BQM_IS_DERIVED_FROM,
+        "type": ls.MODEL_QUALIFIER
+    },
+    {
+        "id": "BQM_IS_INSTANCE_OF",
+        "qualifier": ls.BQM_IS_INSTANCE_OF,
+        "type": ls.MODEL_QUALIFIER
+    },
+    {
+        "id": "BQM_HAS_INSTANCE",
+        "qualifier": ls.BQM_HAS_INSTANCE,
+        "type": ls.MODEL_QUALIFIER
+    },
+    {
+        "id": "BQM_UNKNOWN",
+        "qualifier": ls.BQM_UNKNOWN,
+        "type": ls.MODEL_QUALIFIER
+    },
+    {
+        "id": "BQB_IS",
+        "qualifier": ls.BQB_IS,
+        "type": ls.BIOLOGICAL_QUALIFIER
+    },
+    {
+        "id": "BQB_HAS_PART",
+        "qualifier": ls.BQB_HAS_PART,
+        "type": ls.BIOLOGICAL_QUALIFIER
+    },
+    {
+        "id": "BQB_IS_PART_OF",
+        "qualifier": ls.BQB_IS_PART_OF,
+        "type": ls.BIOLOGICAL_QUALIFIER
+    },
+    {
+        "id": "BQB_IS_VERSION_OF",
+        "qualifier": ls.BQB_IS_VERSION_OF,
+        "type": ls.BIOLOGICAL_QUALIFIER
+    },
+    {
+        "id": "BQB_HAS_VERSION",
+        "qualifier": ls.BQB_HAS_VERSION,
+        "type": ls.BIOLOGICAL_QUALIFIER
+    },
+    {
+        "id": "BQB_IS_HOMOLOG_TO",
+        "qualifier": ls.BQB_IS_HOMOLOG_TO,
+        "type": ls.BIOLOGICAL_QUALIFIER
+    },
+    {
+        "id": "BQB_IS_DESCRIBED_BY",
+        "qualifier": ls.BQB_IS_DESCRIBED_BY,
+        "type": ls.BIOLOGICAL_QUALIFIER
+    },
+    {
+        "id": "BQB_IS_ENCODED_BY",
+        "qualifier": ls.BQB_IS_ENCODED_BY,
+        "type": ls.BIOLOGICAL_QUALIFIER
+    },
+    {
+        "id": "BQB_ENCODES",
+        "qualifier": ls.BQB_ENCODES,
+        "type": ls.BIOLOGICAL_QUALIFIER
+    },
+    {
+        "id": "BQB_OCCURS_IN",
+        "qualifier": ls.BQB_OCCURS_IN,
+        "type": ls.BIOLOGICAL_QUALIFIER
+    },
+    {
+        "id": "BQB_HAS_PROPERTY",
+        "qualifier": ls.BQB_HAS_PROPERTY,
+        "type": ls.BIOLOGICAL_QUALIFIER
+    },
+    {
+        "id": "BQB_IS_PROPERTY_OF",
+        "qualifier": ls.BQB_IS_PROPERTY_OF,
+        "type": ls.BIOLOGICAL_QUALIFIER
+    },
+    {
+        "id": "BQB_HAS_TAXON",
+        "qualifier": ls.BQB_HAS_TAXON,
+        "type": ls.BIOLOGICAL_QUALIFIER
+    },
+    {
+        "id": "BQB_UNKNOWN",
+        "qualifier": ls.BQB_UNKNOWN,
+        "type": ls.BIOLOGICAL_QUALIFIER
+    }
+]
 
 class AnnotationsTemplateGenerator:
 
@@ -22,7 +124,7 @@ class AnnotationsTemplateGenerator:
         dt.extend(dt_parameters)
         terms = pd.DataFrame(
             dt,
-            columns=["element_id", "sbml_type", "element_name", "unit", "annotation_type", "qualifier", "URI", "description", "remark"]
+            columns=["element_id", "sbml_type", "element_name", "unit", "annotation_type", "qualifier", "URI", "remark"]
         )
         return terms
 
@@ -37,7 +139,6 @@ class AnnotationsTemplateGenerator:
             "",
             "",
             "",
-            "Model substances unit.",
             ""
         ])
         dt.append([
@@ -48,7 +149,6 @@ class AnnotationsTemplateGenerator:
             "",
             "",
             "",
-            "Model time unit.",
             ""
         ])
         dt.append([
@@ -59,7 +159,6 @@ class AnnotationsTemplateGenerator:
             "",
             "",
             "",
-            "Model volume unit.",
             ""
         ])
         return dt
@@ -70,7 +169,7 @@ class AnnotationsTemplateGenerator:
         dt = []
         for i in range(0,model.getNumCompartments()):
             element = model.getCompartment(i)
-            element_terms = self.get_element_terms(element, element_type, required_qualifiers, try_fill)
+            element_terms = self._get_element_terms(element, element_type, required_qualifiers, try_fill)
             dt.extend(element_terms)
         return dt
 
@@ -84,7 +183,7 @@ class AnnotationsTemplateGenerator:
         dt = []
         for i in range(0,model.getNumSpecies()):
             element = model.getSpecies(i)
-            element_terms = self.get_element_terms(element, element_type, required_qualifiers, try_fill)
+            element_terms = self._get_element_terms(element, element_type, required_qualifiers, try_fill)
             dt.extend(element_terms)
         return dt
 
@@ -98,11 +197,11 @@ class AnnotationsTemplateGenerator:
         dt = []
         for i in range(0,model.getNumParameters()):
             element = model.getParameter(i)
-            element_terms = self.get_element_terms(element, element_type, required_qualifiers, try_fill)
+            element_terms = self._get_element_terms(element, element_type, required_qualifiers, try_fill)
             dt.extend(element_terms)
         return dt
 
-    def get_element_terms(
+    def _get_element_terms(
         self,
         element: ls.SBase,
         element_type: str,
@@ -111,7 +210,6 @@ class AnnotationsTemplateGenerator:
     ) -> list[str]:
         dt = []
         name = element.getName()
-        description = ''
 
         # Try to find matching term definition for element
         matched_term = self.find_term_definition(element, element_type)
@@ -119,14 +217,12 @@ class AnnotationsTemplateGenerator:
         if (matched_term is not None):
             if try_fill and 'name' in matched_term.keys():
                 name = matched_term['name']
-            if try_fill and'description' in matched_term.keys():
-                description = matched_term['description']
             if 'resources' in matched_term.keys() and len(matched_term['resources']) > 0:
                 matched_term_resources = matched_term['resources']
 
         rows = 0
 
-        for qualifierDefinition in QualifierDefinitions:
+        for qualifierDefinition in _qualifier_definitions:
             qualifier = qualifierDefinition['qualifier']
             qualifier_type = qualifierDefinition['type']
             qualifier_id = qualifierDefinition['id']
@@ -157,7 +253,6 @@ class AnnotationsTemplateGenerator:
                     "rdf",
                     qualifier_id,
                     uri,
-                    (description if rows == 0 else ''),
                     ""
                 ])
                 rows += 1
@@ -167,12 +262,12 @@ class AnnotationsTemplateGenerator:
     def find_term_definition(self, element, element_type):
         """Tries to find a resource definition for the specified element."""
         element_id = element.getId()
-        for index, value in enumerate(TermDefinitions):
+        for index, value in enumerate(term_definitions):
             if value['element_type'] == element_type:
                 if 'recommended_id' in value.keys() \
                     and element_id.lower() == value['recommended_id'].lower():
                     return value
-                elif 'common_ids' in value.keys() \
-                    and any(element_id.lower() == val.lower() for val in value['common_ids']):
+                elif 'common_identifiers' in value.keys() \
+                    and any(element_id.lower() == val.lower() for val in value['common_identifiers']):
                     return value
         return None

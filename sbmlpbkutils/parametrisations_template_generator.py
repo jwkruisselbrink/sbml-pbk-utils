@@ -1,7 +1,7 @@
 import pandas as pd
 import libsbml as ls
 
-from sbmlpbkutils import create_unit_string
+from . import create_unit_string
 
 class ParametrisationsTemplateGenerator:
 
