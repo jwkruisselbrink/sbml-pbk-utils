@@ -1,7 +1,7 @@
 import enum
 import libsbml as ls
 
-class UnitTypes(enum.Enum):
+class UnitType(enum.Enum):
     DIMENSIONLESS = 1           # Unitless/dimensionless
     MASS_UNIT = 2               # Grams or moles
     VOLUME_UNIT = 3             # Liters
@@ -1033,26 +1033,26 @@ def _create_unit_part_string(
     ucum_unit = f"{operator_str}{multiplier_str}{scale_str}{base_unit_str}{exponent_str}"
     return ucum_unit
 
-def get_unit_type(unit_def: dict) -> UnitTypes:
+def get_unit_type(unit_def: dict) -> UnitType:
     if len(unit_def['units']) == 1:
         unit = unit_def['units'][0]
         if unit['kind'] == ls.UNIT_KIND_DIMENSIONLESS:
-            return UnitTypes.DIMENSIONLESS
+            return UnitType.DIMENSIONLESS
         elif _is_mass_unit_part(unit):
-            return UnitTypes.MASS_UNIT
+            return UnitType.MASS_UNIT
         elif _is_volume_unit_part(unit):
-            return UnitTypes.VOLUME_UNIT
+            return UnitType.VOLUME_UNIT
         elif _is_time_unit_part(unit):
-            return UnitTypes.TIME_UNIT
+            return UnitType.TIME_UNIT
         else:
-            return UnitTypes.OTHER
+            return UnitType.OTHER
     elif len(unit_def['units']) == 2:
         if any(_is_mass_unit_part(part) for part in unit_def['units']) \
             and (any(_is_per_volume_unit_part(part) for part in unit_def['units']) \
             or any(_is_per_mass_unit_part(part) for part in unit_def['units'])):
-                return UnitTypes.CONCENTRATION_UNIT
+                return UnitType.CONCENTRATION_UNIT
     else:
-        return UnitTypes.OTHER
+        return UnitType.OTHER
 
 def _is_mass_unit_part(unit_part: dict):
     return (unit_part['kind'] == ls.UNIT_KIND_GRAM \

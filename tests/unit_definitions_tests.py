@@ -3,7 +3,7 @@ import sys
 import libsbml as ls
 from parameterized import parameterized
 
-from sbmlpbkutils import unit_definitions, UnitTypes
+from sbmlpbkutils import unit_definitions, UnitType
 from sbmlpbkutils.unit_definitions import _si_prefix_string, _si_prefix_strings_ext, _time_unit_multipliers
 from sbmlpbkutils import create_unit_string, set_unit_definition, get_unit_definition, get_unit_type
 from sbmlpbkutils import get_volume_unit_definitions, get_mass_unit_definitions, get_time_unit_definitions
@@ -87,16 +87,16 @@ class UnitDefinitionsTests(unittest.TestCase):
                 self.assertIn(unit_def, time_unit_defs)
 
     @parameterized.expand([
-        ("unitless", UnitTypes.DIMENSIONLESS),
-        ("h", UnitTypes.TIME_UNIT),
-        ("s", UnitTypes.TIME_UNIT),
-        ("kg", UnitTypes.MASS_UNIT),
-        ("g", UnitTypes.MASS_UNIT),
-        ("ug", UnitTypes.MASS_UNIT),
-        ("L", UnitTypes.VOLUME_UNIT),
-        ("mL", UnitTypes.VOLUME_UNIT),
-        ("mg/L", UnitTypes.CONCENTRATION_UNIT),
-        ("mg/kg", UnitTypes.CONCENTRATION_UNIT)
+        ("unitless", UnitType.DIMENSIONLESS),
+        ("h", UnitType.TIME_UNIT),
+        ("s", UnitType.TIME_UNIT),
+        ("kg", UnitType.MASS_UNIT),
+        ("g", UnitType.MASS_UNIT),
+        ("ug", UnitType.MASS_UNIT),
+        ("L", UnitType.VOLUME_UNIT),
+        ("mL", UnitType.VOLUME_UNIT),
+        ("mg/L", UnitType.CONCENTRATION_UNIT),
+        ("mg/kg", UnitType.CONCENTRATION_UNIT)
     ])
     def test_get_unit_type(self, unit_str, expected_unit_type):
         unit_definition = get_unit_definition(unit_str)

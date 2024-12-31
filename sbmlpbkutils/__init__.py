@@ -1,5 +1,5 @@
 from .unit_definitions import unit_definitions
-from .unit_definitions import UnitTypes
+from .unit_definitions import UnitType
 from .unit_definitions import get_volume_unit_definitions
 from .unit_definitions import get_mass_unit_definitions
 from .unit_definitions import get_time_unit_definitions
