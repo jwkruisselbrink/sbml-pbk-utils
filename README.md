@@ -10,10 +10,10 @@ The `sbmlpbkutils` package is a small Python package that contains utility funct
 
 ### Install from GitHub
 
-To install a specific version, use the version tag. For instance, for version `v0.12.0`, use:
+To install a specific version, use the version tag. For instance, for version `v0.13.0`, use:
 
 ````
-pip install git+https://github.com/jwkruisselbrink/sbml-pbk-utils.git@v0.12.0
+pip install git+https://github.com/jwkruisselbrink/sbml-pbk-utils.git@v0.13.0
 ````
 
 To install the latest version available on the main Git branch, type:
@@ -35,16 +35,16 @@ The [PbkModelAnnotator](sbmlpbkutils/pbk_model_annotator.py) class can be used t
 | element_id      | Identifier of the model element that is to be annotated. |
 | sbml_type       | Type of the model element that is to be annotated. Options: `model`, `document`, `compartment`, `species`, `parameter`. |
 | element_name    | For specification of element name: the name of the model element. |
-| unit            | For unit annotation: the unit associated with the model element. Units should be compliant with the synonyms of the [unit definitions](src/unit_definitions.py). This catalogue of unit definitions aims to align as much as possible with the [Unified Code for Units of Measure (UCUM)](https://ucum.org/) and the [QUDT Ontologies](https://qudt.org/). |
+| unit            | For unit annotation: the unit associated with the model element. Units should be compliant with the synonyms of the [unit definitions](sbmlpbkutils/unit_definitions.py). This catalogue of unit definitions aims to align as much as possible with the [Unified Code for Units of Measure (UCUM)](https://ucum.org/) and the [QUDT Ontologies](https://qudt.org/). |
 | annotation_type | For RDF annotation: type of the SBML term-annotation (default RDF). |
 | qualifier       | For RDF annotation: [BioModels Qualifier](https://github.com/combine-org/combine-specifications/blob/main/specifications/qualifiers-1.1.md#model-qualifiers) of the annotation (RDF predicate). Model qualifier types: `BQM_IS`, `BQM_IS_DESCRIBED_BY`, `BQM_IS_DERIVED_FROM`, `BQM_IS_INSTANCE_OF`, `BQM_HAS_INSTANCE`. Biological qualifier types: `BQB_IS`, `BQB_HAS_PART`, `BQB_IS_PART_OF`, `BQB_IS_VERSION_OF`, `BQB_HAS_VERSION`, `BQB_IS_HOMOLOG_TO`, `BQB_IS_DESCRIBED_BY`, `BQB_IS_ENCODED_BY`, `BQB_ENCODES`, `BQB_OCCURS_IN`, `BQB_HAS_PROPERTY`, `BQB_IS_PROPERTY_OF`, `BQB_HAS_TAXON`. |
-| URI             | For RDF annotation: annotation resource URI for the term-annotation (RDF object). The [term definitions](src/term_definitions.py) file contains definitions of commonly used model terms, together with recommended resource URIs. This file is still under construction, but is intended to align with a common, harmonized annotation standard for PBK models. It is planned to include resources URIs from the [PBPK ontology](https://github.com/Crispae/pbpko/tree/main) in the near future. |
+| URI             | For RDF annotation: annotation resource URI for the term-annotation (RDF object). The [term definitions](sbmlpbkutils/term_definitions.py) file contains definitions of commonly used model terms, together with recommended resource URIs. This file is still under construction, but is intended to align with a common, harmonized annotation standard for PBK models. It is planned to include resources URIs from the [PBPK ontology](https://github.com/Crispae/pbpko/tree/main) in the near future. |
 
 For specification of the SBML model global substance unit, time unit, and volume unit, use **element_id** values of *substanceUnits*, *timeUnits*, and *volumeUnits* with **sbml_type** *document*.
 
 For an example of an annotations file, see the [annotations file](https://github.com/rivm-syso/euromix-to-sbml/blob/main/model/euromix.annotations.csv) of the SBML EuroMix PBK model re-implementation.
 
-### SBML validation
+### SBML model validation
 
 Having a harmonized standard for implementation of PBK models allows for various types of automated tooling. Automatic validation can be included to check for model errors, model consistency, consitency of units, and also on more PBK-model specific aspects (such as mass balance). The [PbkModelValidator](sbmlpbkutils/pbk_model_validator.py) class provides functionality to run validation checks on PBK model implementations in SBML.
 
@@ -56,9 +56,9 @@ This is a first version in which some rudimentary file and consistency checks ar
 
 ## About the development
 
-As mentioned, this pacakage is currently being developed in an explorative manner to evaluate the use of SBML as a harmonized exchange format for FAIR PBK models, and to develop and test a strategy/standard for annotation of terms and units specifically for PBK models. The aim is to adopt and/or align with already existing initiatives as much as possible. 
+This pacakage is currently being developed in an explorative manner to evaluate the use of SBML as a harmonized exchange format for FAIR PBK models, and to develop and test a strategy/standard for annotation of terms and units specifically for PBK models. The aim is to adopt and/or align with already existing initiatives as much as possible. 
 
-At present, the following elements are considered essential elements for building up a standard for FAIR PBK modelling:
+At present, the following resources are considered essential for building up a standard for FAIR PBK modelling:
 
 - Use of the [Systems Biology Markup Language (SBML)](https://sbml.org/) as a harmonized publication and exchange format for PBK models, which should bridge the gap between the various different model implementation languages that are currently used by PBK model developers.
 - The [SBMLutils](https://github.com/matthiaskoenig/sbmlutils) Python package provides convenient utilities for manipulation and annotation of SBML models. It also serves as a major source of inspiration for this PBK utils package. The reason for creating a package specifically for PBK models is to include also tooling that is specifically tailored to the sub-domain of PBK models.
