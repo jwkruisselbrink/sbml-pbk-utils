@@ -63,11 +63,83 @@ class PbkOntologyCheckerTests(unittest.TestCase):
 
     def test_is_parameter(self):
         checker = PbkOntologyChecker()
-        result = checker.get_parameter_classes()
         self.assertFalse(checker.check_is_parameter("http://purl.obolibrary.org/obo/PBPKO_00477"))
         self.assertTrue(checker.check_is_parameter("http://purl.obolibrary.org/obo/PBPKO_00029")) 
         self.assertTrue(checker.check_is_parameter("http://purl.obolibrary.org/obo/PBPKO_00078"))
         self.assertFalse(checker.check_is_parameter("XXXX")) 
+        result = checker.get_parameter_classes()
+        for item in result:
+            #print(f'[{item.iri}] - {item.label}')
+            self.assertTrue(checker.check_is_parameter(item.iri))
+
+    def test_is_biochemical_parameter(self):
+        checker = PbkOntologyChecker()
+        # Partition coefficient: True
+        self.assertTrue(checker.check_is_biochemical_parameter("http://purl.obolibrary.org/obo/PBPKO_00165"))
+
+        # logP: False
+        self.assertFalse(checker.check_is_biochemical_parameter("http://purl.obolibrary.org/obo/PBPKO_00130"))
+
+        # BW: False
+        self.assertFalse(checker.check_is_biochemical_parameter("http://purl.obolibrary.org/obo/PBPKO_00008"))
+
+        # Invalid URI: False
+        self.assertFalse(checker.check_is_biochemical_parameter("XXXX")) 
+        result = checker.get_parameter_classes()
+        for item in result:
+            #print(f'[{item.iri}] - {item.label}')
+            self.assertTrue(checker.check_is_parameter(item.iri))
+
+    def test_is_physicochemical_parameter(self):
+        checker = PbkOntologyChecker()
+        # Partition coefficient: False
+        self.assertFalse(checker.check_is_physicochemical_parameter("http://purl.obolibrary.org/obo/PBPKO_00165"))
+
+        # logP: True
+        self.assertTrue(checker.check_is_physicochemical_parameter("http://purl.obolibrary.org/obo/PBPKO_00130"))
+
+        # BW: False
+        self.assertFalse(checker.check_is_physicochemical_parameter("http://purl.obolibrary.org/obo/PBPKO_00008"))
+
+        # Invalid URI: False
+        self.assertFalse(checker.check_is_physicochemical_parameter("XXXX")) 
+        result = checker.get_parameter_classes()
+        for item in result:
+            #print(f'[{item.iri}] - {item.label}')
+            self.assertTrue(checker.check_is_parameter(item.iri))
+
+    def test_is_physiological_parameter(self):
+        checker = PbkOntologyChecker()
+        # Partition coefficient: False
+        self.assertFalse(checker.check_is_physiological_parameter("http://purl.obolibrary.org/obo/PBPKO_00165"))
+
+        # logP: False
+        self.assertFalse(checker.check_is_physiological_parameter("http://purl.obolibrary.org/obo/PBPKO_00130"))
+
+        # BW: True
+        self.assertTrue(checker.check_is_physiological_parameter("http://purl.obolibrary.org/obo/PBPKO_00008"))
+
+        # Invalid URI: False
+        self.assertFalse(checker.check_is_physiological_parameter("XXXX")) 
+        result = checker.get_parameter_classes()
+        for item in result:
+            #print(f'[{item.iri}] - {item.label}')
+            self.assertTrue(checker.check_is_parameter(item.iri))
+
+    def test_is_chemical_specific_parameter(self):
+        checker = PbkOntologyChecker()
+        # Partition coefficient: False
+        self.assertTrue(checker.check_is_chemical_specific_parameter("http://purl.obolibrary.org/obo/PBPKO_00165"))
+
+        # logP: True
+        self.assertTrue(checker.check_is_chemical_specific_parameter("http://purl.obolibrary.org/obo/PBPKO_00130"))
+
+        # BW: True
+        self.assertFalse(checker.check_is_chemical_specific_parameter("http://purl.obolibrary.org/obo/PBPKO_00008"))
+
+        # Invalid URI: False
+        self.assertFalse(checker.check_is_chemical_specific_parameter("XXXX")) 
+        result = checker.get_parameter_classes()
         for item in result:
             #print(f'[{item.iri}] - {item.label}')
             self.assertTrue(checker.check_is_parameter(item.iri))

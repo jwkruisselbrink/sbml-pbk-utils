@@ -46,6 +46,22 @@ class PbkOntologyChecker():
         element = self.get_class(iri, self.pbpko_namespaces)
         return element is not None and self.obo.PBPKO_00002 in element.ancestors()
 
+    def check_is_biochemical_parameter(self, iri):
+        element = self.get_class(iri, self.pbpko_namespaces)
+        return element is not None and self.obo.PBPKO_00139 in element.ancestors()
+
+    def check_is_physicochemical_parameter(self, iri):
+        element = self.get_class(iri, self.pbpko_namespaces)
+        return element is not None and self.obo.PBPKO_00126 in element.ancestors()
+
+    def check_is_chemical_specific_parameter(self, iri):
+        return self.check_is_biochemical_parameter(iri) \
+            or self.check_is_physicochemical_parameter(iri)
+
+    def check_is_physiological_parameter(self, iri):
+        element = self.get_class(iri, self.pbpko_namespaces)
+        return element is not None and self.obo.PBPKO_00006 in element.ancestors()
+
     def check_is_species(self, iri):
         element = self.get_class(iri, self.pbpko_namespaces)
         return element is not None and self.obo.PBPKO_00002 in element.ancestors()
