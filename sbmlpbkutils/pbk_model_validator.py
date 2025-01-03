@@ -22,6 +22,8 @@ class ErrorCode(Enum):
     PARAMETER_MISSING_PBPKO_BQM_TERM = 21
     PARAMETER_MULTIPLE_PBPKO_BQM_TERMS = 22
     PARAMETER_INVALID_PBPKO_BQM_TERM = 23
+    PARAMETER_MISSING_BQB_IS_TERM = 24,
+    PARAMETER_MULTIPLE_CHEBI_BQB_IS_TERMS = 25,
     SPECIES_MISSING_BQM_TERM = 30
     SPECIES_MISSING_PBPKO_BQM_TERM = 31
     SPECIES_MULTIPLE_PBPKO_BQM_TERMS = 32
@@ -211,26 +213,43 @@ class PbkModelValidator:
       messages = []
       cv_terms = self._get_cv_terms_by_type(element)
       if 'BQM_IS' not in cv_terms:
-          msg = f"No BQM_IS annotation found refering to a PBPKO term for parameter [{element.getId()}]."
+          level = "" if element.getConstant() else "internal "
+          msg = f"No BQM_IS annotation found refering to a PBPKO term for {level}parameter [{element.getId()}]."
           status = StatusLevel.ERROR if element.getConstant() else StatusLevel.WARNING
           messages.append(ValidationRecord(status, ErrorCode.PARAMETER_MISSING_BQM_TERM, msg))
           valid = not element.getConstant()
       else:
           pbpko_terms = [term for term in cv_terms['BQM_IS'] if self.ontology_checker.check_in_pbpko(term)]
           if not pbpko_terms:
-              msg = f"No BQM_IS annotation found refering to a PBPKO term for parameter [{element.getId()}]."
-              messages.append(ValidationRecord(StatusLevel.ERROR, ErrorCode.PARAMETER_MISSING_PBPKO_BQM_TERM, msg))
-              valid = False
+              level = "" if element.getConstant() else "internal "
+              msg = f"No BQM_IS annotation found refering to a PBPKO term for {level}parameter [{element.getId()}]."
+              status = StatusLevel.ERROR if element.getConstant() else StatusLevel.WARNING
+              messages.append(ValidationRecord(status, ErrorCode.PARAMETER_MISSING_BQM_TERM, msg))
+              valid = not element.getConstant()
           elif len(pbpko_terms) > 1:
               msg = f"Found multiple BQM_IS annotations refering to a PBPKO term for parameter [{element.getId()}]."
               messages.append(ValidationRecord(StatusLevel.ERROR, ErrorCode.PARAMETER_MULTIPLE_PBPKO_BQM_TERMS, msg))
               valid = False
-          else:
+          else:  
               pbpko_term = pbpko_terms[0]
               if not self.ontology_checker.check_is_parameter(pbpko_term):
                   msg = f"Specified BQM_IS resource [{pbpko_term}] for parameter [{element.getId()}] does not refer to a parameter."
                   messages.append(ValidationRecord(StatusLevel.ERROR, ErrorCode.PARAMETER_INVALID_PBPKO_BQM_TERM, msg))
                   valid = False
+              else:
+                if self.ontology_checker.check_is_chemical_specific_parameter(pbpko_term):
+                  chebi_terms = [term for term in cv_terms['BQB_IS'] if self.ontology_checker.check_in_chebi(term)] \
+                    if 'BQB_IS' in cv_terms else []
+                  if not chebi_terms:
+                      msg = f"No BQB_IS annotation found refering to a ChEBI term for chemical specific parameter [{element.getId()}]."
+                      status = StatusLevel.ERROR if element.getConstant() else StatusLevel.WARNING
+                      messages.append(ValidationRecord(status, ErrorCode.PARAMETER_MISSING_BQB_IS_TERM, msg))
+                      valid = not element.getConstant()
+                  elif len(pbpko_terms) > 1:
+                        msg = f"Found multiple BQB_IS annotations refering to a ChEBI term for parameter [{element.getId()}]."
+                        messages.append(ValidationRecord(StatusLevel.ERROR, ErrorCode.PARAMETER_MULTIPLE_CHEBI_BQB_IS_TERMS, msg))
+                        valid = False
+
       return (valid, messages)
 
   def check_species_annotation(

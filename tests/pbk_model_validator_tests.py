@@ -65,13 +65,35 @@ class PbkModelValidatorTests(unittest.TestCase):
         self.assertFalse(result[0])
         self.assertEqual(result[1][0].code, ErrorCode.COMPARTMENT_MISSING_BQM_TERM)
 
-    def test_validate_parameter_valid(self):
+    def test_validate_parameter_no_chebi(self):
         annotations_df = self._fake_single_annotation_record(
             'PCLiver',
             'parameter',
             'BQM_IS',
             'http://purl.obolibrary.org/obo/PBPKO_00165'
         )
+        document = self._annotate_model('simple.sbml', annotations_df)
+        validator = PbkModelValidator()
+        element = document.getElementBySId('PCLiver')
+        result = validator.check_element_annotation(element)
+        self.assertFalse(result[0])
+        self.assertEqual(result[1][0].code, ErrorCode.PARAMETER_MISSING_BQB_IS_TERM)
+
+    def test_validate_parameter_valid(self):
+        annotations_df = pd.concat([
+            self._fake_single_annotation_record(
+                'PCLiver',
+                'parameter',
+                'BQM_IS',
+                'http://purl.obolibrary.org/obo/PBPKO_00165'
+            ),
+            self._fake_single_annotation_record(
+                'PCLiver',
+                'parameter',
+                'BQB_IS',
+                'http://purl.obolibrary.org/obo/CHEBI_25212'
+            )
+        ])
         document = self._annotate_model('simple.sbml', annotations_df)
         validator = PbkModelValidator()
         element = document.getElementBySId('PCLiver')
