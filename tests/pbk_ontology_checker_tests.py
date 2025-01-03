@@ -16,6 +16,15 @@ class PbkOntologyCheckerTests(unittest.TestCase):
         self.assertFalse(checker.check_in_pbpko("obo/PBPKO_00450"))
         self.assertFalse(checker.check_in_pbpko("obo.PBPKO_0x450"))
 
+    def test_check_in_chebi(self):
+        checker = PbkOntologyChecker()
+        self.assertTrue(checker.check_in_chebi("http://purl.obolibrary.org/obo/CHEBI_25212"))
+        self.assertFalse(checker.check_in_chebi("https://purl.obolibrary.org/obo/CHEBI_25212"))
+        self.assertFalse(checker.check_in_chebi("https://purl.obolibrary.org/obo/PBPKO_00450"))
+        self.assertTrue(checker.check_in_chebi("obo:CHEBI_25212"))
+        self.assertFalse(checker.check_in_chebi("obo/CHEBI_25212"))
+        self.assertFalse(checker.check_in_chebi("obo.CHEBI_25212"))
+
     def test_find_by_label(self):
         checker = PbkOntologyChecker()
         result = checker.find_by_label('*arameter*')

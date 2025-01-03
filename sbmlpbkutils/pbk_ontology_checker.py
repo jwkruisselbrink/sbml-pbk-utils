@@ -10,18 +10,32 @@ class PbkOntologyChecker():
         "url": "http://purl.obolibrary.org/obo/"
     }]
 
+    pbpko_namespaces = [{
+        "key": "obo",
+        "separator": ":",
+        "url": "http://purl.obolibrary.org/obo/"
+    }]
+
     def __init__(self) -> None:
         self.onto = get_ontology(pbpko_path)
         self.onto.load()
         self.obo = get_namespace("http://purl.obolibrary.org/obo/")
 
-    def find_by_label(self, label):
+    def find_by_label(self, label: str):
         return list(self.onto.search(label = label))
 
-    def check_in_pbpko(self, iri):
+    def check_in_pbpko(self, iri: str):
         return self.check_iri_in_ontology(iri, self.pbpko_namespaces)
 
-    def get_available_classes(self, element_type):
+    def check_in_chebi(self, iri: str):
+        # Regex for short namespace + ChEBI ID
+        short_iri_pattern = r"^obo:CHEBI_\d+$"
+        # Full regex for namespace + ChEBI ID
+        full_iri_pattern = r"^http://purl.obolibrary.org/obo/CHEBI_\d+$"
+        return bool(re.match(short_iri_pattern, iri)) \
+            or bool(re.match(full_iri_pattern, iri))
+
+    def get_available_classes(self, element_type: str):
         if element_type == 'compartment':
             return self.get_compartment_classes()
         if element_type == 'parameter':
@@ -38,31 +52,31 @@ class PbkOntologyChecker():
     def get_species_classes(self):
         return list(self.obo.PBPKO_00252.descendants())
 
-    def check_is_compartment(self, iri):
+    def check_is_compartment(self, iri: str):
         element = self.get_class(iri, self.pbpko_namespaces)
         return element is not None and self.obo.PBPKO_00446 in element.ancestors()
 
-    def check_is_parameter(self, iri):
+    def check_is_parameter(self, iri: str):
         element = self.get_class(iri, self.pbpko_namespaces)
         return element is not None and self.obo.PBPKO_00002 in element.ancestors()
 
-    def check_is_biochemical_parameter(self, iri):
+    def check_is_biochemical_parameter(self, iri: str):
         element = self.get_class(iri, self.pbpko_namespaces)
         return element is not None and self.obo.PBPKO_00139 in element.ancestors()
 
-    def check_is_physicochemical_parameter(self, iri):
+    def check_is_physicochemical_parameter(self, iri: str):
         element = self.get_class(iri, self.pbpko_namespaces)
         return element is not None and self.obo.PBPKO_00126 in element.ancestors()
 
-    def check_is_chemical_specific_parameter(self, iri):
+    def check_is_chemical_specific_parameter(self, iri: str):
         return self.check_is_biochemical_parameter(iri) \
             or self.check_is_physicochemical_parameter(iri)
 
-    def check_is_physiological_parameter(self, iri):
+    def check_is_physiological_parameter(self, iri: str):
         element = self.get_class(iri, self.pbpko_namespaces)
         return element is not None and self.obo.PBPKO_00006 in element.ancestors()
 
-    def check_is_species(self, iri):
+    def check_is_species(self, iri: str):
         element = self.get_class(iri, self.pbpko_namespaces)
         return element is not None and self.obo.PBPKO_00002 in element.ancestors()
 
@@ -80,5 +94,6 @@ class PbkOntologyChecker():
 
         return result
 
-    def check_iri_in_ontology(self, iri, replacement_namespaces=None):
+    def check_iri_in_ontology(self, iri: str, replacement_namespaces=None):
         return self.get_class(iri, replacement_namespaces) is not None
+
