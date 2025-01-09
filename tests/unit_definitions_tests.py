@@ -103,5 +103,16 @@ class UnitDefinitionsTests(unittest.TestCase):
         unit_type = get_unit_type(unit_definition)
         self.assertEqual(unit_type, expected_unit_type)
 
+    @parameterized.expand([
+        ("L/h", "L/h"),
+        ("L.h-1", "L/h")
+    ])
+    def test_create_unit_string(self, unit_str, expected_unit_str):
+        unit_definition = get_unit_definition(unit_str)
+        sbml_unit_definition = ls.UnitDefinition(3, 2)
+        set_unit_definition(sbml_unit_definition, unit_definition)
+        formatted_unit_string = create_unit_string(sbml_unit_definition)
+        self.assertEqual(formatted_unit_string, expected_unit_str)
+
 if __name__ == '__main__':
     unittest.main()
