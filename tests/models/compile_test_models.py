@@ -25,11 +25,12 @@ for file in os.listdir('./tests/models/'):
     if file.endswith('.ant'):
         ant_file = os.path.join('./tests/models', file)
         sbml_file = Path(ant_file).with_suffix('.sbml')
+        print(f"Creating SBML file [{sbml_file}] from Antimony file [{ant_file}].")
         r = te.loada(ant_file)
         r.exportToSBML(sbml_file)
 
 for file in os.listdir('./tests/models/'):
-    if file.endswith('.sbml') and not file.endswith('annotated.sbml'):
+    if file.endswith('.sbml') and not file.endswith('.annotated.sbml'):
         sbml_file = os.path.join('./tests/models', file)
         document = ls.readSBML(sbml_file)
         model = document.getModel()
@@ -45,7 +46,8 @@ for file in os.listdir('./tests/models/'):
         annotated_sbml_file = Path(sbml_file).with_suffix('.annotated.sbml')
         annotator = PbkModelAnnotator()
         logger = create_file_logger(annotations_log_file)
-        document = annotator.annotate(
+        print(f"Creating annotated SBML file [{annotated_sbml_file}] from SBML file [{sbml_file}] with annotations file [{annotations_file}].")
+        annotator.annotate(
             document,
             annotations_file,
             logger = logger

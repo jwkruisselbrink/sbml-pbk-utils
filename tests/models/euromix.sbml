@@ -156,7 +156,6 @@
       <parameter id="scFLiver" value="0.27" constant="true"/>
       <parameter id="scFSkin" value="0.05" constant="true"/>
       <parameter id="Falv" value="2220" constant="true"/>
-      <parameter id="rho" value="1" constant="true"/>
       <parameter id="PCFat" value="2.53" constant="true"/>
       <parameter id="PCLiver" value="0.923" constant="true"/>
       <parameter id="PCRich" value="0.875" constant="true"/>
@@ -189,39 +188,27 @@
       <assignmentRule variable="Fat">
         <math xmlns="http://www.w3.org/1998/Math/MathML">
           <apply>
-            <divide/>
-            <apply>
-              <times/>
-              <ci> BM </ci>
-              <ci> scVFat </ci>
-            </apply>
-            <ci> rho </ci>
+            <times/>
+            <ci> BM </ci>
+            <ci> scVFat </ci>
           </apply>
         </math>
       </assignmentRule>
       <assignmentRule variable="Rich">
         <math xmlns="http://www.w3.org/1998/Math/MathML">
           <apply>
-            <divide/>
-            <apply>
-              <times/>
-              <ci> BM </ci>
-              <ci> scVRich </ci>
-            </apply>
-            <ci> rho </ci>
+            <times/>
+            <ci> BM </ci>
+            <ci> scVRich </ci>
           </apply>
         </math>
       </assignmentRule>
       <assignmentRule variable="Liver">
         <math xmlns="http://www.w3.org/1998/Math/MathML">
           <apply>
-            <divide/>
-            <apply>
-              <times/>
-              <ci> BM </ci>
-              <ci> scVLiver </ci>
-            </apply>
-            <ci> rho </ci>
+            <times/>
+            <ci> BM </ci>
+            <ci> scVLiver </ci>
           </apply>
         </math>
       </assignmentRule>
@@ -302,7 +289,8 @@
                 <apply>
                   <minus/>
                   <apply>
-                    <minus/>
+                    <times/>
+                    <ci> BM </ci>
                     <apply>
                       <minus/>
                       <apply>
@@ -312,35 +300,26 @@
                           <apply>
                             <minus/>
                             <apply>
-                              <divide/>
-                              <ci> BM </ci>
-                              <ci> rho </ci>
+                              <minus/>
+                              <cn type="integer"> 1 </cn>
+                              <ci> scVFat </ci>
                             </apply>
-                            <ci> Fat </ci>
+                            <ci> scVRich </ci>
                           </apply>
-                          <ci> Rich </ci>
+                          <ci> scVLiver </ci>
                         </apply>
-                        <ci> Liver </ci>
+                        <ci> scVBlood </ci>
                       </apply>
-                      <ci> Skin_e </ci>
+                      <cn> 0.1 </cn>
                     </apply>
-                    <ci> Skin_u </ci>
                   </apply>
-                  <ci> Skin_sc_e </ci>
+                  <ci> Skin_e </ci>
                 </apply>
-                <ci> Skin_sc_u </ci>
+                <ci> Skin_u </ci>
               </apply>
-              <ci> VBlood </ci>
+              <ci> Skin_sc_e </ci>
             </apply>
-            <apply>
-              <times/>
-              <cn> 0.1 </cn>
-              <apply>
-                <divide/>
-                <ci> BM </ci>
-                <ci> rho </ci>
-              </apply>
-            </apply>
+            <ci> Skin_sc_u </ci>
           </apply>
         </math>
       </assignmentRule>
@@ -371,13 +350,9 @@
       <assignmentRule variable="VBlood">
         <math xmlns="http://www.w3.org/1998/Math/MathML">
           <apply>
-            <divide/>
-            <apply>
-              <times/>
-              <ci> BM </ci>
-              <ci> scVBlood </ci>
-            </apply>
-            <ci> rho </ci>
+            <times/>
+            <ci> BM </ci>
+            <ci> scVBlood </ci>
           </apply>
         </math>
       </assignmentRule>

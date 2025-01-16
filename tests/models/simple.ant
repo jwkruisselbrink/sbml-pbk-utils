@@ -14,9 +14,6 @@ model simple()
   QRc = 0.773        # rest-of-body perfusion rate [L/kg/h]
   QLc = 0.227        # liver perfusion rate [L/kg/h]
 
-  ### Tissue density
-  rho = 1            # tissue density [kg/L]
-
   ## Biochemical parameters
 
   #### Partition coefficients
@@ -39,9 +36,9 @@ model simple()
   const QR := QC * QRc
 
   # Compartments
-  compartment Blood := BW * VBc / rho
-  compartment Liver := BW * VLc / rho
-  compartment Rest := BW * VRc / rho
+  compartment Blood := BW * VBc
+  compartment Liver := BW * VLc
+  compartment Rest := BW * VRc
   compartment Gut
   compartment Urine
 
