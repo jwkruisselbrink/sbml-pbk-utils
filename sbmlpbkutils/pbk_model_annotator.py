@@ -173,7 +173,6 @@ class PbkModelAnnotator:
                         element_id,
                         unit,
                         units_dict,
-                        True,
                         logger
                     )
 
@@ -305,11 +304,8 @@ class PbkModelAnnotator:
         element = model.getElementBySId(element_id)
         units_dict = self._get_model_units_dict(model)
         if element_name is not None:
-            if not element.isSetName():
-                logger.info(f'Set name of {element} to "{element_name}".')
-                element.setName(element_name)
-            else:
-                logger.info(f"Name for {element} already set, not overwriting.")
+            logger.info(f'Set name of {element} to "{element_name}".')
+            element.setName(element_name)
         if unit_id is not None:
             self._set_element_unit(
                 model,
@@ -317,7 +313,6 @@ class PbkModelAnnotator:
                 element_id,
                 unit_id,
                 units_dict,
-                True,
                 logger
             )
 
@@ -347,7 +342,6 @@ class PbkModelAnnotator:
             element_id,
             unit_id,
             units_dict,
-            True,
             logger
         )
 
@@ -358,7 +352,7 @@ class PbkModelAnnotator:
         qualifier: str,
         iri: str,
         logger: Logger,
-        overwrite: bool = True,
+        overwrite: bool = True
     ) -> None:
         """Annotate SBase element based on the provided qualifier and resource IRI.
         """
@@ -382,7 +376,6 @@ class PbkModelAnnotator:
         element_id: str,
         unit_id: str,
         units_dict: dict,
-        overwrite: bool,
         logger: Logger
     ) -> None:
         """Set element unit of element with specified id and type to the specfied unit."""
@@ -391,41 +384,26 @@ class PbkModelAnnotator:
             or element.getTypeCode() == ls.SBML_MODEL:
             unit_definition = self._get_or_add_unit_definition(model, unit_id, units_dict, logger)
             if element_id == "timeUnits":
-                if not model.isSetTimeUnits() or overwrite:
-                    logger.info(f"Set model time unit [{unit_id}].")
-                    model.setTimeUnits(unit_definition.getId())
-                elif model.isSetTimeUnits():
-                    logger.info(f"Did not set model time unit [{unit_id}]: unit already set.")
+                logger.info(f"Set model time unit [{unit_id}].")
+                model.setTimeUnits(unit_definition.getId())
             elif element_id == "substanceUnits":
-                if not model.isSetSubstanceUnits() or overwrite:
-                    logger.info(f"Set model substances unit [{unit_id}].")
-                    model.setSubstanceUnits(unit_definition.getId())
-                elif model.isSetSubstanceUnits():
-                    logger.info(f"Did not set model substances unit [{unit_id}]: unit already set.")
+                logger.info(f"Set model substances unit [{unit_id}].")
+                model.setSubstanceUnits(unit_definition.getId())
             elif element_id == "extentUnits":
-                if not model.isSetExtentUnits() or overwrite:
-                    logger.info(f"Set model extent unit [{unit_id}].")
-                    model.setExtentUnits(unit_definition.getId())
-                elif model.isSetExtentUnits():
-                    logger.info(f"Did not set model extent unit [{unit_id}]: unit already set.")
+                logger.info(f"Set model extent unit [{unit_id}].")
+                model.setExtentUnits(unit_definition.getId())
             elif element_id == "volumeUnits":
-                if not model.isSetVolumeUnits() or overwrite:
-                    logger.info(f"Set model volume unit [{unit_id}].")
-                    model.setVolumeUnits(unit_definition.getId())
-                elif model.isSetVolumeUnits():
-                    logger.info(f"Did not set model volume unit [{unit_id}]: unit already set.")
+                logger.info(f"Set model volume unit [{unit_id}].")
+                model.setVolumeUnits(unit_definition.getId())
             else:
                 logger.info(f"Did not set unit [{unit_id}] for root level element [{element_id}]: not a valid document level element identifier.")
         else:
-            if not element.isSetUnits() or overwrite:
-                unit_definition = self._get_or_add_unit_definition(model, unit_id, units_dict, logger)
-                if (unit_definition):
-                    logger.info(f"Set unit of {element} to [{unit_id}].")
-                    element.setUnits(unit_definition.getId())
-                elif element.isSetUnits():
-                    logger.info(f"Did not set unit [{unit_id}] for {element}: unit already set.")
-            else:
-                logger.info(f"Name for {element} already set, not overwriting.")
+            unit_definition = self._get_or_add_unit_definition(model, unit_id, units_dict, logger)
+            if (unit_definition):
+                logger.info(f"Set unit of {element} to [{unit_id}].")
+                element.setUnits(unit_definition.getId())
+            elif element.isSetUnits():
+                logger.info(f"Did not set unit [{unit_id}] for {element}: unit already set.")
 
     def _set_element_rdf_annotation(
         self,
