@@ -1,34 +1,34 @@
-element_id,sbml_type,element_name,unit,annotation_type,qualifier,URI,description,remark
-substanceUnits,document,model substances unit,ug,,,,Model substances unit.,
-extentUnits,document,model extent unit,ug,,,,Model extent unit.,
-timeUnits,document,model time unit,h,,,,Model time unit.,
-volumeUnits,document,model volume unit,L,,,,Model volume unit.,
-Blood,compartment,blood compartment,L,rdf,BQM_IS,http://purl.obolibrary.org/obo/PBPKO_00464,PBK model compartment representing blood (whole blood).,
-Blood,compartment,,,rdf,BQB_IS,,,
-Liver,compartment,liver compartment,L,rdf,BQM_IS,,PBK model compartment representing the liver.,
-Liver,compartment,,,rdf,BQB_IS,http://purl.obolibrary.org/obo/UBERON_0002107 ,,
-Rest,compartment,rest-of-body compartment,L,rdf,BQM_IS,http://purl.obolibrary.org/obo/PBPKO_00450,PBK model compartment representing the rest of the body (periphery).,
-Rest,compartment,,,rdf,BQB_IS,,,
-Gut,compartment,gut compartment,L,rdf,BQM_IS,http://purl.obolibrary.org/obo/PBPKO_00477,PBK model compartment representing the gut.,
-Gut,compartment,,,rdf,BQB_IS,http://purl.obolibrary.org/obo/UBERON_0001555,,
-Urine,compartment,urine compartment,L,rdf,BQM_IS,,PBK model compartment representing urine.,
-Urine,compartment,,,rdf,BQB_IS,http://purl.obolibrary.org/obo/UBERON_0001088,,
-ABlood,species,amount of chemical in blood,ug,rdf,BQM_IS,,The amount of a chemical substance in blood.,
-ALiver,species,amount of chemical in liver,ug,rdf,BQM_IS,http://purl.obolibrary.org/obo/PBPKO_00497,,
-ARest,species,amount of chemical in rest-of-body,ug,rdf,BQM_IS,http://purl.obolibrary.org/obo/PBPKO_00501,,
-AGut,species,amount of chemical in gut,ug,rdf,BQM_IS,http://purl.obolibrary.org/obo/PBPKO_00496,,
-AUrine,species,amount of chemical in urine,ug,rdf,BQM_IS,http://purl.obolibrary.org/obo/PBPKO_00272,,
-BW,parameter,body weight,kg,rdf,BQM_IS,http://purl.obolibrary.org/obo/PBPKO_00009,PBK model parameter representing the (initial) body weight of the modelled entity.,
-BW,parameter,,,rdf,BQB_IS,http://purl.obolibrary.org/obo/NCIT_C81328,,
-VRc,parameter,rest-of-body as fraction of total bodyweight,L/kg,rdf,BQM_IS,,,
-VLc,parameter,liver as fraction of total bodyweight,L/kg,rdf,BQM_IS,,,
-VBc,parameter,blood as fraction of total bodyweight,L/kg,rdf,BQM_IS,http://purl.obolibrary.org/obo/PBPKO_00107,,
-QRc,parameter,,dimensionless,rdf,BQM_IS,,,
-QLc,parameter,,dimensionless,rdf,BQM_IS,,,
-PCLiver,parameter,,dimensionless,rdf,BQM_IS,,,
-PCRest,parameter,,dimensionless,rdf,BQM_IS,,,
-CLUrine,parameter,,L/h,rdf,BQM_IS,,,
-Ka,parameter,,/h,rdf,BQM_IS,,,
-QC,parameter,,L/h,rdf,BQM_IS,,,
-QL,parameter,,L/h,rdf,BQM_IS,,,
-QR,parameter,,L/h,rdf,BQM_IS,,,
+element_id,sbml_type,element_name,unit,annotation_type,qualifier,URI
+substanceUnits,document,model substances unit,ug,,,
+extentUnits,document,model extent unit,ug,,,
+timeUnits,document,model time unit,h,,,
+volumeUnits,document,model volume unit,L,,,
+Blood,compartment,blood,L,rdf,BQM_IS,http://purl.obolibrary.org/obo/PBPKO_00464
+Blood,compartment,,,rdf,BQB_IS,
+Liver,compartment,liver,L,rdf,BQM_IS,
+Liver,compartment,,,rdf,BQB_IS,http://purl.obolibrary.org/obo/UBERON_0002107
+Rest,compartment,rest-of-body,L,rdf,BQM_IS,http://purl.obolibrary.org/obo/PBPKO_00450
+Rest,compartment,,,rdf,BQB_IS,
+Gut,compartment,gut,L,rdf,BQM_IS,http://purl.obolibrary.org/obo/PBPKO_00477
+Gut,compartment,,,rdf,BQB_IS,http://purl.obolibrary.org/obo/UBERON_0001555
+Urine,compartment,urine,L,rdf,BQM_IS,
+Urine,compartment,,,rdf,BQB_IS,http://purl.obolibrary.org/obo/UBERON_0001088
+ABlood,species,amount of chemical in blood,ug,rdf,BQM_IS,
+ALiver,species,amount of chemical in liver,ug,rdf,BQM_IS,http://purl.obolibrary.org/obo/PBPKO_00497
+ARest,species,amount of chemical in rest-of-body,ug,rdf,BQM_IS,http://purl.obolibrary.org/obo/PBPKO_00501
+AGut,species,amount of chemical in gut,ug,rdf,BQM_IS,http://purl.obolibrary.org/obo/PBPKO_00496
+AUrine,species,amount of chemical in urine,ug,rdf,BQM_IS,http://purl.obolibrary.org/obo/PBPKO_00272
+BW,parameter,body weight,kg,rdf,BQM_IS,http://purl.obolibrary.org/obo/PBPKO_00009
+BW,parameter,,,rdf,BQB_IS,http://purl.obolibrary.org/obo/NCIT_C81328
+VRc,parameter,rest-of-body as fraction of total bodyweight,L/kg,rdf,BQM_IS,
+VLc,parameter,liver as fraction of total bodyweight,L/kg,rdf,BQM_IS,
+VBc,parameter,blood as fraction of total bodyweight,L/kg,rdf,BQM_IS,http://purl.obolibrary.org/obo/PBPKO_00107
+QRc,parameter,,dimensionless,rdf,BQM_IS,
+QLc,parameter,,dimensionless,rdf,BQM_IS,
+PCLiver,parameter,,dimensionless,rdf,BQM_IS,
+PCRest,parameter,,dimensionless,rdf,BQM_IS,
+CLUrine,parameter,,L/h,rdf,BQM_IS,
+Ka,parameter,,/h,rdf,BQM_IS,
+QC,parameter,,L/h,rdf,BQM_IS,
+QL,parameter,,L/h,rdf,BQM_IS,
+QR,parameter,,L/h,rdf,BQM_IS,
