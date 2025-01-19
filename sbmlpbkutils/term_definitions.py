@@ -1,37 +1,24 @@
 term_definitions = [
     {
-        "name": "alveolar air compartment",
+        "name": "alveolar air",
         "element_type": "compartment",
         "common_identifiers": [
             "Air"
         ],
-        "exposure_route": "inhalation",
         "resources": [
             {
                 "qualifier": "BQM_IS",
                 "URI": "http://purl.obolibrary.org/obo/PBPKO_00458"
-            },
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/NCIT_C150891"
             }
         ]
     },
     {
-        "name": "arterial blood compartment",
+        "name": "arterial blood",
         "element_type": "compartment",
         "common_identifiers": [
             "Art"
         ],
         "resources": [
-            {
-                "qualifier": "BQM_IS",
-                "URI": "http://purl.obolibrary.org/obo/PBPKO_00462"
-            },
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON_0013755"
-            }
         ]
     },
     {
@@ -48,7 +35,7 @@ term_definitions = [
         ]
     },
     {
-        "name": "bladder compartment",
+        "name": "bladder",
         "element_type": "compartment",
         "common_identifiers": [
             "Bladder"
@@ -57,15 +44,11 @@ term_definitions = [
             {
                 "qualifier": "BQM_IS",
                 "URI": "http://purl.obolibrary.org/obo/PBPKO_00402"
-            },
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON_0004228"
             }
         ]
     },
     {
-        "name": "blood compartment",
+        "name": "blood",
         "element_type": "compartment",
         "common_identifiers": [
             "Blood"
@@ -78,7 +61,7 @@ term_definitions = [
         ]
     },
     {
-        "name": "blood plasma compartment",
+        "name": "blood plasma",
         "element_type": "compartment",
         "common_identifiers": [
             "Plasma"
@@ -87,15 +70,11 @@ term_definitions = [
             {
                 "qualifier": "BQM_IS",
                 "URI": "http://purl.obolibrary.org/obo/PBPKO_00488"
-            },
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON_0001969"
             }
         ]
     },
     {
-        "name": "brain compartment",
+        "name": "brain",
         "element_type": "compartment",
         "common_identifiers": [
             "Brain"
@@ -104,92 +83,63 @@ term_definitions = [
             {
                 "qualifier": "BQM_IS",
                 "URI": "http://purl.obolibrary.org/obo/PBPKO_00466"
-            },
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON_0000955"
             }
         ]
     },
     {
-        "name": "digestive tract compartment",
+        "name": "digestive tract",
         "element_type": "compartment",
         "resources": [
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON_0001555"
-            }
         ]
     },
     {
-        "name": "digestive system compartment",
+        "name": "digestive system",
         "element_type": "compartment",
         "resources": [
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON_0001007"
-            }
         ]
     },
     {
-        "name": "excreta compartment",
+        "name": "excreta",
         "element_type": "compartment",
         "common_identifiers": [
             "Excretion"
         ],
         "resources": [
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON_0000174"
-            }
         ]
     },
     {
-        "name": "feces compartment",
+        "name": "feces",
         "element_type": "compartment",
         "common_identifiers": [
             "Feces"
         ],
         "resources": [
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON_0001988"
-            }
         ]
     },
     {
-        "name": "filtrate compartment",
+        "name": "filtrate",
         "element_type": "compartment",
         "common_identifiers": [
             "Filtrate"
         ],
         "resources": [
-            {
-                "qualifier": "BQM_IS",
-                "URI": "http://purl.obolibrary.org/obo/PBPKO_00397"
-            }
         ]
     },
     {
-        "name": "gut compartment",
+        "name": "gut",
         "element_type": "compartment",
         "common_identifiers": [
             "Gut"
         ],
-        "exposure_route": "oral",
         "resources": [
             {
                 "qualifier": "BQM_IS",
                 "URI": "http://purl.obolibrary.org/obo/PBPKO_00477"
-            },
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON_0001555"
             }
         ]
     },
     {
-        "name": "gut lumen compartment",
+        "name": "gut lumen",
         "element_type": "compartment",
         "common_identifiers": [
             "Lumen"
@@ -198,10 +148,6 @@ term_definitions = [
             {
                 "qualifier": "BQM_IS",
                 "URI": "http://purl.obolibrary.org/obo/PBPKO_00478"
-            },
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON_0006909"
             }
         ]
     },
@@ -212,14 +158,10 @@ term_definitions = [
             "Gonads"
         ],
         "resources": [
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON_0000991"
-            }
         ]
     },
     {
-        "name": "heart compartment",
+        "name": "heart",
         "element_type": "compartment",
         "common_identifiers": [
             "Heart"
@@ -228,67 +170,47 @@ term_definitions = [
             {
                 "qualifier": "BQM_IS",
                 "URI": "http://purl.obolibrary.org/obo/PBPKO_00480"
-            },
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON_0000948"
             }
         ]
     },
     {
-        "name": "intestine compartment",
+        "name": "intestine",
         "element_type": "compartment",
         "common_identifiers": [
             "Intestine"
         ],
         "resources": [
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON_0000160"
-            }
         ]
     },
     {
-        "name": "kidney compartment",
+        "name": "kidney",
         "element_type": "compartment",
         "common_identifiers": [
             "Kidney"
         ],
         "resources": [
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON_0002113"
-            }
         ]
     },
     {
-        "name": "liver compartment",
+        "name": "liver",
         "element_type": "compartment",
         "common_identifiers": [
             "Liver"
         ],
         "resources": [
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON_0002107 "
-            }
         ]
     },
     {
-        "name": "lung compartment",
+        "name": "lung",
         "element_type": "compartment",
         "common_identifiers": [
             "Lung"
         ],
         "resources": [
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON_0002048"
-            }
         ]
     },
     {
-        "name": "poorly perfused tissue compartment",
+        "name": "poorly perfused tissue",
         "element_type": "compartment",
         "common_identifiers": [
             "Poor"
@@ -301,20 +223,16 @@ term_definitions = [
         ]
     },
     {
-        "name": "systemic exposure compartment",
+        "name": "systemic exposure",
         "element_type": "compartment",
         "common_identifiers": [
             "Systemic"
         ],
         "resources": [
-            {
-                "qualifier": "BQM_IS",
-                "URI": "http://purl.obolibrary.org/obo/PBPKO_00459"
-            }
         ]
     },
     {
-        "name": "rest-of-body compartment",
+        "name": "rest-of-body",
         "element_type": "compartment",
         "common_identifiers": [
             "Rest",
@@ -328,7 +246,7 @@ term_definitions = [
         ]
     },
     {
-        "name": "richly perfused tissue compartment",
+        "name": "richly perfused tissue",
         "element_type": "compartment",
         "common_identifiers": [
             "Rich"
@@ -341,25 +259,20 @@ term_definitions = [
         ]
     },
     {
-        "name": "skin compartment",
+        "name": "skin",
         "element_type": "compartment",
         "common_identifiers": [
             "Skin"
         ],
-        "exposure_route": "dermal",
         "resources": [
             {
                 "qualifier": "BQM_IS",
                 "URI": "http://purl.obolibrary.org/obo/PBPKO_00470"
-            },
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON_0002097"
             }
         ]
     },
     {
-        "name": "spleen compartment",
+        "name": "spleen",
         "element_type": "compartment",
         "common_identifiers": [
             "Spleen"
@@ -368,28 +281,20 @@ term_definitions = [
             {
                 "qualifier": "BQM_IS",
                 "URI": "http://purl.obolibrary.org/obo/PBPKO_00492"
-            },
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON_0002106"
             }
         ]
     },
     {
-        "name": "stomach compartment",
+        "name": "stomach",
         "element_type": "compartment",
         "common_identifiers": [
             "Stomach"
         ],
         "resources": [
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON_0000945"
-            }
         ]
     },
     {
-        "name": "stratum corneum unexposed skin compartment",
+        "name": "stratum corneum unexposed skin",
         "element_type": "compartment",
         "common_identifiers": [
             "Skin_SC_u"
@@ -402,12 +307,11 @@ term_definitions = [
         ]
     },
     {
-        "name": "stratum corneum exposed skin compartment",
+        "name": "stratum corneum exposed skin",
         "element_type": "compartment",
         "common_identifiers": [
             "Skin_SC_e"
         ],
-        "exposure_route": "dermal",
         "resources": [
             {
                 "qualifier": "BQM_IS",
@@ -416,63 +320,47 @@ term_definitions = [
         ]
     },
     {
-        "name": "stratum corneum compartment",
+        "name": "stratum corneum",
         "element_type": "compartment",
         "common_identifiers": [
             "Skin_SC"
         ],
         "resources": [
             {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON_0002027"
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00493"
             }
         ]
     },
     {
-        "name": "urine compartment",
+        "name": "urine",
         "element_type": "compartment",
         "common_identifiers": [
             "Urine"
         ],
         "resources": [
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON_0001088"
-            }
         ]
     },
     {
-        "name": "uterus compartment",
+        "name": "uterus",
         "element_type": "compartment",
         "common_identifiers": [
             "Uterus"
         ],
         "resources": [
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON_0000995"
-            }
         ]
     },
     {
-        "name": "venous blood compartment",
+        "name": "venous blood",
         "element_type": "compartment",
         "common_identifiers": [
             "Ven"
         ],
         "resources": [
-            {
-                "qualifier": "BQM_IS",
-                "URI": "http://purl.obolibrary.org/obo/PBPKO_00452"
-            },
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/UBERON_0013756"
-            }
         ]
     },
     {
-        "name": "venous blood plasma compartment",
+        "name": "venous blood plasma",
         "element_type": "compartment",
         "common_identifiers": [
             "Ven_Plasma"
@@ -480,12 +368,12 @@ term_definitions = [
         "resources": [
             {
                 "qualifier": "BQM_IS",
-                "URI": "http://purl.obolibrary.org/obo/PBPKO_00463"
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00452"
             }
         ]
     },
     {
-        "name": "viable epidermis compartment",
+        "name": "viable epidermis",
         "element_type": "compartment",
         "common_identifiers": [
             "Skin_VE"
@@ -493,7 +381,7 @@ term_definitions = [
         "resources": []
     },
     {
-        "name": "viable epidermis exposed skin compartment",
+        "name": "viable epidermis exposed skin",
         "element_type": "compartment",
         "common_identifiers": [
             "Skin_VE_e"
@@ -501,12 +389,12 @@ term_definitions = [
         "resources": [
             {
                 "qualifier": "BQM_IS",
-                "URI": "http://purl.obolibrary.org/obo/PBPKO_00467"
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00456"
             }
         ]
     },
     {
-        "name": "viable epidermis unexposed skin compartment",
+        "name": "viable epidermis unexposed skin",
         "element_type": "compartment",
         "common_identifiers": [
             "Skin_VE_u"
@@ -514,7 +402,7 @@ term_definitions = [
         "resources": [
             {
                 "qualifier": "BQM_IS",
-                "URI": "http://purl.obolibrary.org/obo/PBPKO_00466"
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00455"
             }
         ]
     },
@@ -539,22 +427,54 @@ term_definitions = [
     {
         "name": "amount of chemical in gut",
         "element_type": "species",
-        "resources": []
+        "common_identifiers": [
+            "AGut"
+        ],
+        "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00496"
+            }
+        ]
     },
     {
         "name": "amount of chemical in kidney",
         "element_type": "species",
-        "resources": []
+        "common_identifiers": [
+            "AKidney"
+        ],
+        "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00498"
+            }
+        ]
     },
     {
         "name": "amount of chemical in liver",
         "element_type": "species",
-        "resources": []
+        "common_identifiers": [
+            "ALiver"
+        ],
+        "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00497"
+            }
+        ]
     },
     {
         "name": "amount of chemical in plasma",
         "element_type": "species",
-        "resources": []
+        "common_identifiers": [
+            "APlasma"
+        ],
+        "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00502"
+            }
+        ]
     },
     {
         "name": "amount of chemical in poorly perfused tissue",
@@ -564,7 +484,15 @@ term_definitions = [
     {
         "name": "amount of chemical in rest-of-body",
         "element_type": "species",
-        "resources": []
+        "common_identifiers": [
+            "ARest"
+        ],
+        "resources": [
+            {
+                "qualifier": "BQM_IS",
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00501"
+            }
+        ]
     },
     {
         "name": "amount of chemical in richly perfused tissue",
@@ -619,11 +547,7 @@ term_definitions = [
         "resources": [
             {
                 "qualifier": "BQM_IS",
-                "URI": "http://purl.obolibrary.org/obo/PBPKO_00009"
-            },
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/NCIT_C81328"
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00008"
             }
         ]
     },
@@ -636,7 +560,7 @@ term_definitions = [
         "resources": [
             {
                 "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/NCIT_C25157"
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00010"
             }
         ]
     },
@@ -650,10 +574,6 @@ term_definitions = [
             {
                 "qualifier": "BQM_IS",
                 "URI": "http://purl.obolibrary.org/obo/PBPKO_00123"
-            },
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/NCIT_C43816"
             }
         ]
     },
@@ -674,20 +594,12 @@ term_definitions = [
         "name": "creatinine excretion rate",
         "element_type": "parameter",
         "resources": [
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/NCIT_C150817"
-            }
         ]
     },
     {
         "name": "excretion rate",
         "element_type": "parameter",
         "resources": [
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/NCIT_C85534"
-            }
         ]
     },
     {
@@ -704,7 +616,7 @@ term_definitions = [
         "resources": [
             {
                 "qualifier": "BQM_IS",
-                "URI": "http://purl.obolibrary.org/obo/PKPBO_00215"
+                "URI": "http://purl.obolibrary.org/obo/PKPBO_00234"
             }
         ]
     },
@@ -714,7 +626,7 @@ term_definitions = [
         "resources": [
             {
                 "qualifier": "BQM_IS",
-                "URI": "http://purl.obolibrary.org/obo/PKPBO_00218"
+                "URI": "http://purl.obolibrary.org/obo/PKPBO_00237"
             }
         ]
     },
@@ -734,12 +646,12 @@ term_definitions = [
         "resources": [
             {
                 "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/NCIT_C94866"
+                "URI": "http://purl.obolibrary.org/obo/PBPKO_00012"
             }
         ]
     },
     {
-        "name": "blood flow going to physiological compartment",
+        "name": "blood flow going to physiological",
         "element_type": "parameter",
         "resources": []
     },
@@ -795,11 +707,6 @@ term_definitions = [
     },
     {
         "name": "blood flow going to unexposed skin",
-        "element_type": "parameter",
-        "resources": []
-    },
-    {
-        "name": "fraction of total blood flow going to physiological compartment",
         "element_type": "parameter",
         "resources": []
     },
@@ -867,10 +774,6 @@ term_definitions = [
         "name": "ratio fat to total body mass",
         "element_type": "parameter",
         "resources": [
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/CMO_0003945"
-            }
         ]
     },
     {
@@ -927,10 +830,6 @@ term_definitions = [
         "name": "skin thickness",
         "element_type": "parameter",
         "resources": [
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/OBA_VT0001200"
-            }
         ]
     },
     {
@@ -1117,10 +1016,6 @@ term_definitions = [
             {
                 "qualifier": "BQM_IS",
                 "URI": "http://purl.obolibrary.org/obo/PBPKO_00431"
-            },
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://biomodels.net/SBO/SBO_0000491"
             }
         ]
     },
@@ -1144,10 +1039,6 @@ term_definitions = [
             {
                 "qualifier": "BQM_IS",
                 "URI": "http://purl.obolibrary.org/obo/PBPKO_00165"
-            },
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/NCIT_C20610"
             }
         ]
     },
@@ -1363,10 +1254,6 @@ term_definitions = [
         "name": "maximal velocity",
         "element_type": "parameter",
         "resources": [
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://biomodels.net/SBO/SBO_0000186"
-            }
         ]
     },
     {
@@ -1386,10 +1273,6 @@ term_definitions = [
             {
                 "qualifier": "BQM_IS",
                 "URI": "http://purl.obolibrary.org/obo/PBPKO_00002"
-            },
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/STATO_0000034"
             }
         ]
     },
@@ -1400,10 +1283,6 @@ term_definitions = [
             "Htc"
         ],
         "resources": [
-            {
-                "qualifier": "BQB_IS",
-                "URI": "http://purl.obolibrary.org/obo/CMO_0000037"
-            }
         ]
     }
 ]
