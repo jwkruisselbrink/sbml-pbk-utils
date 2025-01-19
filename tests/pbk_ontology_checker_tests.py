@@ -57,13 +57,28 @@ class PbkOntologyCheckerTests(unittest.TestCase):
 
     def test_is_compartment(self):
         checker = PbkOntologyChecker()
-        result = checker.get_compartment_classes()
         self.assertTrue(checker.check_is_compartment("http://purl.obolibrary.org/obo/PBPKO_00477"))
         self.assertFalse(checker.check_is_compartment("http://purl.obolibrary.org/obo/PBPKO_00029")) 
         self.assertFalse(checker.check_is_compartment("XXXX")) 
+        result = checker.get_compartment_classes()
         for item in result:
             #print(f'[{item.iri}] - {item.label}')
             self.assertTrue(checker.check_is_compartment(item.iri))
+
+    def test_is_input_compartment(self):
+        checker = PbkOntologyChecker()
+        # Alveolar air compartment (should be true)
+        self.assertTrue(checker.check_is_input_compartment("http://purl.obolibrary.org/obo/PBPKO_00458"))
+        # Gut compartment (should be true)
+        self.assertTrue(checker.check_is_input_compartment("http://purl.obolibrary.org/obo/PBPKO_00477"))
+        # Skin compartment (should be true)
+        self.assertTrue(checker.check_is_input_compartment("http://purl.obolibrary.org/obo/PBPKO_00470"))
+        # Stratum corneum exposed skin compartment compartment (should be true)
+        self.assertTrue(checker.check_is_input_compartment("http://purl.obolibrary.org/obo/PBPKO_00458"))
+        # Heart compartment (should be false)
+        self.assertFalse(checker.check_is_input_compartment("http://purl.obolibrary.org/obo/PBPKO_00480"))
+        # Invalid iri (should be false)
+        self.assertFalse(checker.check_is_input_compartment("XXXX"))
 
     def test_get_pbpko_parameters(self):
         checker = PbkOntologyChecker()

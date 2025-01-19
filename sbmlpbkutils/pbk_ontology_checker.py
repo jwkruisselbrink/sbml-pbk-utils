@@ -53,8 +53,27 @@ class PbkOntologyChecker():
         return list(self.obo.PBPKO_00252.descendants())
 
     def check_is_compartment(self, iri: str):
-        element = self.get_class(iri, self.pbpko_namespaces)
-        return element is not None and self.obo.PBPKO_00446 in element.ancestors()
+        pbpko_class = self.get_class(iri, self.pbpko_namespaces)
+        return pbpko_class is not None and self.obo.PBPKO_00446 in pbpko_class.ancestors()
+
+    def check_is_input_compartment(self, iri: str):
+        return self.check_is_oral_input_compartment(iri) \
+            or self.check_is_dermal_input_compartment(iri) \
+            or self.check_is_inhalation_input_compartment(iri)
+
+    def check_is_oral_input_compartment(self, iri: str):
+        pbpko_class = self.get_class(iri, self.pbpko_namespaces)
+        return pbpko_class is not None and pbpko_class is self.obo.PBPKO_00477
+
+    def check_is_dermal_input_compartment(self, iri: str):
+        pbpko_class = self.get_class(iri, self.pbpko_namespaces)
+        return pbpko_class \
+            and (pbpko_class is self.obo.PBPKO_00470 \
+                or pbpko_class is self.obo.PBPKO_00458)
+
+    def check_is_inhalation_input_compartment(self, iri: str):
+        pbpko_class = self.get_class(iri, self.pbpko_namespaces)
+        return pbpko_class is not None and pbpko_class is self.obo.PBPKO_00448
 
     def check_is_parameter(self, iri: str):
         element = self.get_class(iri, self.pbpko_namespaces)

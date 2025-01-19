@@ -3,8 +3,6 @@ import pandas as pd
 from sbmlutils.report.mathml import astnode_to_latex
 
 from . import PbkOntologyChecker
-from . import PbkModelAnnotator
-from . import term_definitions
 from . import create_unit_string
 
 class PbkModelInfosExtractor:
@@ -15,7 +13,6 @@ class PbkModelInfosExtractor:
     ):
         self.document = document
         self.model = self.document.getModel()
-        self.terms_by_uri_lookup = self._init_terms_by_uri_lookup()
         self.onto_checker = PbkOntologyChecker()
 
     def get_model_creators(self) -> pd.DataFrame:
@@ -228,16 +225,21 @@ class PbkModelInfosExtractor:
         input_compartments = {}
         for i in range(0, self.model.getNumCompartments()):
             compartment = self.model.getCompartment(i)
-            cv_terms = PbkModelAnnotator.get_cv_terms(compartment)
-            for cv_term in cv_terms:
-                lookup_key = f'{cv_term['qualifier']}#{cv_term['uri']}'
-                if (lookup_key in self.terms_by_uri_lookup.keys()):
-                    term_definition = self.terms_by_uri_lookup[lookup_key]
-                    if ('exposure_route' in term_definition.keys()):
+            cv_terms = get_cv_terms_by_type(compartment)
+            if ls.BQM_IS in cv_terms:
+                for term in cv_terms[ls.BQM_IS]:
+                    if self.onto_checker.check_is_oral_input_compartment(term):
                         input_compartments.update({
-                            compartment.getId() : term_definition['exposure_route'],
+                            compartment.getId() : "oral",
                         })
-                        continue
+                    elif self.onto_checker.check_is_dermal_input_compartment(term):
+                        input_compartments.update({
+                            compartment.getId() : "dermal",
+                        })
+                    elif self.onto_checker.check_is_inhalation_input_compartment(term):
+                        input_compartments.update({
+                            compartment.getId() : "inhalation",
+                        })
         return input_compartments
 
     def get_input_species(self):
@@ -252,19 +254,6 @@ class PbkModelInfosExtractor:
                     species.getId() : input_compartments[compartment]
                 })
         return input_species
-
-    def find_term_definition(self, element, element_type):
-        """Tries to find a resource definition for the specified element."""
-        element_id = element.getId()
-        for index, value in enumerate(term_definitions):
-            if value['element_type'] == element_type:
-                if 'recommended_id' in value.keys() \
-                    and element_id.lower() == value['recommended_id'].lower():
-                    return value
-                elif 'common_identifiers' in value.keys() \
-                    and any(element_id.lower() == val.lower() for val in value['common_identifiers']):
-                    return value
-        return None
 
     def get_pbko_class(
         self,
@@ -281,17 +270,6 @@ class PbkModelInfosExtractor:
                             return self.onto_checker.get_class(iri)
         return None
 
-    def _init_terms_by_uri_lookup(self):
-        """Tries to find a resource definition for the specified element."""
-        result = {}
-        for value in term_definitions:
-            if ('resources' in value.keys()):
-                for resource in value['resources']:
-                    result.update({
-                        f'{resource['qualifier']}#{resource['URI']}': value
-                    })
-        return result
-
     def _math_print_element(self, id):
         return f"\\mathtt{{{id.replace('_', '-')}}}"
 
@@ -304,3 +282,20 @@ class PbkModelInfosExtractor:
         if unit_def is not None:
             return create_unit_string(unit_def)
         return ""
+
+def get_cv_terms_by_type(
+    element: ls.SBase
+):
+    lookup = {}
+    cv_terms = element.getCVTerms()
+    for term in cv_terms:
+        num_resources = term.getNumResources()
+        for j in range(num_resources):
+            if term.getQualifierType() == ls.BIOLOGICAL_QUALIFIER:
+                qualifier_type = term.getBiologicalQualifierType()
+            elif term.getQualifierType() == ls.MODEL_QUALIFIER:
+                qualifier_type = term.getModelQualifierType()
+            if qualifier_type not in lookup:
+                lookup[qualifier_type] = []
+            lookup[qualifier_type].append(term.getResourceURI(j))
+    return lookup
