@@ -10,10 +10,10 @@ The `sbmlpbkutils` package is a small Python package that contains utility funct
 
 ### Install from GitHub
 
-To install a specific version, use the version tag. For instance, for version `v0.15.0`, use:
+To install a specific version, use the version tag. For instance, for version `v0.16.0`, use:
 
 ````
-pip install git+https://github.com/jwkruisselbrink/sbml-pbk-utils.git@v0.15.0
+pip install git+https://github.com/jwkruisselbrink/sbml-pbk-utils.git@v0.16.0
 ````
 
 To install the latest version available on the main Git branch, type:
