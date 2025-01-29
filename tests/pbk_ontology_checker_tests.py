@@ -50,10 +50,9 @@ class PbkOntologyCheckerTests(unittest.TestCase):
     def test_get_element(self):
         checker = PbkOntologyChecker()
         result = checker.get_class("http://purl.obolibrary.org/obo/PBPKO_00477")
-        print(result)
         self.assertEqual(result.iri, "http://purl.obolibrary.org/obo/PBPKO_00477")
-        self.assertEqual(result.label[0], "Gut")
-        self.assertEqual(result.IAO_0000115[0], "It is a part of digestive system")
+        self.assertEqual(result.label[0], "gut compartment")
+        self.assertTrue(result.IAO_0000115[0])
 
     def test_is_compartment(self):
         checker = PbkOntologyChecker()

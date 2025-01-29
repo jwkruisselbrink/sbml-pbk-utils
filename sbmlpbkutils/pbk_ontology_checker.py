@@ -1,6 +1,6 @@
 from owlready2 import *
 
-pbpko_path = "https://raw.githubusercontent.com/Crispae/pbpko/refs/heads/main/Robot/ontologies/pbpko.owl"
+pbpko_path = "https://raw.githubusercontent.com/InSilicoVida-Research-Lab/pbpko/refs/heads/main/Robot/ontologies/pbpko.owl"
 
 class PbkOntologyChecker():
 
