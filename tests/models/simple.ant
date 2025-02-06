@@ -6,13 +6,13 @@ model simple()
 
   ### Body size
   BW = 70            # body weight [kg]
-  VRc = 0.9003       # volume fraction Rest compartment [-]
-  VLc = 0.0257       # volume fraction Liver compartment [-]
-  VBc = 0.074        # volume fraction Blood compartment [-]
+  VRc = 0.9003       # rest-of-body volume as fraction body weight [L/kg]
+  VLc = 0.0257       # liver volume as fraction of body weight [L/kg]
+  VBc = 0.074        # blood volume as fraction of body weight [L/kg]
 
   ### Fractional flow rates
-  QRc = 0.773        # rest-of-body perfusion rate [L/kg/h]
-  QLc = 0.227        # liver perfusion rate [L/kg/h]
+  QRc = 0.773        # fraction of blood flow to rest-of-body [-]
+  QLc = 0.227        # fraction of blood flow to liver [-]
 
   ## Biochemical parameters
 
@@ -21,7 +21,7 @@ model simple()
   PCRest = 1.2       # partition coefficient rest:blood [-]
 
   #### Metabolism and excretion
-  CLUrine = 1        # excretion rate of parent [L/h]
+  CLUrine = 1        # urinary excretion rate [L/h]
 
   #### Absorption
   Ka = 0.05          # absorption rate from gut to liver [/h]
@@ -31,9 +31,9 @@ model simple()
   ## Physiology
 
   ### Flow rates
-  const QC := 15 * BW^0.74 # cardiac output [L/kg/h]
-  const QL := QC * QLc
-  const QR := QC * QRc
+  const QC := 15 * BW^0.74 # cardiac output [L/h]
+  const QL := QC * QLc     # blood flow to liver [L/h]
+  const QR := QC * QRc     # blood flow to rest-of-body [L/h]
 
   # Compartments
   compartment Blood := BW * VBc
