@@ -9,6 +9,7 @@ from sbmlpbkutils import AnnotationsTemplateGenerator
 sys.path.append('../sbmlpbkutils/')
 
 __test_outputs_path__ = './tests/__testoutputs__'
+__test_models_path__ = './tests/models/'
 
 class AnnotationsTemplateGeneratorTests(unittest.TestCase):
 
@@ -19,18 +20,29 @@ class AnnotationsTemplateGeneratorTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.sbml_files = [
-            os.path.join('./tests/models', 'simple.sbml'),
-            os.path.join('./tests/models', 'simple.annotated.sbml'),
-            os.path.join('./tests/models', 'euromix.sbml'),
-            os.path.join('./tests/models', 'euromix.annotated.sbml')
+            os.path.join(__test_models_path__, 'simple.sbml'),
+            os.path.join(__test_models_path__, 'simple.annotated.sbml'),
+            os.path.join(__test_models_path__, 'euromix.sbml'),
+            os.path.join(__test_models_path__, 'euromix.annotated.sbml')
         ]
 
+    def test_get_annotations_template(self):
+        # Arrange
+        sbml_file = os.path.join(__test_models_path__, 'simple.sbml') 
+        document = ls.readSBML(sbml_file)
+        model = document.getModel()
+        annotationsTemplateGenerator = AnnotationsTemplateGenerator()
+        df = annotationsTemplateGenerator.generate(model, False)
+
+        # Check if template contains record for extent unit
+        self.assertEqual(len(df.loc[df['element_id'] == 'extentUnits']), 1)
+
     def test_generate_no_fill(self):
-        infosExporter = AnnotationsTemplateGenerator()
+        annotationsTemplateGenerator = AnnotationsTemplateGenerator()
         for sbml_file in self.sbml_files:
             document = ls.readSBML(sbml_file)
             model = document.getModel()
-            df = infosExporter.generate(model, False)
+            df = annotationsTemplateGenerator.generate(model, False)
             self.assertEqual(df.ndim, 2)
             sbml_basename = os.path.basename(sbml_file)
             stem = Path(sbml_basename).stem
@@ -38,11 +50,11 @@ class AnnotationsTemplateGeneratorTests(unittest.TestCase):
             df.to_csv(csv_file, index=False)
 
     def test_generate_try_fill(self):
-        infosExporter = AnnotationsTemplateGenerator()
+        annotationsTemplateGenerator = AnnotationsTemplateGenerator()
         for sbml_file in self.sbml_files:
             document = ls.readSBML(sbml_file)
             model = document.getModel()
-            df = infosExporter.generate(model, True)
+            df = annotationsTemplateGenerator.generate(model, True)
             self.assertEqual(df.ndim, 2)
             sbml_basename = os.path.basename(sbml_file)
             stem = Path(sbml_basename).stem

@@ -128,7 +128,7 @@ class AnnotationsTemplateGenerator:
         )
         return terms
 
-    def get_document_level_terms(self, model):
+    def get_document_level_terms(self, model: ls.Model):
         element_type="document"
         dt = []
         dt.append([
@@ -136,6 +136,16 @@ class AnnotationsTemplateGenerator:
             element_type,
             "model substances unit",
             get_ucum_unit_string(model.getSubstanceUnits()),
+            "",
+            "",
+            "",
+            ""
+        ])
+        dt.append([
+            "extentUnits",
+            element_type,
+            "model extent unit",
+            get_ucum_unit_string(model.getExtentUnits()),
             "",
             "",
             "",
