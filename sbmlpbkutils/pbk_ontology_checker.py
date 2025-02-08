@@ -73,7 +73,10 @@ class PbkOntologyChecker():
 
     def check_is_inhalation_input_compartment(self, iri: str):
         pbpko_class = self.get_class(iri, self.pbpko_namespaces)
-        return pbpko_class is not None and pbpko_class is self.obo.PBPKO_00448
+        # Lung compartment or sub-class of lung compartment (e.g. alveolar air)
+        return pbpko_class \
+            and (pbpko_class is self.obo.PBPKO_00559 \
+            or self.obo.PBPKO_00559 in pbpko_class.ancestors())
 
     def check_is_parameter(self, iri: str):
         element = self.get_class(iri, self.pbpko_namespaces)

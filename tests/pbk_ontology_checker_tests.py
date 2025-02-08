@@ -67,7 +67,7 @@ class PbkOntologyCheckerTests(unittest.TestCase):
     def test_is_input_compartment(self):
         checker = PbkOntologyChecker()
         # Alveolar air compartment (should be true)
-        self.assertTrue(checker.check_is_input_compartment("http://purl.obolibrary.org/obo/PBPKO_00458"))
+        self.assertTrue(checker.check_is_input_compartment("http://purl.obolibrary.org/obo/PBPKO_00448"))
         # Gut compartment (should be true)
         self.assertTrue(checker.check_is_input_compartment("http://purl.obolibrary.org/obo/PBPKO_00477"))
         # Skin compartment (should be true)
@@ -78,6 +78,15 @@ class PbkOntologyCheckerTests(unittest.TestCase):
         self.assertFalse(checker.check_is_input_compartment("http://purl.obolibrary.org/obo/PBPKO_00480"))
         # Invalid iri (should be false)
         self.assertFalse(checker.check_is_input_compartment("XXXX"))
+
+    def test_is_inhalation_compartment(self):
+        checker = PbkOntologyChecker()
+        # Alveolar air compartment (should be true)
+        self.assertTrue(checker.check_is_inhalation_input_compartment("http://purl.obolibrary.org/obo/PBPKO_00448"))
+        # Lung compartment (should be true)
+        self.assertTrue(checker.check_is_inhalation_input_compartment("http://purl.obolibrary.org/obo/PBPKO_00559"))
+        # Skin compartment (should be false)
+        self.assertFalse(checker.check_is_inhalation_input_compartment("http://purl.obolibrary.org/obo/PBPKO_00470"))
 
     def test_get_pbpko_parameters(self):
         checker = PbkOntologyChecker()
