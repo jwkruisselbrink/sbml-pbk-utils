@@ -28,12 +28,12 @@ class ParametrisationsTemplateGenerator:
                     ""
                 ]
                 if include_element_name:
-                    row.insert(2, element.getName())
+                    row.insert(3, element.getName())
                 dt.append(row)
 
         colnames = ["element_id", "value", "unit", "reference"]
         if include_element_name:
-            colnames.insert(2, "description")
+            colnames.insert(3, "description")
 
         terms = pd.DataFrame(
             dt,
