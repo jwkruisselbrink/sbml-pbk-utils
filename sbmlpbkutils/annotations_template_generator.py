@@ -175,7 +175,7 @@ class AnnotationsTemplateGenerator:
 
     def get_compartment_terms(self, model, try_fill):
         element_type="compartment"
-        required_qualifiers = ['BQM_IS', 'BQB_IS']
+        required_qualifiers = ['BQM_IS']
         dt = []
         for i in range(0,model.getNumCompartments()):
             element = model.getCompartment(i)
@@ -189,7 +189,7 @@ class AnnotationsTemplateGenerator:
         try_fill
     ):
         element_type="species"
-        required_qualifiers = ['BQM_IS']
+        required_qualifiers = ['BQM_IS', 'BQB_IS']
         dt = []
         for i in range(0,model.getNumSpecies()):
             element = model.getSpecies(i)
@@ -203,7 +203,7 @@ class AnnotationsTemplateGenerator:
         try_fill: bool
     ) -> list[str]:
         element_type="parameter"
-        required_qualifiers = ['BQM_IS']
+        required_qualifiers = ['BQM_IS', 'BQB_IS']
         dt = []
         for i in range(0,model.getNumParameters()):
             element = model.getParameter(i)
@@ -269,7 +269,11 @@ class AnnotationsTemplateGenerator:
 
         return dt
 
-    def find_term_definition(self, element, element_type):
+    def find_term_definition(
+        self,
+        element: ls.SBase,
+        element_type: str
+    ):
         """Tries to find a resource definition for the specified element."""
         element_id = element.getId()
         for index, value in enumerate(term_definitions):
