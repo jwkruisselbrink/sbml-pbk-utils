@@ -10,10 +10,10 @@ The `sbmlpbkutils` package is a small Python package that contains utility funct
 
 ### Install from GitHub
 
-To install a specific version, use the version tag. For instance, for version `v0.17.0`, use:
+To install a specific version, use the version tag. For instance, for version `v0.18.0`, use:
 
 ````
-pip install git+https://github.com/jwkruisselbrink/sbml-pbk-utils.git@v0.17.0
+pip install git+https://github.com/jwkruisselbrink/sbml-pbk-utils.git@v0.18.0
 ````
 
 To install the latest version available on the main Git branch, type:
@@ -38,7 +38,7 @@ The [PbkModelAnnotator](sbmlpbkutils/pbk_model_annotator.py) class can be used t
 | unit            | For unit annotation: the unit associated with the model element. Units should be compliant with the synonyms of the [unit definitions](sbmlpbkutils/unit_definitions.py). This catalogue of unit definitions aims to align as much as possible with the [Unified Code for Units of Measure (UCUM)](https://ucum.org/) and the [QUDT Ontologies](https://qudt.org/). |
 | annotation_type | For RDF annotation: type of the SBML term-annotation (default RDF). |
 | qualifier       | For RDF annotation: [BioModels Qualifier](https://github.com/combine-org/combine-specifications/blob/main/specifications/qualifiers-1.1.md#model-qualifiers) of the annotation (RDF predicate). Model qualifier types: `BQM_IS`, `BQM_IS_DESCRIBED_BY`, `BQM_IS_DERIVED_FROM`, `BQM_IS_INSTANCE_OF`, `BQM_HAS_INSTANCE`. Biological qualifier types: `BQB_IS`, `BQB_HAS_PART`, `BQB_IS_PART_OF`, `BQB_IS_VERSION_OF`, `BQB_HAS_VERSION`, `BQB_IS_HOMOLOG_TO`, `BQB_IS_DESCRIBED_BY`, `BQB_IS_ENCODED_BY`, `BQB_ENCODES`, `BQB_OCCURS_IN`, `BQB_HAS_PROPERTY`, `BQB_IS_PROPERTY_OF`, `BQB_HAS_TAXON`. |
-| URI             | For RDF annotation: annotation resource URI for the term-annotation (RDF object). The [term definitions](sbmlpbkutils/term_definitions.py) file contains definitions of commonly used model terms, together with recommended resource URIs. This file is still under construction, but is intended to align with a common, harmonized annotation standard for PBK models. It is planned to include resources URIs from the [PBPK ontology](https://github.com/Crispae/pbpko/tree/main) in the near future. |
+| URI             | For RDF annotation: annotation resource URI for the term-annotation (RDF object). The [term definitions](sbmlpbkutils/term_definitions.py) file contains definitions of commonly used model terms, together with recommended resource URIs. This file is still under construction, but is intended to align with a common, harmonized annotation standard for PBK models. It is planned to include resources URIs from the [PBPK ontology](https://github.com/InSilicoVida-Research-Lab/pbpko) in the near future. |
 
 For specification of the SBML model global substance unit, time unit, and volume unit, use **element_id** values of *substanceUnits*, *timeUnits*, and *volumeUnits* with **sbml_type** *document*.
 
@@ -50,9 +50,10 @@ Having a harmonized standard for implementation of PBK models allows for various
 
 This is a first version in which some rudimentary file and consistency checks are performed. The validation report is printed to the console. This first version is inspired by the [example](https://synonym.caltech.edu/software/libsbml/5.18.0/docs/formatted/python-api/validate_s_b_m_l_8py-example.html) presented in the libSBML documentation.
 
-- Every compartment should have a BQM_IS annotation linking associating the compartment with a known compartment of the PBPK ontology.
-- Every parameter should have a BQM_IS annotation linking associating the compartment with a known parameter of the PBPK ontology.
-- Pyhisical compartments should have a BQB_IS annotation linking associating the compartment with a biological entity (organ, tissue, body fluid) of the UBERON ontology.
+- Every compartment should have a BQM_IS annotation linking associating the compartment with a known [compartment](http://purl.obolibrary.org/obo/PBPKO_00446) of the [PBPK ontology](https://github.com/InSilicoVida-Research-Lab/pbpko).
+- Every species should have a BQM_IS annotation linking associating the species with a known [output parameter](http://purl.obolibrary.org/obo/PBPKO_00252) of the [PBPK ontology](https://github.com/InSilicoVida-Research-Lab/pbpko).
+- Every parameter should have a BQM_IS annotation linking associating the parameter with a known [parameter](http://purl.obolibrary.org/obo/PBPKO_00002) of the [PBPK ontology](https://github.com/InSilicoVida-Research-Lab/pbpko).
+- When the parameter is a [biochemical parameter](http://purl.obolibrary.org/obo/PBPKO_00139) or a [physicochemical parameter](http://purl.obolibrary.org/obo/PBPKO_00126), the the parameter should also have a BQB_IS annotation linking the parameter to the chemical for which it applies.
 
 ## About the development
 
@@ -64,6 +65,6 @@ At present, the following resources are considered essential for building up a s
 - The [SBMLutils](https://github.com/matthiaskoenig/sbmlutils) Python package provides convenient utilities for manipulation and annotation of SBML models. It also serves as a major source of inspiration for this PBK utils package. The reason for creating a package specifically for PBK models is to include also tooling that is specifically tailored to the sub-domain of PBK models.
 - The [libSBML](https://github.com/sbmlteam/python-libsbml) python package provides the essential functionality for manipulating SBML models. For instance, for enriching SBML model implementations with annotations, units and descriptions of the model elements.
 - For (semantic) annotation of PBK models, the controlled vocabularies of the following ontologies are considered relevant:
-  - Use of the (currently being developed) [PBPK ontology](https://github.com/Crispae/pbpko/tree/main) for annotation of all model elements (e.g., compartments, species, parameters).
+  - Use of the (currently being developed) [PBPK ontology](https://github.com/InSilicoVida-Research-Lab/pbpko) for annotation of all model elements (e.g., compartments, species, parameters).
   - Alignment with the [Unified Code for Units of Measure (UCUM)](https://ucum.org/) and the [QUDT Ontologies](https://qudt.org/) for annotation of units, combined with the facilities for specification of units available in SBML.
   - Use of the [UBERON](https://obophenotype.github.io/uberon/about/) ontology for relating PBK model compartments to the biological entities they represent.
