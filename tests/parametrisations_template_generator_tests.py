@@ -31,7 +31,7 @@ class ParametrisationsTemplateGeneratorTests(unittest.TestCase):
         sbml_file = os.path.join(__test_models_path__, 'simple.sbml') 
         document = ls.readSBML(sbml_file)
         model = document.getModel()
-        df = generator.generate(model)
+        df = generator.generate_parameters_df(model)
         self.assertEqual(df.ndim, 2)
 
     def test_generate_parameterisation_tepmlate(self):
@@ -39,11 +39,17 @@ class ParametrisationsTemplateGeneratorTests(unittest.TestCase):
         for sbml_file in self.sbml_files:
             document = ls.readSBML(sbml_file)
             model = document.getModel()
-            df = generator.generate(model)
-            self.assertEqual(df.ndim, 2)
             stem = Path(sbml_file).stem
-            csv_file = os.path.join(__test_outputs_path__, f'{stem}.parametrisation.csv')
-            df.to_csv(csv_file, index=False)
+
+            (df_instance, df_params) = generator.generate(
+                    model
+                )
+            self.assertEqual(df_params.ndim, 2)
+
+            csv_file = os.path.join(__test_outputs_path__, f'{stem}.instance.csv')
+            df_instance.to_csv(csv_file, index=False)
+            csv_file = os.path.join(__test_outputs_path__, f'{stem}.instance_params.csv')
+            df_params.to_csv(csv_file, index=False)
 
 if __name__ == '__main__':
     unittest.main()
