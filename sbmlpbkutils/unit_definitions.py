@@ -503,7 +503,8 @@ unit_definitions = [
         "UCUM" : "ug/L",
         "synonyms" : [
             "ug_per_L",
-            "ug/L"
+            "ug/L",
+            "ug.L-1"
         ],
         "units": [
             { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -6 },
@@ -724,6 +725,34 @@ unit_definitions = [
         ]
     },
     {
+        "id" : "MicroGM_PER_HR",
+        "qudt" : "",
+        "UCUM" : "ug/h",
+        "synonyms" : [
+            "ug_per_h",
+            "ug/h",
+            "ug.h-1"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -6 },
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 }
+        ]
+    },
+    {
+        "id" : "MicroGM_PER_DAY",
+        "qudt" : "",
+        "UCUM" : "ug/day",
+        "synonyms" : [
+            "ug_per_day",
+            "ug/d",
+            "ug.d-1"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -6 },
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 }
+        ]
+    },
+    {
         "id" : "L_PER_HR",
         "qudt" : "L-PER-HR",
         "UCUM" : "L/h",
@@ -817,7 +846,6 @@ unit_definitions = [
         "qudt" : "",
         "UCUM" : "L/(d.kg^0.75)",
         "synonyms" : [
-            "L_PER_DAY_PER_KiloGM3DIV4",
             "L/d/kg^0.75",
             "L/(d.kg^0.75)",
             "L.d-1.kg-0.75"
@@ -825,6 +853,22 @@ unit_definitions = [
         "units": [
             { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": 0 },
             { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
+        ]
+    },
+    {
+        "id" : "L_PER_HR_PER_KiloGM0P75",
+        "qudt" : "",
+        "UCUM" : "L/(h.kg^0.75)",
+        "synonyms" : [
+            "L_PER_HR_PER_KiloGM3DIV4",
+            "L/h/kg^0.75",
+            "L/(h.kg^0.75)",
+            "L.h-1.kg-0.75"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": 0 },
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 },
             { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
         ]
     },
@@ -843,6 +887,21 @@ unit_definitions = [
         "units": [
             { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
             { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.25, "multiplier": 1, "scale": 3 },
+        ]
+    },
+    {
+        "id" : "MicroGM_PER_HRY_PER_KiloGM0P75",
+        "qudt" : "",
+        "UCUM" : "ug/(h.kg^0.75)",
+        "synonyms" : [
+            "ug/h/kg^0.75",
+            "ug/(h.kg^0.75)",
+            "ug.h-1.kg-0.75"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -6 },
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
         ]
     },
     {
