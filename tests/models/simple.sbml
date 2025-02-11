@@ -20,15 +20,16 @@
       <parameter id="VRc" value="0.9003" constant="true"/>
       <parameter id="VLc" value="0.0257" constant="true"/>
       <parameter id="VBc" value="0.074" constant="true"/>
+      <parameter id="QCC" value="15" constant="true"/>
       <parameter id="QRc" value="0.773" constant="true"/>
       <parameter id="QLc" value="0.227" constant="true"/>
       <parameter id="PCLiver" value="2" constant="true"/>
       <parameter id="PCRest" value="1.2" constant="true"/>
       <parameter id="CLUrine" value="1" constant="true"/>
       <parameter id="Ka" value="0.05" constant="true"/>
-      <parameter id="QC" value="347.90751404651" constant="false"/>
-      <parameter id="QL" value="78.9750056885578" constant="false"/>
-      <parameter id="QR" value="268.932508357952" constant="false"/>
+      <parameter id="QC" value="363.006823874038" constant="false"/>
+      <parameter id="QL" value="82.4025490194066" constant="false"/>
+      <parameter id="QR" value="280.604274854631" constant="false"/>
     </listOfParameters>
     <listOfRules>
       <assignmentRule variable="Blood">
@@ -62,11 +63,11 @@
         <math xmlns="http://www.w3.org/1998/Math/MathML">
           <apply>
             <times/>
-            <cn type="integer"> 15 </cn>
+            <ci> QCC </ci>
             <apply>
               <power/>
               <ci> BW </ci>
-              <cn> 0.74 </cn>
+              <cn> 0.75 </cn>
             </apply>
           </apply>
         </math>
