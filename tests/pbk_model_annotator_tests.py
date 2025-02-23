@@ -7,6 +7,8 @@ import libsbml as ls
 import pandas as pd
 from pathlib import Path
 
+from parameterized import parameterized
+
 from sbmlpbkutils import PbkModelAnnotator
 
 sys.path.append('../sbmlpbkutils/')
@@ -148,6 +150,63 @@ class PbkModelAnnotatorTests(unittest.TestCase):
         element = model.getElementBySId(element_id)
         element_unit = element.getUnits()
         self.assertEqual(element_unit, new_unit)
+
+    @parameterized.expand([
+        ("Liver"),
+        ("Blood")
+    ])
+    def test_remove_element_rdf_annotation(self, element_id):
+        # Arrange
+        sbml_file = os.path.join(__test_models_path__, 'simple.annotated.sbml') 
+        annotator = PbkModelAnnotator()
+        document = ls.readSBML(sbml_file)
+        logger = logging.getLogger(__name__)
+
+        # Assert (check whether annotation currently exists)
+        model = document.getModel()
+        element = model.getElementBySId(element_id)
+        cv_terms = PbkModelAnnotator.get_cv_terms(element, ls.MODEL_QUALIFIER, ls.BQM_IS)
+        self.assertIn("http://purl.obolibrary.org/obo/PBPKO_", cv_terms[0]['uri'])
+
+        # Act
+        annotator.remove_element_rdf_annotation(
+            document,
+            element_id,
+            'BQM_IS',
+            logger
+        )
+
+        # Assert
+        model = document.getModel()
+        element = model.getElementBySId(element_id)
+        cv_terms = PbkModelAnnotator.get_cv_terms(element, ls.MODEL_QUALIFIER, ls.BQM_IS)
+        self.assertEqual(len(cv_terms), 0)
+
+        # Write to SBML
+        sbml_out = os.path.join(__test_outputs_path__, f'test_remove_element_rdf_annotation_{element_id}.sbml')
+        ls.writeSBML(document, sbml_out)
+
+    def test_remove_element_rdf_annotation_already_empty(self):
+        # Arrange
+        sbml_file = os.path.join(__test_models_path__, 'simple.sbml') 
+        annotator = PbkModelAnnotator()
+        document = ls.readSBML(sbml_file)
+        logger = logging.getLogger(__name__)
+        element_id = 'Gut'
+
+        # Act
+        annotator.remove_element_rdf_annotation(
+            document,
+            element_id,
+            'BQM_IS',
+            logger
+        )
+
+        # Assert
+        model = document.getModel()
+        element = model.getElementBySId(element_id)
+        cv_terms = PbkModelAnnotator.get_cv_terms(element, ls.MODEL_QUALIFIER, ls.BQM_IS)
+        self.assertEqual(len(cv_terms), 0)
 
     def test_set_element_rdf_annotation(self):
         # Arrange
