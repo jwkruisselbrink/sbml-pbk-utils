@@ -149,6 +149,58 @@ class PbkModelAnnotatorTests(unittest.TestCase):
         element_unit = element.getUnits()
         self.assertEqual(element_unit, new_unit)
 
+    def test_clear_element_rdf_annotation(self):
+        # Arrange
+        sbml_file = os.path.join(__test_models_path__, 'simple.annotated.sbml') 
+        annotator = PbkModelAnnotator()
+        document = ls.readSBML(sbml_file)
+        logger = logging.getLogger(__name__)
+        element_id = 'Gut'
+
+        # Assert (check whether annotation currently exists)
+        model = document.getModel()
+        element = model.getElementBySId(element_id)
+        cv_terms = PbkModelAnnotator.get_cv_terms(element, ls.MODEL_QUALIFIER, ls.BQM_IS)
+        self.assertEqual(cv_terms[0]['uri'], "http://purl.obolibrary.org/obo/PBPKO_00477")
+
+        # Act
+        annotator.clear_element_rdf_annotation(
+            document,
+            element_id,
+            'BQM_IS',
+            logger
+        )
+
+        # Assert
+        model = document.getModel()
+        element = model.getElementBySId(element_id)
+        cv_terms = PbkModelAnnotator.get_cv_terms(element, ls.MODEL_QUALIFIER, ls.BQM_IS)
+        print(cv_terms)
+        self.assertEqual(len(cv_terms), 0)
+
+    def test_clear_element_rdf_annotation_already_empty(self):
+        # Arrange
+        sbml_file = os.path.join(__test_models_path__, 'simple.sbml') 
+        annotator = PbkModelAnnotator()
+        document = ls.readSBML(sbml_file)
+        logger = logging.getLogger(__name__)
+        element_id = 'Gut'
+
+        # Act
+        annotator.clear_element_rdf_annotation(
+            document,
+            element_id,
+            'BQM_IS',
+            logger
+        )
+
+        # Assert
+        model = document.getModel()
+        element = model.getElementBySId(element_id)
+        cv_terms = PbkModelAnnotator.get_cv_terms(element, ls.MODEL_QUALIFIER, ls.BQM_IS)
+        print(cv_terms)
+        self.assertEqual(len(cv_terms), 0)
+
     def test_set_element_rdf_annotation(self):
         # Arrange
         sbml_file = os.path.join(__test_models_path__, 'simple.sbml') 

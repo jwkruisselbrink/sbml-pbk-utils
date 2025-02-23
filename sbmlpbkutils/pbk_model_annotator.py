@@ -369,6 +369,68 @@ class PbkModelAnnotator:
             overwrite
         )
 
+    def clear_element_rdf_annotation(
+        self,
+        document: ls.SBMLDocument,
+        element_id: str,
+        qualifier: str,
+        logger: Logger
+    ) -> None:
+        """Clear SBase element annotation of the provided qualifier.
+        """
+        model = document.getModel()
+        element = model.getElementBySId(element_id)
+
+        # Check qualifier type
+        if qualifier.startswith("BQB"):
+            qualifier_type = ls.BIOLOGICAL_QUALIFIER
+            ls_qualifier_str = ModelAnnotator.get_SBMLQualifier(qualifier, "BQB")
+            ls_qualifier = ls.BiolQualifierType_fromString(ls_qualifier_str)
+        elif qualifier.startswith("BQM"):
+            qualifier_type = ls.MODEL_QUALIFIER
+            ls_qualifier_str = ModelAnnotator.get_SBMLQualifier(qualifier, "BQM")
+            ls_qualifier = ls.ModelQualifierType_fromString(ls_qualifier_str)
+        else:
+            msg = f"Failed to clear [{qualifier}] resource IRI for {element}: unsupported qualifier."
+            logger.error(msg)
+            return
+
+        # meta id has to be set
+        if not element.isSetMetaId():
+            element.setMetaId(utils.create_metaid(element))
+
+        # Create or get the CV term
+        cv_terms = element.getCVTerms()
+        if cv_terms is not None:
+
+            # Get CV term from the list of CV terms
+            cv_term = None
+            for term in cv_terms:
+                if term.getQualifierType() == qualifier_type:
+                    if term.getQualifierType() == ls.BIOLOGICAL_QUALIFIER \
+                        and term.getBiologicalQualifierType() == ls_qualifier:
+                        cv_term = term
+                        break
+                    elif term.getQualifierType() == ls.MODEL_QUALIFIER \
+                        and term.getModelQualifierType() == ls_qualifier:
+                        cv_term = term
+                        break
+
+            if cv_term is not None:
+                # Collect current resources
+                current_resources = []
+                num_resources = cv_term.getNumResources()
+                for i in range(num_resources):
+                    current_resources.append(cv_term.getResourceURI(i))
+
+                logger.info(f"Clearing [{qualifier}] resource for {element}.")
+
+                # Remove all of the current resources one by one
+                for uri in current_resources:
+                    if cv_term.removeResource(uri) != ls.LIBSBML_OPERATION_SUCCESS:
+                        logger.error(f"Failed to remove current [{qualifier}] resource [{uri}] for {element}.")
+                        return
+
     def _set_element_unit(
         self,
         model: ls.Model,
