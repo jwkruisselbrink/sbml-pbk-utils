@@ -24,6 +24,11 @@ class UnitDefinitionsTests(unittest.TestCase):
             msg = f"Generated unit string '{unit_string}' not in synonyms of unit '{definition["id"]}' [{aliases}]"
             self.assertIn(unit_string, definition['synonyms'], msg)
 
+    def test_unit_definition_ucum(self):
+        for definition in unit_definitions:
+            if definition['UCUM']:
+                self.assertIn(definition['UCUM'], definition['synonyms'])
+
     def test_volume_unit_definition(self):
         volume_unit_defs = get_volume_unit_definitions()
         tabu_list = ['KiloL', 'HectoL', 'DecaL', 'DeciGM', 'NanoL', 'PicoL']

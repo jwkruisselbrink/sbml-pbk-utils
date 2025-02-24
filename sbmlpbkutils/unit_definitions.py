@@ -330,7 +330,7 @@ unit_definitions = [
     {
         "id" : "MilliGM_PER_GM",
         "qudt" : "MilliGM-PER-GM",
-        "UCUM" : "mg/kg",
+        "UCUM" : "mg/g",
         "synonyms" : [
             "mg/g",
             "mg_per_g"
@@ -741,10 +741,11 @@ unit_definitions = [
     {
         "id" : "MicroGM_PER_DAY",
         "qudt" : "",
-        "UCUM" : "ug/day",
+        "UCUM" : "ug/d",
         "synonyms" : [
             "ug_per_day",
             "ug/d",
+            "ug/day",
             "ug.d-1"
         ],
         "units": [
@@ -769,10 +770,11 @@ unit_definitions = [
     {
         "id" : "L_PER_DAY",
         "qudt" : "L-PER-DAY",
-        "UCUM" : "L/day",
+        "UCUM" : "L/d",
         "synonyms" : [
             "L_PER_DAY",
             "L/d",
+            "L/day",
             "L.d-1"
         ],
         "units": [
@@ -887,6 +889,24 @@ unit_definitions = [
         "units": [
             { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
             { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.25, "multiplier": 1, "scale": 3 },
+        ]
+    },
+    {
+        "id" : "PER_DAY_PER_KiloGM-0P25",
+        "qudt" : "",
+        "UCUM" : "1/(d.kg^-0.25)",
+        "synonyms" : [
+            "PER_DAY_PER_KiloGM-0P25",
+            "1/d/kg^-0.25",
+            "/d/kg^-0.25",
+            "/d.kg^0.25",
+            "1/(d.kg^-0.25)",
+            "/(d.kg^-0.25)",
+            "d-1.kg^0.25"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": 0.25, "multiplier": 1, "scale": 3 },
         ]
     },
     {
