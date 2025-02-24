@@ -892,11 +892,11 @@ unit_definitions = [
         ]
     },
     {
-        "id" : "PER_DAY_PER_KiloGM-0P25",
+        "id" : "PER_DAY_KiloGM0P25",
         "qudt" : "",
         "UCUM" : "1/(d.kg^-0.25)",
         "synonyms" : [
-            "PER_DAY_PER_KiloGM-0P25",
+            "PER_DAY_KiloGM0P25",
             "1/d/kg^-0.25",
             "/d/kg^-0.25",
             "/d.kg^0.25",

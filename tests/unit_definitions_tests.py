@@ -22,6 +22,7 @@ class UnitDefinitionsTests(unittest.TestCase):
             unit_string = create_unit_string(unit_definition)
             aliases = ', '.join(definition['synonyms'])
             msg = f"Generated unit string '{unit_string}' not in synonyms of unit '{definition["id"]}' [{aliases}]"
+            self.assertEqual(unit_definition.getId(), definition['id'])
             self.assertIn(unit_string, definition['synonyms'], msg)
 
     def test_unit_definition_ucum(self):
