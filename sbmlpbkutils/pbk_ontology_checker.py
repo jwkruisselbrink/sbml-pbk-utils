@@ -10,12 +10,6 @@ class PbkOntologyChecker():
         "url": "http://purl.obolibrary.org/obo/"
     }]
 
-    pbpko_namespaces = [{
-        "key": "obo",
-        "separator": ":",
-        "url": "http://purl.obolibrary.org/obo/"
-    }]
-
     def __init__(self) -> None:
         self.onto = get_ontology(pbpko_path)
         self.onto.load()

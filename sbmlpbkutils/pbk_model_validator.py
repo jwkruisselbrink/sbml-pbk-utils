@@ -230,7 +230,7 @@ class PbkModelValidator:
               msg = f"Found multiple BQM_IS annotations refering to a PBPKO term for parameter [{element.getId()}]."
               messages.append(ValidationRecord(StatusLevel.ERROR, ErrorCode.PARAMETER_MULTIPLE_PBPKO_BQM_TERMS, msg))
               valid = False
-          else:  
+          else:
               pbpko_term = pbpko_terms[0]
               if not self.ontology_checker.check_is_parameter(pbpko_term):
                   msg = f"Specified BQM_IS resource [{pbpko_term}] for parameter [{element.getId()}] does not refer to a parameter."

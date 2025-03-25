@@ -110,17 +110,21 @@ _qualifier_definitions = [
 
 class AnnotationsTemplateGenerator:
 
-    def generate(self, model: ls.Model, try_fill: bool = True):
+    def generate(
+        self,
+        model: ls.Model,
+        try_fill: bool = True
+    ):
         """Generates an annotations data table 
         file and write results to the specified out file."""
         dt = []
-        dt_model = self.get_document_level_terms(model)
+        dt_model = self._get_document_level_terms(model)
         dt.extend(dt_model)
-        dt_compartments = self.get_compartment_terms(model, try_fill)
+        dt_compartments = self._get_compartment_terms(model, try_fill)
         dt.extend(dt_compartments)
-        dt_species = self.get_species_terms(model, try_fill)
+        dt_species = self._get_species_terms(model, try_fill)
         dt.extend(dt_species)
-        dt_parameters = self.get_parameter_terms(model, try_fill)
+        dt_parameters = self._get_parameter_terms(model, try_fill)
         dt.extend(dt_parameters)
         terms = pd.DataFrame(
             dt,
@@ -128,7 +132,10 @@ class AnnotationsTemplateGenerator:
         )
         return terms
 
-    def get_document_level_terms(self, model: ls.Model):
+    def _get_document_level_terms(
+        self,
+        model: ls.Model
+    ) -> list[str]:
         element_type="document"
         dt = []
         dt.append([
@@ -173,7 +180,11 @@ class AnnotationsTemplateGenerator:
         ])
         return dt
 
-    def get_compartment_terms(self, model, try_fill):
+    def _get_compartment_terms(
+        self,
+        model: ls.Model,
+        try_fill: bool
+    ) -> list[str]:
         element_type="compartment"
         required_qualifiers = ['BQM_IS']
         dt = []
@@ -183,11 +194,11 @@ class AnnotationsTemplateGenerator:
             dt.extend(element_terms)
         return dt
 
-    def get_species_terms(
+    def _get_species_terms(
         self,
-        model,
-        try_fill
-    ):
+        model: ls.Model,
+        try_fill: bool
+    ) -> list[str]:
         element_type="species"
         required_qualifiers = ['BQM_IS', 'BQB_IS']
         dt = []
@@ -197,9 +208,9 @@ class AnnotationsTemplateGenerator:
             dt.extend(element_terms)
         return dt
 
-    def get_parameter_terms(
+    def _get_parameter_terms(
         self,
-        model,
+        model: ls.Model,
         try_fill: bool
     ) -> list[str]:
         element_type="parameter"
