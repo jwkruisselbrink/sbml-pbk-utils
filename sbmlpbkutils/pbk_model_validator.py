@@ -94,11 +94,17 @@ class PbkModelValidator:
   ):
     """Runs consistency checks on the units."""
     sbmlDoc.setConsistencyChecks(ls.LIBSBML_CAT_UNITS_CONSISTENCY, self.ucheck)
-    failures = sbmlDoc.checkConsistency()
+    failures = sbmlDoc.checkConsistencyWithStrictUnits()
     if failures > 0:
       for i in range(failures):
-        severity = sbmlDoc.getError(i).getSeverity()
-        if (severity == ls.LIBSBML_SEV_ERROR) or (severity == ls.LIBSBML_SEV_FATAL):
+        error = sbmlDoc.getError(i)
+        error_code = error.getErrorId()
+        severity = error.getSeverity()
+        #logger.warning(error_code)
+        #logger.warning(error.getShortMessage())
+        if (severity == ls.LIBSBML_SEV_ERROR \
+          or severity == ls.LIBSBML_SEV_FATAL) \
+          and error_code != ls.UndeclaredUnits:
           logger.error(sbmlDoc.getError(i).getMessage())
         else:
           logger.warning(sbmlDoc.getError(i).getMessage())

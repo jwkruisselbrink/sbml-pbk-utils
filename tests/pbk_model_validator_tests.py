@@ -6,6 +6,7 @@ import sys
 import unittest
 import uuid
 from pathlib import Path
+from parameterized import parameterized
 
 from sbmlpbkutils import PbkModelValidator, PbkModelAnnotator
 from sbmlpbkutils import ErrorCode, StatusLevel
@@ -21,8 +22,12 @@ class PbkModelValidatorTests(unittest.TestCase):
         from pathlib import Path
         Path(__test_outputs_path__).mkdir(parents=True, exist_ok=True)
 
-    def test_validate_simple(self):
-        sbml_file = os.path.join(__test_models_path__, 'simple.sbml')
+    @parameterized.expand([
+        ("simple.sbml"),
+        ("euromix.annotated.sbml")
+    ])
+    def test_validate_simple(self, file):
+        sbml_file = os.path.join(__test_models_path__, file)
         validator = PbkModelValidator()
         sbml_basename = os.path.basename(sbml_file)
         log_file = os.path.join(__test_outputs_path__, Path(sbml_basename).with_suffix('.validation.log'))
