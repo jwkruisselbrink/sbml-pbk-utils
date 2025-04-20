@@ -1,18 +1,29 @@
 import unittest
 import sys
-
+from parameterized import parameterized
 from sbmlpbkutils import PbkOntologyChecker
 
 sys.path.append('../sbmlpbkutils/')
 
 class PbkOntologyCheckerTests(unittest.TestCase):
 
+    def test_check_in_ncbitaxon(self):
+        checker = PbkOntologyChecker()
+        self.assertTrue(checker.check_in_ncbitaxon("http://purl.obolibrary.org/obo/NCBITaxon_9606"))
+        self.assertTrue(checker.check_in_ncbitaxon("obo:NCBITaxon_9606"))
+        self.assertTrue(checker.check_in_ncbitaxon("urn:miriam:taxonomy:10095"))
+        self.assertFalse(checker.check_in_ncbitaxon("https://purl.obolibrary.org/obo/NCBITaxon_9606"))
+        self.assertFalse(checker.check_in_ncbitaxon("NCBITaxon_9606"))
+        self.assertFalse(checker.check_in_ncbitaxon("obo/NCBITaxon_9606"))
+        self.assertFalse(checker.check_in_ncbitaxon("obo.NCBITaxon_9606"))
+        self.assertFalse(checker.check_in_ncbitaxon("obo:PBPKO_00450"))
+
     def test_check_in_pbpko(self):
         checker = PbkOntologyChecker()
         self.assertTrue(checker.check_in_pbpko("http://purl.obolibrary.org/obo/PBPKO_00450"))
+        self.assertTrue(checker.check_in_pbpko("obo:PBPKO_00450"))
         self.assertFalse(checker.check_in_pbpko("https://purl.obolibrary.org/obo/PBPKO_00450"))
         self.assertFalse(checker.check_in_pbpko("PBPKO_00450"))
-        self.assertTrue(checker.check_in_pbpko("obo:PBPKO_00450"))
         self.assertFalse(checker.check_in_pbpko("obo/PBPKO_00450"))
         self.assertFalse(checker.check_in_pbpko("obo.PBPKO_0x450"))
 
@@ -25,12 +36,20 @@ class PbkOntologyCheckerTests(unittest.TestCase):
         self.assertFalse(checker.check_in_chebi("obo/CHEBI_25212"))
         self.assertFalse(checker.check_in_chebi("obo.CHEBI_25212"))
 
-    def test_find_by_label(self):
+    def test_get_pbpko_class(self):
         checker = PbkOntologyChecker()
-        result = checker.find_by_label('*arameter*')
-        #for item in result:
-            #print(f'[{item.iri}] - {item.label}')
-        self.assertTrue(result)
+        result = checker.get_pbpko_class("http://purl.obolibrary.org/obo/PBPKO_00477")
+        self.assertEqual(result.iri, "http://purl.obolibrary.org/obo/PBPKO_00477")
+        self.assertEqual(result.label[0], "gut compartment")
+        self.assertTrue(result.IAO_0000115[0])
+
+    def test_get_ncbitaxon_class(self):
+        iri = "http://purl.obolibrary.org/obo/NCBITaxon_40674"
+        iri_full = "http://purl.obolibrary.org/obo/NCBITaxon_40674"
+        checker = PbkOntologyChecker()
+        result = checker.get_ncbitaxon_class(iri)
+        self.assertEqual(result.iri, iri_full)
+        self.assertEqual(result.label[0], "Mammalia")
 
     def test_get_pbpko_compartments(self):
         checker = PbkOntologyChecker()
@@ -47,12 +66,18 @@ class PbkOntologyCheckerTests(unittest.TestCase):
         result = checker.get_species_classes()
         self.assertTrue(list(result))
 
-    def test_get_element(self):
+    def test_get_ncbitaxon_mammalia(self):
         checker = PbkOntologyChecker()
-        result = checker.get_class("http://purl.obolibrary.org/obo/PBPKO_00477")
-        self.assertEqual(result.iri, "http://purl.obolibrary.org/obo/PBPKO_00477")
-        self.assertEqual(result.label[0], "gut compartment")
-        self.assertTrue(result.IAO_0000115[0])
+        result = checker.get_mammal_taxon_classes()
+        self.assertTrue(list(result))
+
+    @parameterized.expand([
+        ("http://purl.obolibrary.org/obo/NCBITaxon_9606"),
+        ("urn:miriam:taxonomy:9606")
+    ])
+    def test_is_taxon_mammalia(self, iri):
+        checker = PbkOntologyChecker()
+        self.assertTrue(checker.check_is_animal_species(iri))
 
     def test_is_compartment(self):
         checker = PbkOntologyChecker()
@@ -61,7 +86,6 @@ class PbkOntologyCheckerTests(unittest.TestCase):
         self.assertFalse(checker.check_is_compartment("XXXX")) 
         result = checker.get_compartment_classes()
         for item in result:
-            #print(f'[{item.iri}] - {item.label}')
             self.assertTrue(checker.check_is_compartment(item.iri))
 
     def test_is_input_compartment(self):

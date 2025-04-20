@@ -24,18 +24,11 @@ class PbkModelValidatorTests(unittest.TestCase):
 
     @parameterized.expand([
         ("simple.sbml"),
+        ("simple.annotated.sbml"),
         ("euromix.annotated.sbml")
     ])
-    def test_validate_simple(self, file):
+    def test_validate(self, file):
         sbml_file = os.path.join(__test_models_path__, file)
-        validator = PbkModelValidator()
-        sbml_basename = os.path.basename(sbml_file)
-        log_file = os.path.join(__test_outputs_path__, Path(sbml_basename).with_suffix('.validation.log'))
-        logger = self._create_file_logger(log_file)
-        validator.validate(sbml_file, logger)
-
-    def test_validate_simple_annotated(self):
-        sbml_file = os.path.join(__test_models_path__, 'simple.annotated.sbml')
         validator = PbkModelValidator()
         sbml_basename = os.path.basename(sbml_file)
         log_file = os.path.join(__test_outputs_path__, Path(sbml_basename).with_suffix('.validation.log'))

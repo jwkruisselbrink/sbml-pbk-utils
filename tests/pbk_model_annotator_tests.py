@@ -208,6 +208,26 @@ class PbkModelAnnotatorTests(unittest.TestCase):
         cv_terms = PbkModelAnnotator.get_cv_terms(element, ls.MODEL_QUALIFIER, ls.BQM_IS)
         self.assertEqual(len(cv_terms), 0)
 
+    def test_set_model_rdf_annotation(self):
+        # Arrange
+        sbml_file = os.path.join(__test_models_path__, 'simple.sbml') 
+        annotator = PbkModelAnnotator()
+        document = ls.readSBML(sbml_file)
+        logger = logging.getLogger(__name__)
+
+        # Act
+        annotator.set_model_rdf_annotation(
+            document,
+            'BQB_HAS_TAXON',
+            "http://identifiers.org/taxonomy/40674",
+            logger
+        )
+
+        # Assert
+        model = document.getModel()
+        cv_terms = PbkModelAnnotator.get_cv_terms(model, ls.BIOLOGICAL_QUALIFIER, ls.BQB_HAS_TAXON)
+        self.assertEqual(cv_terms[0]['uri'], "http://identifiers.org/taxonomy/40674")
+
     def test_set_element_rdf_annotation(self):
         # Arrange
         sbml_file = os.path.join(__test_models_path__, 'simple.sbml') 

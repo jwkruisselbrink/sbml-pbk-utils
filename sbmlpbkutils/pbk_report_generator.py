@@ -30,25 +30,25 @@ class PbkReportGenerator:
             # Write the model overview table
             f.write("## Overview\n\n")
             table = infos_extractor.get_model_overview()
-            f.write(table.to_markdown())
+            f.write(table.to_markdown(index=False))
             f.write("\n\n")
 
             # Write compartment infos table
             f.write("## Compartments\n\n")
             table = infos_extractor.get_compartment_infos()
-            f.write(table.to_markdown())
+            f.write(table.to_markdown(index=False))
             f.write("\n\n")
 
             # Write compartment infos table
             f.write("## Species\n\n")
             table = infos_extractor.get_species_infos()
-            f.write(table.to_markdown())
+            f.write(table.to_markdown(index=False))
             f.write("\n\n")
 
             # Write compartment infos table
             f.write("## Parameters\n\n")
             table = infos_extractor.get_parameter_infos()
-            f.write(table.to_markdown())
+            f.write(table.to_markdown(index=False))
             f.write("\n\n")
 
             # Write compartment infos table

@@ -14,6 +14,9 @@ class StatusLevel(Enum):
 
 class ErrorCode(Enum):
     UNDEFINED = -1
+    MODEL_MISSING_BQB_HAS_TAXON_TERM = 1
+    MODEL_MISSING_NCBITAXON_BQB_HAS_TAXON_TERM = 2
+    MODEL_INVALID_NCBITAXON_BQB_HAS_TAXON_TERM = 3
     COMPARTMENT_MISSING_BQM_TERM = 10
     COMPARTMENT_MISSING_PBPKO_BQM_TERM = 11
     COMPARTMENT_MULTIPLE_PBPKO_BQM_TERMS = 12
@@ -91,6 +94,11 @@ class PbkModelValidator:
     # Run unit consistency checks
     self.validate_units(sbmlDoc, logger)
 
+    # Check model annotations
+    (model_valid, model_messages) = self.check_model_annotations(sbmlDoc)
+    for record in model_messages:
+      record.log(logger)
+
     # Check compartment annotations
     (comps_valid, comps_messages) = self.check_compartment_annotations(sbmlDoc)
     for record in comps_messages:
@@ -126,6 +134,33 @@ class PbkModelValidator:
         else:
           logger.warning(sbmlDoc.getError(i).getMessage())
 
+  def check_model_annotations(
+    self,
+    sbmlDoc: ls.SBMLDocument
+  ) -> tuple[bool, list[ValidationRecord]]:
+    """Check compartment annotations. Each compartment should have a BQM_IS
+    relation referring to a term of the PBPK ontology."""
+    valid = True
+    messages = []
+    cv_terms = self._get_cv_terms_by_type(sbmlDoc.getModel())
+    if 'BQB_HAS_TAXON' not in cv_terms:
+        msg = f"No model level BQB_HAS_TAXON annotation found refering to an NCBI taxon."
+        messages.append(ValidationRecord(StatusLevel.ERROR, ErrorCode.MODEL_MISSING_BQB_HAS_TAXON_TERM, msg))
+        valid = False
+    else:
+        ncbitaxon_terms = [term for term in cv_terms['BQB_HAS_TAXON'] if self.ontology_checker.check_in_ncbitaxon(term)]
+        if not ncbitaxon_terms:
+            msg = f"No model level BQB_HAS_TAXON annotation found refering to an NCBI taxon."
+            messages.append(ValidationRecord(StatusLevel.ERROR, ErrorCode.MODEL_MISSING_NCBITAXON_BQB_HAS_TAXON_TERM, msg))
+            valid = False
+        else:
+            ncbitaxon_term = ncbitaxon_terms[0]
+            if not self.ontology_checker.check_is_animal_species(ncbitaxon_term):
+                msg = f"Specified model level BQB_HAS_TAXON resource [{ncbitaxon_term}] does not refer to a taxonomical class."
+                messages.append(ValidationRecord(StatusLevel.ERROR, ErrorCode.MODEL_INVALID_NCBITAXON_BQB_HAS_TAXON_TERM, msg))
+                valid = False
+    return (valid, messages)
+
   def check_compartment_annotations(
     self,
     sbmlDoc: ls.SBMLDocument
@@ -151,8 +186,8 @@ class PbkModelValidator:
     for key, values in lookup.items():
       if (len(values) > 1):
         iri = key[2]
-        in_pbpko = self.ontology_checker.check_in_pbpko(iri)
-        if (in_pbpko):
+        is_pbpko_compartment = self.ontology_checker.check_is_compartment(iri)
+        if (is_pbpko_compartment):
           if (key[0] == ls.MODEL_QUALIFIER and key[1] == ls.BQM_IS):
             element_ids_str = ','.join(values)
             msg = f"PBPKO term [{iri}] used as BQM_IS resource by multiple compartments [{element_ids_str}]."
@@ -201,8 +236,7 @@ class PbkModelValidator:
     for key, values in lookup.items():
       if (len(values) > 1):
         iri = key[2]
-        in_pbpko = self.ontology_checker.check_in_pbpko(iri)
-        if (in_pbpko):
+        if (self.ontology_checker.check_is_parameter(iri)):
           if (key[0] == ls.MODEL_QUALIFIER and key[1] == ls.BQM_IS):
             if not self.ontology_checker.check_is_chemical_specific_parameter(iri):
               # For parameters that are not chemical specific, the same IRI can only be used once for a BQM_IS

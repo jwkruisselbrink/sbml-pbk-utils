@@ -41,28 +41,34 @@ class PbkModelInfosExtractor:
         col_names = ["key", "value", "status", "message"]
         dt.append(["Model code", self.document.model.getMetaId()])
         dt.append(["Substance applicability domain"])
-        dt.append(["Modelled species/orgamism(s)"])
+
+        animal_species = self.get_model_animal_species()
+        if (len(animal_species) > 0):
+            species = [x.iri for x in animal_species]
+            dt.append(["Modelled species/orgamism(s)", ", ".join(species), "ok"])
+        else:
+            dt.append(["Modelled species/orgamism(s)", "", "error", "Taxon missing."])
 
         input_compartments = self.get_input_compartments()
         input_routes = set(input_compartments.values())
         input_routes_str = ' (' + str.join(", ", input_compartments.values()) + ')' if len(input_routes) > 0 else ""
         if len(input_routes) > 0:
-            dt.append(["Input route(s)", f"{len(input_routes)}{input_routes_str}", "", ""])
+            dt.append(["Input route(s)", f"{len(input_routes)}{input_routes_str}", "ok", ""])
         else:
             dt.append(["Input route(s)", "", "error", "No input routes detected."])
 
         if self.model.isSetTimeUnits():
-            dt.append(["Time resolution", self._get_unit_string(self.model.getTimeUnits()), "", ""])
+            dt.append(["Time resolution", self._get_unit_string(self.model.getTimeUnits()), "ok", ""])
         else:
             dt.append(["Time resolution", "", "error", "Time unit missing."])
 
         if self.model.isSetSubstanceUnits():
-            dt.append(["Amounts unit", self._get_unit_string(self.model.getSubstanceUnits()), "", ""])
+            dt.append(["Amounts unit", self._get_unit_string(self.model.getSubstanceUnits()), "ok", ""])
         else:
             dt.append(["Amounts unit", "", "error", "Substance unit missing."])
 
         if self.model.isSetVolumeUnits():
-            dt.append(["Volume unit", self._get_unit_string(self.model.getVolumeUnits()), "", ""])
+            dt.append(["Volume unit", self._get_unit_string(self.model.getVolumeUnits()), "ok", ""])
         else:
             dt.append(["Volume unit", "", "error", "Volume unit missing."])
 
@@ -81,6 +87,21 @@ class PbkModelInfosExtractor:
         dt.append(["Number of parameters", f'{self.model.getNumParameters()} ({externalParamsCount} external / {internalParamsCount} internal)'])
 
         result = pd.DataFrame(dt, columns=col_names)
+        return result
+
+    def get_model_animal_species(self):
+        result = []
+        cv_terms = self.model.getCVTerms()
+        if cv_terms is not None:
+            for term in cv_terms:
+                if term.getQualifierType() == ls.BIOLOGICAL_QUALIFIER \
+                    and term.getBiologicalQualifierType() == ls.BQB_HAS_TAXON:
+                    num_resources = term.getNumResources()
+                    for j in range(num_resources):
+                        iri = term.getResourceURI(j)
+                        taxon = self.onto_checker.get_ncbitaxon_class(iri)
+                        if taxon is not None:
+                            result.append(taxon)
         return result
 
     def get_compartment_infos(self):
@@ -267,7 +288,7 @@ class PbkModelInfosExtractor:
                     for j in range(num_resources):
                         iri = term.getResourceURI(j)
                         if self.onto_checker.check_in_pbpko(iri):
-                            return self.onto_checker.get_class(iri)
+                            return self.onto_checker.get_pbpko_class(iri)
         return None
 
     def _math_print_element(self, id):
