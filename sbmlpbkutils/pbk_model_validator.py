@@ -18,12 +18,14 @@ class ErrorCode(Enum):
     COMPARTMENT_MISSING_PBPKO_BQM_TERM = 11
     COMPARTMENT_MULTIPLE_PBPKO_BQM_TERMS = 12
     COMPARTMENT_INVALID_PBPKO_BQM_TERM = 13
+    COMPARTMENT_MULTIPLE_ANNOTATION_USE = 17,
     PARAMETER_MISSING_BQM_TERM = 20
     PARAMETER_MISSING_PBPKO_BQM_TERM = 21
     PARAMETER_MULTIPLE_PBPKO_BQM_TERMS = 22
     PARAMETER_INVALID_PBPKO_BQM_TERM = 23
     PARAMETER_MISSING_BQB_IS_TERM = 24,
     PARAMETER_MULTIPLE_CHEBI_BQB_IS_TERMS = 25,
+    PARAMETER_MULTIPLE_ANNOTATION_USE = 27,
     SPECIES_MISSING_BQM_TERM = 30
     SPECIES_MISSING_PBPKO_BQM_TERM = 31
     SPECIES_MULTIPLE_PBPKO_BQM_TERMS = 32
@@ -39,6 +41,17 @@ class ValidationRecord(object):
         self.level = level
         self.message = message
         self.code = code
+
+    def log(self, logger: Logger):
+        if self.level == StatusLevel.CRITICAL:
+          logger.critical(self.message)
+        if self.level == StatusLevel.ERROR:
+          logger.error(self.message)
+        elif self.level == StatusLevel.WARNING:
+          logger.warning(self.message)
+        elif self.level == StatusLevel.INFO:
+          logger.info(self.message)
+
 
 class PbkModelValidator:
 
@@ -79,13 +92,19 @@ class PbkModelValidator:
     self.validate_units(sbmlDoc, logger)
 
     # Check compartment annotations
-    self.validate_compartment_annotations(sbmlDoc, logger)
+    (comps_valid, comps_messages) = self.check_compartment_annotations(sbmlDoc)
+    for record in comps_messages:
+      record.log(logger)
 
     # Check parameter annotations
-    self.validate_parameter_annotations(sbmlDoc, logger)
+    (parms_valid, parm_messages) = self.check_parameter_annotations(sbmlDoc)
+    for record in parm_messages:
+      record.log(logger)
 
     # Check species annotations
-    self.validate_species_annotations(sbmlDoc, logger)
+    (specs_valid, specs_messages) = self.check_species_annotations(sbmlDoc)
+    for record in specs_messages:
+      record.log(logger)
 
   def validate_units(
     self,
@@ -100,8 +119,6 @@ class PbkModelValidator:
         error = sbmlDoc.getError(i)
         error_code = error.getErrorId()
         severity = error.getSeverity()
-        #logger.warning(error_code)
-        #logger.warning(error.getShortMessage())
         if (severity == ls.LIBSBML_SEV_ERROR \
           or severity == ls.LIBSBML_SEV_FATAL) \
           and error_code != ls.UndeclaredUnits:
@@ -109,65 +126,92 @@ class PbkModelValidator:
         else:
           logger.warning(sbmlDoc.getError(i).getMessage())
 
-  def validate_compartment_annotations(
+  def check_compartment_annotations(
     self,
-    sbmlDoc: ls.SBMLDocument,
-    logger: Logger
-  ):
+    sbmlDoc: ls.SBMLDocument
+  ) -> tuple[bool, list[ValidationRecord]]:
     """Check compartment annotations. Each compartment should have a BQM_IS
     relation referring to a term of the PBPK ontology."""
+    valid = True
+    messages = []
+
+    # Collect all compartment elements
+    elements = []
     for i in range(0, sbmlDoc.model.getNumCompartments()):
-      c = sbmlDoc.model.getCompartment(i)
-      (valid, messages) = self.check_compartment_annotation(c)
-      for record in messages:
-        if record.level == StatusLevel.CRITICAL:
-          logger.critical(record.message)
-        if record.level == StatusLevel.ERROR:
-          logger.error(record.message)
-        elif record.level == StatusLevel.WARNING:
-          logger.warning(record.message)
-        elif record.level == StatusLevel.INFO:
-          logger.info(record.message)
+      elements.append(sbmlDoc.model.getCompartment(i))
 
-  def validate_parameter_annotations(
-    self,
-    sbmlDoc: ls.SBMLDocument,
-    logger: Logger
-  ):
-    """Check parameter annotations. Each parameter should have a BQM_IS
-    relation referring to a term of the PBPK ontology."""
-    for i in range(0, sbmlDoc.model.getNumParameters()):
-      c = sbmlDoc.model.getParameter(i)
-      (valid, messages) = self.check_parameter_annotation(c)
-      for record in messages:
-        if record.level == StatusLevel.CRITICAL:
-          logger.critical(record.message)
-        if record.level == StatusLevel.ERROR:
-          logger.error(record.message)
-        elif record.level == StatusLevel.WARNING:
-          logger.warning(record.message)
-        elif record.level == StatusLevel.INFO:
-          logger.info(record.message)
+    # Check individual compartment annotations
+    for element in elements:
+      (cur_valid, cur_messages) = self.check_compartment_annotation(element)
+      valid = valid and cur_valid
+      messages.extend(cur_messages) 
 
-  def validate_species_annotations(
+    # Get lookup by qualifier and IRI
+    lookup = self._get_annotations_lookup(elements)
+    for key, values in lookup.items():
+      if (len(values) > 1):
+        iri = key[2]
+        in_pbpko = self.ontology_checker.check_in_pbpko(iri)
+        if (in_pbpko):
+          if (key[0] == ls.MODEL_QUALIFIER and key[1] == ls.BQM_IS):
+            element_ids_str = ','.join(values)
+            msg = f"PBPKO term [{iri}] used as BQM_IS resource by multiple compartments [{element_ids_str}]."
+            messages.append(ValidationRecord(StatusLevel.ERROR, ErrorCode.PARAMETER_MULTIPLE_ANNOTATION_USE, msg))
+            valid = False
+
+    return (valid, messages)
+
+  def check_species_annotations(
     self,
-    sbmlDoc: ls.SBMLDocument,
-    logger: Logger
-  ):
+    sbmlDoc: ls.SBMLDocument
+  ) -> tuple[bool, list[ValidationRecord]]:
     """Check species annotations. Each species should have a BQM_IS
     relation referring to a term of the PBPK ontology."""
+    valid = True
+    messages = []
     for i in range(0, sbmlDoc.model.getNumSpecies()):
       c = sbmlDoc.model.getSpecies(i)
-      (valid, messages) = self.check_species_annotation(c)
-      for record in messages:
-        if record.level == StatusLevel.CRITICAL:
-          logger.critical(record.message)
-        if record.level == StatusLevel.ERROR:
-          logger.error(record.message)
-        elif record.level == StatusLevel.WARNING:
-          logger.warning(record.message)
-        elif record.level == StatusLevel.INFO:
-          logger.info(record.message)
+      (cur_valid, cur_messages) = self.check_species_annotation(c)
+      valid = valid and cur_valid
+      messages.extend(cur_messages) 
+    return (valid, messages)
+
+  def check_parameter_annotations(
+    self,
+    sbmlDoc: ls.SBMLDocument
+  ) -> tuple[bool, list[ValidationRecord]]:
+    """Check parameter annotations. Each parameter should have a BQM_IS
+    relation referring to a term of the PBPK ontology."""
+    valid = True
+    messages = []
+
+    # Collect parameter elements
+    elements = []
+    for i in range(0, sbmlDoc.model.getNumParameters()):
+      elements.append(sbmlDoc.model.getParameter(i))
+
+    # Check individual paramter annotations
+    for element in elements:
+      (cur_valid, cur_messages) = self.check_parameter_annotation(element)
+      valid = valid and cur_valid
+      messages.extend(cur_messages) 
+
+    # Get lookup by qualifier and IRI
+    lookup = self._get_annotations_lookup(elements)
+    for key, values in lookup.items():
+      if (len(values) > 1):
+        iri = key[2]
+        in_pbpko = self.ontology_checker.check_in_pbpko(iri)
+        if (in_pbpko):
+          if (key[0] == ls.MODEL_QUALIFIER and key[1] == ls.BQM_IS):
+            if not self.ontology_checker.check_is_chemical_specific_parameter(iri):
+              # For parameters that are not chemical specific, the same IRI can only be used once for a BQM_IS
+              element_ids_str = ','.join(values)
+              msg = f"PBPKO term [{iri}] used as BQM_IS resource by multiple parameters [{element_ids_str}]."
+              messages.append(ValidationRecord(StatusLevel.ERROR, ErrorCode.PARAMETER_MULTIPLE_ANNOTATION_USE, msg))
+              valid = False
+            # TODO: else-check for chemical specific parameters: check for different chemical
+    return (valid, messages)
 
   def check_element_annotation(
       self,
@@ -255,7 +299,6 @@ class PbkModelValidator:
                         msg = f"Found multiple BQB_IS annotations refering to a ChEBI term for parameter [{element.getId()}]."
                         messages.append(ValidationRecord(StatusLevel.ERROR, ErrorCode.PARAMETER_MULTIPLE_CHEBI_BQB_IS_TERMS, msg))
                         valid = False
-
       return (valid, messages)
 
   def check_species_annotation(
@@ -286,6 +329,27 @@ class PbkModelValidator:
                   messages.append(ValidationRecord(StatusLevel.ERROR, ErrorCode.SPECIES_INVALID_PBPKO_BQM_TERM, msg))
                   valid = False
       return (valid, messages)
+
+  def _get_annotations_lookup(self, elements):
+      lookup = {}
+      for element in elements:
+        element_id = element.getId()
+        cv_terms = element.getCVTerms()
+        for term in cv_terms:
+            num_resources = term.getNumResources()
+            for j in range(num_resources):
+                qualifier_type = term.getQualifierType()
+                if qualifier_type == ls.BIOLOGICAL_QUALIFIER:
+                    qualifier_id = term.getBiologicalQualifierType()
+                elif qualifier_type == ls.MODEL_QUALIFIER:
+                    qualifier_id = term.getModelQualifierType()
+                iri = term.getResourceURI(j)
+                key = (qualifier_type, qualifier_id, iri)
+                if key not in lookup:
+                  lookup[key] = [element_id]
+                else:
+                  lookup[key].append(element_id)
+      return lookup
 
   def _get_cv_terms_by_type(
       self,

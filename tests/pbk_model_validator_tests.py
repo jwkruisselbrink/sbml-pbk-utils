@@ -121,6 +121,50 @@ class PbkModelValidatorTests(unittest.TestCase):
         self.assertEqual(result[1][0].level, StatusLevel.ERROR)
         self.assertEqual(result[1][0].code, ErrorCode.PARAMETER_MISSING_BQM_TERM)
 
+    def test_validate_parameters_duplicate_use(self):
+        annotations_df = pd.concat([
+            self._fake_single_annotation_record(
+                'VLc',
+                'parameter',
+                'BQM_IS',
+                'http://purl.obolibrary.org/obo/PBPKO_00106'
+            ),
+            self._fake_single_annotation_record(
+                'VRc',
+                'parameter',
+                'BQM_IS',
+                'http://purl.obolibrary.org/obo/PBPKO_00106'
+            )
+        ])
+        document = self._annotate_model('simple.sbml', annotations_df)
+        validator = PbkModelValidator()
+        result = validator.check_parameter_annotations(document)
+        self.assertFalse(result[0])
+        messages = [r for r in result[1] if r.code == ErrorCode.PARAMETER_MULTIPLE_ANNOTATION_USE]
+        self.assertEqual(messages[0].level, StatusLevel.ERROR)
+        self.assertEqual(messages[0].code, ErrorCode.PARAMETER_MULTIPLE_ANNOTATION_USE)
+
+    def test_validate_parameters_duplicate_use_chemical_specific(self):
+        annotations_df = pd.concat([
+            self._fake_single_annotation_record(
+                'PCLiver',
+                'parameter',
+                'BQM_IS',
+                'http://purl.obolibrary.org/obo/PBPKO_00165'
+            ),
+            self._fake_single_annotation_record(
+                'PCRest',
+                'parameter',
+                'BQM_IS',
+                'http://purl.obolibrary.org/obo/PBPKO_00165'
+            )
+        ])
+        document = self._annotate_model('simple.sbml', annotations_df)
+        validator = PbkModelValidator()
+        result = validator.check_parameter_annotations(document)
+        messages = [r for r in result[1] if r.code == ErrorCode.PARAMETER_MULTIPLE_ANNOTATION_USE]
+        self.assertEqual(len(messages), 0)
+
     def test_validate_parameter_warning(self):
         '''
         Annotation of internal parameters is not mandatory. Validation should yield a warning.
