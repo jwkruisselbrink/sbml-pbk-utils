@@ -1,11 +1,10 @@
 from owlready2 import *
 
 onto_path.append("./.cache")
-pbpko_path = "https://raw.githubusercontent.com/InSilicoVida-Research-Lab/pbpko/refs/heads/main/Robot/ontologies/pbpko.owl"
+pbpko_path = "https://raw.githubusercontent.com/InSilicoVida-Research-Lab/pbpko/refs/heads/develop/Robot/ontologies/pbpko.owl"
 ncbitaxon_path = "https://purl.obolibrary.org/obo/ncbitaxon/subsets/taxslim.owl"
 ncbitaxon = World()
 pbpko = World()
-#ncbitaxon.set_backend(filename = "./.cache/ncbitaxon.sqlite3", exclusive = False)
 
 class PbkOntologyChecker():
 
