@@ -32,6 +32,8 @@ class PbkOntologyCheckerTests(unittest.TestCase):
         self.assertTrue(checker.check_in_chebi("http://purl.obolibrary.org/obo/CHEBI_25212"))
         self.assertFalse(checker.check_in_chebi("https://purl.obolibrary.org/obo/CHEBI_25212"))
         self.assertFalse(checker.check_in_chebi("https://purl.obolibrary.org/obo/PBPKO_00450"))
+        self.assertTrue(checker.check_in_chebi("http://identifiers.org/chebi/CHEBI:24431"))
+        self.assertTrue(checker.check_in_chebi("http://identifiers.org/CHEBI:24431"))
         self.assertTrue(checker.check_in_chebi("obo:CHEBI_25212"))
         self.assertFalse(checker.check_in_chebi("obo/CHEBI_25212"))
         self.assertFalse(checker.check_in_chebi("obo.CHEBI_25212"))
@@ -43,13 +45,47 @@ class PbkOntologyCheckerTests(unittest.TestCase):
         self.assertEqual(result.label[0], "gut compartment")
         self.assertTrue(result.IAO_0000115[0])
 
-    def test_get_ncbitaxon_class(self):
-        iri = "http://purl.obolibrary.org/obo/NCBITaxon_40674"
-        iri_full = "http://purl.obolibrary.org/obo/NCBITaxon_40674"
+    @parameterized.expand([
+        ("40674", "Mammalia"),
+        ("9606", "Homo sapiens")
+    ])
+    def test_get_ncbitaxon_class(self, id, label_exp):
         checker = PbkOntologyChecker()
-        result = checker.get_ncbitaxon_class(iri)
-        self.assertEqual(result.iri, iri_full)
-        self.assertEqual(result.label[0], "Mammalia")
+        iri_expected = f"http://purl.obolibrary.org/obo/NCBITaxon_{id}"
+        patterns = [
+            "http://purl.obolibrary.org/obo/NCBITaxon_",
+            "http://identifiers.org/taxonomy/",
+            "urn:miriam:taxonomy:",
+            "obo:NCBITaxon_",
+        ]
+        for pattern in patterns:
+            iri = f"{pattern}{id}"
+            result = checker.get_ncbitaxon_class(iri)
+            self.assertIsNotNone(result)
+            self.assertEqual(result.iri, iri_expected)
+            self.assertEqual(result.label[0], label_exp)
+
+    @parameterized.expand([
+        ("24431", "chemical entity"),
+        ("25212", "metabolite"),
+        ("35549", "perfluorooctanoic acid")
+    ])
+    def test_get_chebi_class(self, id, label_exp):
+        checker = PbkOntologyChecker()
+        iri_expected = f"http://purl.obolibrary.org/obo/CHEBI_{id}"
+        patterns = [
+            "http://purl.obolibrary.org/obo/CHEBI_",
+            "http://identifiers.org/chebi/CHEBI:",
+            "http://identifiers.org/CHEBI:",
+            "urn:miriam:chebi:",
+            "obo:CHEBI_",
+        ]
+        for pattern in patterns:
+            iri = f"{pattern}{id}"
+            result = checker.get_chebi_class(iri)
+            self.assertIsNotNone(result)
+            self.assertEqual(result.iri, iri_expected)
+            self.assertEqual(result.label[0], label_exp)
 
     def test_get_pbpko_compartments(self):
         checker = PbkOntologyChecker()

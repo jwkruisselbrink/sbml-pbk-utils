@@ -9,6 +9,11 @@
               <rdf:li rdf:resource="http://identifiers.org/taxonomy/40674"/>
             </rdf:Bag>
           </bqbiol:hasTaxon>
+          <bqbiol:hasProperty>
+            <rdf:Bag>
+              <rdf:li rdf:resource="http://identifiers.org/CHEBI:24431"/>
+            </rdf:Bag>
+          </bqbiol:hasProperty>
         </rdf:Description>
       </rdf:RDF>
     </annotation>

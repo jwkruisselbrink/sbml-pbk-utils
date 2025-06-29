@@ -115,8 +115,6 @@ class PbkModelReportGenerator():
         dt = []
         col_names = ["key", "value"]
         model = self.document.getModel()
-        dt.append(["Model code", self.document.model.getMetaId()])
-        dt.append(["Substance applicability domain"])
 
         animal_species = self.infos_extractor.get_model_animal_species()
         if (len(animal_species) > 0):
@@ -124,6 +122,13 @@ class PbkModelReportGenerator():
             dt.append(["Modelled species/orgamism(s)", ", ".join(species)])
         else:
             dt.append(["Modelled species/orgamism(s)", "*not specified*"])
+
+        model_chemicals = self.infos_extractor.get_model_chemicals()
+        if (len(model_chemicals) > 0):
+            chemicals = [x.iri for x in model_chemicals]
+            dt.append(["Model chemical(s)", ", ".join(chemicals)])
+        else:
+            dt.append(["Model chemical(s)", "*not specified*"])
 
         input_compartments = self.infos_extractor.get_input_compartments()
         input_routes = set(input_compartments.values())
