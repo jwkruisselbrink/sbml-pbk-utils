@@ -14,9 +14,10 @@ class StatusLevel(Enum):
 
 class ErrorCode(Enum):
     UNDEFINED = -1
-    MODEL_MISSING_BQB_HAS_TAXON_TERM = 1
+    MODEL_MISSING_TAXON_SPECIFICATION = 1
     MODEL_MISSING_NCBITAXON_BQB_HAS_TAXON_TERM = 2
     MODEL_INVALID_NCBITAXON_BQB_HAS_TAXON_TERM = 3
+    MODEL_MISSING_CHEMICAL_SPECIFICATION = 4
     COMPARTMENT_MISSING_BQM_TERM = 10
     COMPARTMENT_MISSING_PBPKO_BQM_TERM = 11
     COMPARTMENT_MULTIPLE_PBPKO_BQM_TERMS = 12
@@ -142,25 +143,57 @@ class PbkModelValidator:
     relation referring to a term of the PBPK ontology."""
     valid = True
     messages = []
-    cv_terms = self._get_cv_terms_by_type(sbmlDoc.getModel())
-    if 'BQB_HAS_TAXON' not in cv_terms:
-        msg = f"No model level BQB_HAS_TAXON annotation found refering to an NCBI taxon."
-        messages.append(ValidationRecord(StatusLevel.ERROR, ErrorCode.MODEL_MISSING_BQB_HAS_TAXON_TERM, msg))
-        valid = False
-    else:
-        ncbitaxon_terms = [term for term in cv_terms['BQB_HAS_TAXON'] if self.ontology_checker.check_in_ncbitaxon(term)]
-        if not ncbitaxon_terms:
-            msg = f"No model level BQB_HAS_TAXON annotation found refering to an NCBI taxon."
-            messages.append(ValidationRecord(StatusLevel.ERROR, ErrorCode.MODEL_MISSING_NCBITAXON_BQB_HAS_TAXON_TERM, msg))
-            valid = False
-        else:
-            ncbitaxon_term = ncbitaxon_terms[0]
-            if not self.ontology_checker.check_is_animal_species(ncbitaxon_term):
-                msg = f"Specified model level BQB_HAS_TAXON resource [{ncbitaxon_term}] does not refer to a taxonomical class."
-                messages.append(ValidationRecord(StatusLevel.ERROR, ErrorCode.MODEL_INVALID_NCBITAXON_BQB_HAS_TAXON_TERM, msg))
-                valid = False
+
+    (taxon_valid, taxon_record) = self.check_model_taxon(sbmlDoc)
+    if not taxon_valid:
+      valid = False
+      messages.append(taxon_record)
+
+    (chemicals_valid, chemical_record) = self.check_model_chemicals(sbmlDoc)
+    if not chemicals_valid:
+      valid = False
+      messages.append(chemical_record)
+
     return (valid, messages)
 
+  def check_model_taxon(
+    self,
+    sbmlDoc: ls.SBMLDocument
+  ) -> tuple[bool, ValidationRecord]:
+    """Check modelled (animal) species. A model should have at least 
+    one BQB_HAS_TAXON annotation refering to a NCBI taxon."""
+    cv_terms = sbmlDoc.getModel().getCVTerms()
+    for term in cv_terms:
+        if term.getQualifierType() == ls.BIOLOGICAL_QUALIFIER \
+          and term.getBiologicalQualifierType() == ls.BQB_HAS_TAXON:
+          num_resources = term.getNumResources()
+          for j in range(num_resources):
+            iri = term.getResourceURI(j)
+            if self.ontology_checker.check_is_animal_species(iri):
+              return (True, None)
+    msg = f"No model level BQB_HAS_TAXON annotation found refering to an NCBI taxon."
+    record = ValidationRecord(StatusLevel.ERROR, ErrorCode.MODEL_MISSING_TAXON_SPECIFICATION, msg)
+    return (False, record)
+
+  def check_model_chemicals(
+    self,
+    sbmlDoc: ls.SBMLDocument
+  ) -> tuple[bool, ValidationRecord]:
+    """Check model chemical applicability domain annotation. A model should have at least 
+    one BQB_HAS_PROPERTY annotation refering to a ChEBI chemical entity."""
+    cv_terms = sbmlDoc.getModel().getCVTerms()
+    for term in cv_terms:
+        if term.getQualifierType() == ls.BIOLOGICAL_QUALIFIER \
+          and term.getBiologicalQualifierType() == ls.BQB_HAS_PROPERTY:
+          num_resources = term.getNumResources()
+          for j in range(num_resources):
+            iri = term.getResourceURI(j)
+            if self.ontology_checker.check_is_chemical_entity(iri):
+              return (True, None)
+    msg = f"No model level BQB_HAS_PROPERTY annotation found refering to a ChEBI chemical entity."
+    record = ValidationRecord(StatusLevel.ERROR, ErrorCode.MODEL_MISSING_CHEMICAL_SPECIFICATION, msg)
+    return (False, record)
+  
   def check_compartment_annotations(
     self,
     sbmlDoc: ls.SBMLDocument
@@ -392,13 +425,13 @@ class PbkModelValidator:
       lookup = {}
       cv_terms = element.getCVTerms()
       for term in cv_terms:
+          if term.getQualifierType() == ls.BIOLOGICAL_QUALIFIER:
+              qualifier_type = _biological_qualifier_ids_lookup[term.getBiologicalQualifierType()]
+          elif term.getQualifierType() == ls.MODEL_QUALIFIER:
+              qualifier_type = _model_qualifier_ids_lookup[term.getModelQualifierType()]
+          if qualifier_type not in lookup:
+              lookup[qualifier_type] = []
           num_resources = term.getNumResources()
           for j in range(num_resources):
-              if term.getQualifierType() == ls.BIOLOGICAL_QUALIFIER:
-                  qualifier_type = _biological_qualifier_ids_lookup[term.getBiologicalQualifierType()]
-              elif term.getQualifierType() == ls.MODEL_QUALIFIER:
-                  qualifier_type = _model_qualifier_ids_lookup[term.getModelQualifierType()]
-              if qualifier_type not in lookup:
-                  lookup[qualifier_type] = []
               lookup[qualifier_type].append(term.getResourceURI(j))
       return lookup

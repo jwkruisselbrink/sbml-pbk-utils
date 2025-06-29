@@ -4,6 +4,7 @@ extentUnits,document,model substances unit,ug,,,,
 timeUnits,document,model time unit,h,,,,
 volumeUnits,document,model volume unit,L,,,,
 simple,model,,,rdf,BQB_HAS_TAXON,http://identifiers.org/taxonomy/40674,mammalia
+simple,model,,,rdf,BQB_HAS_PROPERTY,http://identifiers.org/chebi/CHEBI:24431,chemical entity
 Blood,compartment,blood,L,rdf,BQM_IS,http://purl.obolibrary.org/obo/PBPKO_00464,
 Blood,compartment,,,rdf,BQB_IS,,
 Liver,compartment,liver,L,rdf,BQM_IS,http://purl.obolibrary.org/obo/PBPKO_00558,

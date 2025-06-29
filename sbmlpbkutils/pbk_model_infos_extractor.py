@@ -27,6 +27,21 @@ class PbkModelInfosExtractor:
                             result.append(taxon)
         return result
 
+    def get_model_chemicals(self):
+        result = []
+        cv_terms = self.model.getCVTerms()
+        if cv_terms is not None:
+            for term in cv_terms:
+                if term.getQualifierType() == ls.BIOLOGICAL_QUALIFIER \
+                    and term.getBiologicalQualifierType() == ls.BQB_HAS_PROPERTY:
+                    num_resources = term.getNumResources()
+                    for j in range(num_resources):
+                        iri = term.getResourceURI(j)
+                        chemical = self.onto_checker.get_chebi_class(iri)
+                        if chemical is not None:
+                            result.append(chemical)
+        return result
+
     def get_input_compartments(self):
         input_compartments = {}
         for i in range(0, self.model.getNumCompartments()):

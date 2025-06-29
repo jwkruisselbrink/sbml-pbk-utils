@@ -1,44 +1,78 @@
 from owlready2 import *
+import gzip
+import shutil
+from pathlib import Path
 
-onto_path.append("./.cache")
-pbpko_path = "https://raw.githubusercontent.com/InSilicoVida-Research-Lab/pbpko/refs/heads/develop/Robot/ontologies/pbpko.owl"
-ncbitaxon_path = "https://purl.obolibrary.org/obo/ncbitaxon/subsets/taxslim.owl"
+ONTOLOGY_CACHE_DIR = "./.cache"
+PBPKO = {
+    "url": "https://raw.githubusercontent.com/InSilicoVida-Research-Lab/pbpko/refs/heads/develop/Robot/ontologies/pbpko.owl",
+    "filename": "pbpko.owl"
+}
+CHEBI = {
+    "url": "https://ftp.ebi.ac.uk/pub/databases/chebi/ontology/chebi_lite.owl.gz",
+    "filename": "chebi_lite.owl.gz"
+}
+NCBITAXON = {
+    "url": "https://purl.obolibrary.org/obo/ncbitaxon/subsets/taxslim.owl",
+    "filename": "taxslim.owl"
+}
+
+onto_path.append(ONTOLOGY_CACHE_DIR)
 ncbitaxon = World()
 pbpko = World()
+chebi = World()
 
 class PbkOntologyChecker():
 
+    pbpko_namespaces = [{
+        "pattern": "obo:",
+        "replacement": "http://purl.obolibrary.org/obo/"
+    }]
+
     ncbitaxon_namespaces = [
         {
-            "prefix": "obo",
-            "separator": ":",
-            "url": "http://purl.obolibrary.org/obo/"
+            "pattern": "http://identifiers.org/taxonomy/",
+            "replacement": "http://purl.obolibrary.org/obo/NCBITaxon_"
         },
         {
-            "prefix": "urn:miriam:taxonomy",
-            "separator": ":",
-            "url": "http://purl.obolibrary.org/obo/NCBITaxon_"
+            "pattern": "urn:miriam:taxonomy:",
+            "replacement": "http://purl.obolibrary.org/obo/NCBITaxon_"
         },
         {
-            "prefix": "http://identifiers.org/taxonomy",
-            "separator": "/",
-            "url": "http://purl.obolibrary.org/obo/NCBITaxon_"
+            "pattern": "obo:",
+            "replacement": "http://purl.obolibrary.org/obo/"
         }
     ]
 
-    pbpko_namespaces = [{
-        "prefix": "obo",
-        "separator": ":",
-        "url": "http://purl.obolibrary.org/obo/"
-    }]
+    chebi_namespaces = [
+        {
+            "pattern": "http://identifiers.org/chebi/CHEBI:",
+            "replacement": "http://purl.obolibrary.org/obo/CHEBI_"
+        },
+        {
+            "pattern": "http://identifiers.org/CHEBI:",
+            "replacement": "http://purl.obolibrary.org/obo/CHEBI_"
+        },
+        {
+            "pattern": "urn:miriam:chebi:",
+            "replacement": "http://purl.obolibrary.org/obo/CHEBI_"
+        },
+        {
+            "pattern": "obo:",
+            "replacement": "http://purl.obolibrary.org/obo/"
+        }
+    ]
 
     def __init__(self) -> None:
         self.pbpko = pbpko
-        self.pbpko.get_ontology(pbpko_path).load()
-        self.ncbitaxon = ncbitaxon
-        self.ncbitaxon.get_ontology(ncbitaxon_path).load()
-        self.ncbitaxon_obo = self.ncbitaxon.get_namespace("http://purl.obolibrary.org/obo/")
+        load_ontology(pbpko, PBPKO)
         self.pbpko_obo = self.pbpko.get_namespace("http://purl.obolibrary.org/obo/")
+        self.ncbitaxon = ncbitaxon
+        load_ontology(ncbitaxon, NCBITAXON)
+        self.ncbitaxon_obo = self.ncbitaxon.get_namespace("http://purl.obolibrary.org/obo/")
+        self.chebi = chebi
+        load_ontology(chebi, CHEBI)
+        self.chebi_obo = self.chebi.get_namespace("http://purl.obolibrary.org/obo/")
         time.sleep(0.0001)
 
     def check_in_pbpko(self, iri: str):
@@ -53,13 +87,20 @@ class PbkOntologyChecker():
     def get_ncbitaxon_class(self, iri):
         return self._get_class(iri, self.ncbitaxon, self.ncbitaxon_namespaces)
 
+    def get_chebi_class(self, iri):
+        return self._get_class(iri, self.chebi, self.chebi_namespaces)
+
     def check_in_chebi(self, iri: str):
-        # Regex for short namespace + ChEBI ID
-        short_iri_pattern = r"^obo:CHEBI_\d+$"
         # Full regex for namespace + ChEBI ID
         full_iri_pattern = r"^http://purl.obolibrary.org/obo/CHEBI_\d+$"
-        return bool(re.match(short_iri_pattern, iri)) \
-            or bool(re.match(full_iri_pattern, iri))
+
+        # If an ontology definition is provided, check the modified IRI
+        for onto_namespace in self.chebi_namespaces:
+            # Replace the namespace in the IRI
+            modified_iri = iri.replace(f'{onto_namespace['pattern']}', onto_namespace['replacement'])
+            if bool(re.match(full_iri_pattern, modified_iri)):
+                return True
+        return False
 
     def get_available_classes(self, element_type: str):
         if element_type == 'taxon':
@@ -86,6 +127,10 @@ class PbkOntologyChecker():
     def check_is_animal_species(self, iri: str):
         element = self._get_class(iri, self.ncbitaxon, self.ncbitaxon_namespaces)
         return element is not None and self.ncbitaxon_obo.NCBITaxon_40674 in element.ancestors()
+
+    def check_is_chemical_entity(self, iri: str):
+        element = self._get_class(iri, self.chebi, self.chebi_namespaces)
+        return element is not None and self.chebi_obo.CHEBI_24431 in element.ancestors()
 
     def check_is_compartment(self, iri: str):
         pbpko_class = self._get_class(iri, self.pbpko, self.pbpko_namespaces)
@@ -148,8 +193,39 @@ class PbkOntologyChecker():
             # If an ontology definition is provided, check the modified IRI
             for onto_namespace in onto_namespaces:
                 # Replace the namespace in the IRI
-                modified_iri = iri.replace(f'{onto_namespace['prefix']}{onto_namespace['separator']}', onto_namespace['url'])
+                modified_iri = iri.replace(f'{onto_namespace['pattern']}', onto_namespace['replacement'])
                 result = onto.search_one(iri = modified_iri)
                 if result is not None:
                     break
         return result
+
+def load_ontology(world: World, onto_spec):
+    cache_dir = Path(ONTOLOGY_CACHE_DIR)
+    url = onto_spec["url"]
+    filename = onto_spec["filename"]
+    is_gzip = filename.endswith(".gz")
+    file_path = cache_dir / filename
+    owl_filename = filename[:-3] if is_gzip else filename
+    owl_path = cache_dir / owl_filename
+
+    # If .owl file not exists
+    if not owl_path.exists():
+        # Create cache dir if not exists
+        cache_dir.mkdir(parents=True, exist_ok=True)
+
+        # Download file if not exists
+        if not file_path.exists():
+            urllib.request.urlretrieve(url, file_path)
+
+        # Extract .owl file from .gz file
+        if is_gzip:
+            with gzip.open(file_path, 'rb') as f_in, open(owl_path, 'wb') as f_out:
+                shutil.copyfileobj(f_in, f_out)
+
+        # Raise error if .owl file still not exists
+        if not owl_path.exists():
+            raise FileNotFoundError(f"Failed to load OWL file [{owl_filename}].")
+
+    # Load with owlready2
+    world.get_ontology(owl_filename).load()
+
