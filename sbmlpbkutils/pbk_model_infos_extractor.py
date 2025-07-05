@@ -1,3 +1,5 @@
+from typing import assert_never
+
 import libsbml as ls
 
 from . import PbkOntologyChecker
@@ -103,6 +105,8 @@ def get_cv_terms_by_type(
                 qualifier_type = term.getBiologicalQualifierType()
             elif term.getQualifierType() == ls.MODEL_QUALIFIER:
                 qualifier_type = term.getModelQualifierType()
+            else:
+                assert_never(qualifier_type)
             if qualifier_type not in lookup:
                 lookup[qualifier_type] = []
             lookup[qualifier_type].append(term.getResourceURI(j))

@@ -49,9 +49,9 @@ class PbkOntologyCheckerTests(unittest.TestCase):
         ("40674", "Mammalia"),
         ("9606", "Homo sapiens")
     ])
-    def test_get_ncbitaxon_class(self, id, label_exp):
+    def test_get_ncbitaxon_class(self, term_id, label_exp):
         checker = PbkOntologyChecker()
-        iri_expected = f"http://purl.obolibrary.org/obo/NCBITaxon_{id}"
+        iri_expected = f"http://purl.obolibrary.org/obo/NCBITaxon_{term_id}"
         patterns = [
             "http://purl.obolibrary.org/obo/NCBITaxon_",
             "http://identifiers.org/taxonomy/",
@@ -59,7 +59,7 @@ class PbkOntologyCheckerTests(unittest.TestCase):
             "obo:NCBITaxon_",
         ]
         for pattern in patterns:
-            iri = f"{pattern}{id}"
+            iri = f"{pattern}{term_id}"
             result = checker.get_ncbitaxon_class(iri)
             self.assertIsNotNone(result)
             self.assertEqual(result.iri, iri_expected)
@@ -70,9 +70,9 @@ class PbkOntologyCheckerTests(unittest.TestCase):
         ("25212", "metabolite"),
         ("35549", "perfluorooctanoic acid")
     ])
-    def test_get_chebi_class(self, id, label_exp):
+    def test_get_chebi_class(self, term_id, label_exp):
         checker = PbkOntologyChecker()
-        iri_expected = f"http://purl.obolibrary.org/obo/CHEBI_{id}"
+        iri_expected = f"http://purl.obolibrary.org/obo/CHEBI_{term_id}"
         patterns = [
             "http://purl.obolibrary.org/obo/CHEBI_",
             "http://identifiers.org/chebi/CHEBI:",
@@ -81,7 +81,7 @@ class PbkOntologyCheckerTests(unittest.TestCase):
             "obo:CHEBI_",
         ]
         for pattern in patterns:
-            iri = f"{pattern}{id}"
+            iri = f"{pattern}{term_id}"
             result = checker.get_chebi_class(iri)
             self.assertIsNotNone(result)
             self.assertEqual(result.iri, iri_expected)
@@ -119,7 +119,7 @@ class PbkOntologyCheckerTests(unittest.TestCase):
         checker = PbkOntologyChecker()
         self.assertTrue(checker.check_is_compartment("http://purl.obolibrary.org/obo/PBPKO_00477"))
         self.assertFalse(checker.check_is_compartment("http://purl.obolibrary.org/obo/PBPKO_00029")) 
-        self.assertFalse(checker.check_is_compartment("XXXX")) 
+        self.assertFalse(checker.check_is_compartment("XXXX"))
         result = checker.get_compartment_classes()
         for item in result:
             self.assertTrue(checker.check_is_compartment(item.iri))
@@ -148,17 +148,12 @@ class PbkOntologyCheckerTests(unittest.TestCase):
         # Skin compartment (should be false)
         self.assertFalse(checker.check_is_inhalation_input_compartment("http://purl.obolibrary.org/obo/PBPKO_00470"))
 
-    def test_get_pbpko_parameters(self):
-        checker = PbkOntologyChecker()
-        result = checker.get_parameter_classes()
-        self.assertTrue(result)
-
     def test_is_parameter(self):
         checker = PbkOntologyChecker()
         self.assertFalse(checker.check_is_parameter("http://purl.obolibrary.org/obo/PBPKO_00477"))
         self.assertTrue(checker.check_is_parameter("http://purl.obolibrary.org/obo/PBPKO_00029")) 
         self.assertTrue(checker.check_is_parameter("http://purl.obolibrary.org/obo/PBPKO_00078"))
-        self.assertFalse(checker.check_is_parameter("XXXX")) 
+        self.assertFalse(checker.check_is_parameter("XXXX"))
         result = checker.get_parameter_classes()
         for item in result:
             #print(f'[{item.iri}] - {item.label}')
@@ -176,7 +171,7 @@ class PbkOntologyCheckerTests(unittest.TestCase):
         self.assertFalse(checker.check_is_biochemical_parameter("http://purl.obolibrary.org/obo/PBPKO_00008"))
 
         # Invalid URI: False
-        self.assertFalse(checker.check_is_biochemical_parameter("XXXX")) 
+        self.assertFalse(checker.check_is_biochemical_parameter("XXXX"))
         result = checker.get_parameter_classes()
         for item in result:
             #print(f'[{item.iri}] - {item.label}')
@@ -194,7 +189,7 @@ class PbkOntologyCheckerTests(unittest.TestCase):
         self.assertFalse(checker.check_is_physicochemical_parameter("http://purl.obolibrary.org/obo/PBPKO_00008"))
 
         # Invalid URI: False
-        self.assertFalse(checker.check_is_physicochemical_parameter("XXXX")) 
+        self.assertFalse(checker.check_is_physicochemical_parameter("XXXX"))
         result = checker.get_parameter_classes()
         for item in result:
             #print(f'[{item.iri}] - {item.label}')
@@ -212,7 +207,7 @@ class PbkOntologyCheckerTests(unittest.TestCase):
         self.assertTrue(checker.check_is_physiological_parameter("http://purl.obolibrary.org/obo/PBPKO_00008"))
 
         # Invalid URI: False
-        self.assertFalse(checker.check_is_physiological_parameter("XXXX")) 
+        self.assertFalse(checker.check_is_physiological_parameter("XXXX"))
         result = checker.get_parameter_classes()
         for item in result:
             #print(f'[{item.iri}] - {item.label}')

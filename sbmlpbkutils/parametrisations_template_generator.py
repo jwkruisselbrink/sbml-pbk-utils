@@ -55,7 +55,7 @@ class ParametrisationsTemplateGenerator:
     ):
         dt = []
         model_instance_ids = model_instance_ids if model_instance_ids else [f'{model.getId()}_PARAM']
-        for i, model_instance_id in enumerate(model_instance_ids):
+        for _, model_instance_id in enumerate(model_instance_ids):
             for j in range(0,model.getNumParameters()):
                 element = model.getParameter(j)
                 if (element.getConstant()):
@@ -82,4 +82,3 @@ class ParametrisationsTemplateGenerator:
 
         df = pd.DataFrame(dt, columns = colnames)
         return df
-

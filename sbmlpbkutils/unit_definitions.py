@@ -6,7 +6,7 @@ class UnitType(enum.Enum):
     MASS_UNIT = 2               # Grams or moles
     VOLUME_UNIT = 3             # Liters
     TIME_UNIT = 4               # Seconds
-    CONCENTRATION_UNIT = 5,     # Grams per mass or volume
+    CONCENTRATION_UNIT = 5      # Grams per mass or volume
     OTHER = 99                  # Anything other than the above
 
 _si_prefix_string = {
@@ -1072,7 +1072,7 @@ unit_definitions = [
 
 def get_volume_unit_definitions() -> list[dict]:
     res = []
-    for index, unit_def in enumerate(unit_definitions):
+    for _, unit_def in enumerate(unit_definitions):
         if len(unit_def['units']) == 1 \
             and _is_volume_unit_part(unit_def['units'][0]):
             res.append(unit_def)
@@ -1080,7 +1080,7 @@ def get_volume_unit_definitions() -> list[dict]:
 
 def get_mass_unit_definitions() -> list[dict]:
     res = []
-    for index, unit_def in enumerate(unit_definitions):
+    for _, unit_def in enumerate(unit_definitions):
         if len(unit_def['units']) == 1 \
             and _is_mass_unit_part(unit_def['units'][0]):
             res.append(unit_def)
@@ -1088,7 +1088,7 @@ def get_mass_unit_definitions() -> list[dict]:
 
 def get_time_unit_definitions() -> list[dict]:
     res = []
-    for index, unit_def in enumerate(unit_definitions):
+    for _, unit_def in enumerate(unit_definitions):
         if len(unit_def['units']) == 1 \
             and _is_time_unit_part(unit_def['units'][0]):
             res.append(unit_def)
@@ -1102,7 +1102,7 @@ def get_unit_definition(
     Returns none if no matching unit definition was found.
     """
     res = None
-    for index, value in enumerate(unit_definitions):
+    for _, value in enumerate(unit_definitions):
         if value['id'].lower() == unit_str.lower() \
             or any(val.lower() == unit_str.lower() for val in value['synonyms']):
             res = value
@@ -1114,7 +1114,7 @@ def get_ucum_unit_string(
 ) -> str:
     """Tries to get the (UCUM formated) unit string of the specified element."""
     if (unit_str):
-        for index, value in enumerate(unit_definitions):
+        for _, value in enumerate(unit_definitions):
             if unit_str.lower() == value['id'].lower() \
                 or any(val.lower() == unit_str.lower() for val in value['synonyms']):
                 return value['UCUM'] if value['UCUM'] else value['id']
@@ -1125,14 +1125,14 @@ def set_unit_definition(
     definition
 ):
     """ Sets the libSBML unit definition according to the unit definition."""
-    id = definition["id"]
-    sbml_unit_definition.setId(id)
-    for unitPart in definition["units"]:
+    definition_id = definition["id"]
+    sbml_unit_definition.setId(definition_id)
+    for unit_part in definition["units"]:
         u = sbml_unit_definition.createUnit()
-        u.setKind(unitPart["kind"])
-        u.setExponent(unitPart["exponent"])
-        u.setMultiplier(unitPart["multiplier"])
-        u.setScale(unitPart["scale"])
+        u.setKind(unit_part["kind"])
+        u.setExponent(unit_part["exponent"])
+        u.setMultiplier(unit_part["multiplier"])
+        u.setScale(unit_part["scale"])
 
 def create_unit_string(
     unit: ls.UnitDefinition,
@@ -1196,7 +1196,7 @@ def get_unit_type(unit_def: dict) -> UnitType:
         if any(_is_mass_unit_part(part) for part in unit_def['units']) \
             and (any(_is_per_volume_unit_part(part) for part in unit_def['units']) \
             or any(_is_per_mass_unit_part(part) for part in unit_def['units'])):
-                return UnitType.CONCENTRATION_UNIT
+            return UnitType.CONCENTRATION_UNIT
     else:
         return UnitType.OTHER
 

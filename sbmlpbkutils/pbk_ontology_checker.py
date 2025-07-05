@@ -1,7 +1,11 @@
-from owlready2 import *
 import gzip
 import shutil
+import time
+import re
+import urllib.request
 from pathlib import Path
+
+from owlready2 import World, onto_path
 
 ONTOLOGY_CACHE_DIR = "./.cache"
 PBPKO = {
@@ -97,7 +101,7 @@ class PbkOntologyChecker():
         # If an ontology definition is provided, check the modified IRI
         for onto_namespace in self.chebi_namespaces:
             # Replace the namespace in the IRI
-            modified_iri = iri.replace(f'{onto_namespace['pattern']}', onto_namespace['replacement'])
+            modified_iri = iri.replace(onto_namespace['pattern'], onto_namespace['replacement'])
             if bool(re.match(full_iri_pattern, modified_iri)):
                 return True
         return False
@@ -193,7 +197,7 @@ class PbkOntologyChecker():
             # If an ontology definition is provided, check the modified IRI
             for onto_namespace in onto_namespaces:
                 # Replace the namespace in the IRI
-                modified_iri = iri.replace(f'{onto_namespace['pattern']}', onto_namespace['replacement'])
+                modified_iri = iri.replace(onto_namespace['pattern'], onto_namespace['replacement'])
                 result = onto.search_one(iri = modified_iri)
                 if result is not None:
                     break

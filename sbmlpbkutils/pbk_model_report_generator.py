@@ -27,7 +27,7 @@ class PbkModelReportGenerator():
         name = model.getName() if model.isSetName() else model.getId()
 
         # Open the file in write mode
-        with open(output_file, "w") as f:
+        with open(output_file, mode="w", encoding="utf-8") as f:
             # Write the title
             f.write(f"# {name}\n\n")
 
@@ -67,12 +67,12 @@ class PbkModelReportGenerator():
             # Write ODEs
             f.write("## ODEs\n\n")
             odes = self.get_odes_as_str(RenderMode.LATEX)
-            for species_id, equation in odes.items():
+            for _, equation in odes.items():
                 f.write(f"${equation}$\n\n")
             f.write("\n\n")
 
             function_defs = self.get_function_as_str(RenderMode.LATEX)
-            for fct_id, equation in function_defs.items():
+            for _, equation in function_defs.items():
                 f.write(f"${equation}$\n\n")
             f.write("\n\n")
 
@@ -98,7 +98,7 @@ class PbkModelReportGenerator():
         model = self.document.getModel()
         if model.isSetModelHistory():
             model_history = model.getModelHistory()
-            if (model_history.getNumCreators() > 0):
+            if model_history.getNumCreators() > 0:
                 model_creators = model_history.getListCreators()
                 for creator in model_creators:
                     dt.append([
@@ -117,14 +117,14 @@ class PbkModelReportGenerator():
         model = self.document.getModel()
 
         animal_species = self.infos_extractor.get_model_animal_species()
-        if (len(animal_species) > 0):
+        if len(animal_species) > 0:
             species = [x.iri for x in animal_species]
             dt.append(["Modelled species/orgamism(s)", ", ".join(species)])
         else:
             dt.append(["Modelled species/orgamism(s)", "*not specified*"])
 
         model_chemicals = self.infos_extractor.get_model_chemicals()
-        if (len(model_chemicals) > 0):
+        if len(model_chemicals) > 0:
             chemicals = [x.iri for x in model_chemicals]
             dt.append(["Model chemical(s)", ", ".join(chemicals)])
         else:
@@ -156,16 +156,19 @@ class PbkModelReportGenerator():
         dt.append(["Number of compartments", model.getNumCompartments()])
         dt.append(["Number of species", model.getNumSpecies()])
 
-        internalParamsCount = 0
-        externalParamsCount = 0
+        internal_params_count = 0
+        external_params_count = 0
         for i in range(0, model.getNumParameters()):
             element = model.getParameter(i)
             if element.getConstant():
-                externalParamsCount += 1
+                external_params_count += 1
             else:
-                internalParamsCount += 1
+                internal_params_count += 1
 
-        dt.append(["Number of parameters", f'{model.getNumParameters()} ({externalParamsCount} external / {internalParamsCount} internal)'])
+        dt.append([
+            "Number of parameters",
+            f"{model.getNumParameters()} ({external_params_count} external / {internal_params_count} internal)"
+        ])
 
         result = pd.DataFrame(dt, columns=col_names)
         return result
@@ -305,9 +308,9 @@ class PbkModelReportGenerator():
                 reactants.append(reactant.getSpecies())
 
             eq = PbkModelReportGenerator._reaction_to_equation(reaction, render_mode)
-            idReaction = reaction.getId()
-            result[idReaction] = {
-                'id': idReaction,
+            id_reaction = reaction.getId()
+            result[id_reaction] = {
+                'id': id_reaction,
                 'equation': eq,
                 'products': products,
                 'reactants': reactants
@@ -344,14 +347,14 @@ class PbkModelReportGenerator():
         ast_node: ls.ASTNode,
         render_mode: RenderMode
     ):
-        if (render_mode == RenderMode.TEXT):
+        if render_mode == RenderMode.TEXT:
             return ls.formulaToString(ast_node).strip()
-        elif (render_mode == RenderMode.LATEX):
+        elif render_mode == RenderMode.LATEX:
             return astnode_to_latex(ast_node).replace("·", "\cdot ")
 
     @staticmethod
-    def _math_print_element(id):
-        return f"\\mathtt{{{id.replace('_', '-')}}}"
+    def _math_print_element(element_id):
+        return f"\\mathtt{{{element_id.replace('_', '-')}}}"
 
     def _get_unit_string(
         self,

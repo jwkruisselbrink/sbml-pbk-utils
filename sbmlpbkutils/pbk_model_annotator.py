@@ -1,12 +1,12 @@
 import os
-import libsbml as ls
-import numpy as np
-import pandas as pd
-import yaml
 from pathlib import Path
 from typing import List, Union
 from logging import Logger
 
+import libsbml as ls
+import yaml
+import numpy as np
+import pandas as pd
 from sbmlutils import utils
 from sbmlutils.metadata.annotator import ModelAnnotator, ExternalAnnotation
 from pymetadata.core.annotation import RDFAnnotation as Annotation
@@ -67,7 +67,7 @@ class PbkModelAnnotator:
 
         if cff_file is not None:
             try:
-                # Read CFF file 
+                # Read CFF file
                 creators = PbkModelAnnotator._read_cff_authors(cff_file)
             except Exception as error:
                 file_basename = os.path.basename(cff_file)
@@ -79,7 +79,7 @@ class PbkModelAnnotator:
                     creators
                 )
             except Exception as error:
-                logger.error(f'Failed to set creators from CFF file')
+                logger.error("Failed to set creators from CFF file")
 
     def set_model_annotations(
         self,
@@ -108,13 +108,13 @@ class PbkModelAnnotator:
 
         # Check for required columns
         if not any(item in annotations_df.columns for item in ['URI', 'resource']):
-            msg = f'Missing [URI] or [resource] column in annotations table.'
+            msg = f"Missing [URI] or [resource] column in annotations table."
             logger.critical(msg)
             raise ValueError(msg)
 
         # Check for required columns
         if not 'qualifier' in annotations_df.columns:
-            msg = f'Missing [qualifier] column in annotations table.'
+            msg = f"Missing [qualifier] column in annotations table."
             logger.critical(msg)
             raise ValueError(msg)
 
@@ -149,13 +149,13 @@ class PbkModelAnnotator:
                 else:
                     try:
                         annotation = ExternalAnnotation(row)
-                    except:
-                        msg = f'Invalid annotation [{qualifier}|{resource}] for {sbml_type} "{element_id}".'
+                    except Exception:
+                        msg = f"Invalid annotation [{qualifier}|{resource}] for {sbml_type} [{element_id}]."
                         logger.error(msg)
 
             if sbml_type == "document":
                 elements = [document]
-            elif (element_id):
+            elif element_id:
                 elements = self._get_elements_by_pattern(
                     model,
                     sbml_type,
@@ -166,7 +166,7 @@ class PbkModelAnnotator:
 
             for element in elements:
                 # If unit field is not empty, try set element unit
-                if (unit is not None):
+                if unit is not None:
                     self._set_element_unit(
                         model,
                         element,
@@ -357,7 +357,7 @@ class PbkModelAnnotator:
         """
         model = document.getModel()
         annotation = Annotation(
-            qualifier=ExternalAnnotation._parse_qualifier_str(qualifier),
+            qualifier = ExternalAnnotation._parse_qualifier_str(qualifier),
             resource=iri
         )
         self._set_element_rdf_annotation(
@@ -381,7 +381,7 @@ class PbkModelAnnotator:
         model = document.getModel()
         element = model.getElementBySId(element_id)
         annotation = Annotation(
-            qualifier=ExternalAnnotation._parse_qualifier_str(qualifier),
+            qualifier = ExternalAnnotation._parse_qualifier_str(qualifier),
             resource=iri
         )
         self._set_element_rdf_annotation(
@@ -494,7 +494,7 @@ class PbkModelAnnotator:
 
         # Create or get the CV term
         cv_term: ls.CVTerm = None
-        if (overwrite):
+        if overwrite:
             cv_terms = element.getCVTerms()
             for term in cv_terms:
                 if term.getQualifierType() == qualifier_type:
@@ -643,7 +643,6 @@ class PbkModelAnnotator:
                 e = model.getUnitDefinition(sid)
             else:
                 # returns the first element with id
-                # FIXME: this is very slow in a loop, better solution required via
                 e = model.getElementBySId(sid)
             if e is None:
                 if sid == model.getId():
@@ -673,13 +672,13 @@ class PbkModelAnnotator:
         """Tries to get the unit definition for the specified unit id from the SBML document.
         The unit definition will be created and added to the document if it does not yet exist.
         """
-        if (unit_id not in units_dict):
+        if unit_id not in units_dict:
             unit_definition = get_unit_definition(unit_id)
-            if (unit_definition is None):
+            if unit_definition is None:
                 logger.error(f"Failed to set unit [{unit_id}]: unknown unit definition!")
                 return
             sbml_unit_definition = model.getUnitDefinition(unit_definition["id"])
-            if (not sbml_unit_definition):
+            if not sbml_unit_definition:
                 logger.info(f"Add unit definition [{unit_id}].")
                 sbml_unit_definition = model.createUnitDefinition()
                 set_unit_definition(
@@ -715,7 +714,7 @@ class PbkModelAnnotator:
         """Read annotations from given file into DataFrame.
         Supports "xlsx", "tsv", "csv", "json", "*"
         """
-        filename, file_extension = os.path.splitext(file_path)
+        _, file_extension = os.path.splitext(file_path)
         if file_format == "*":
             file_format = file_extension[1:]  # remove leading dot
 
@@ -741,6 +740,8 @@ class PbkModelAnnotator:
             df = pd.read_json(file_path)
         elif file_format == "xlsx":
             df = pd.read_excel(file_path, comment="#", engine="openpyxl")
+        else:
+            raise NotImplementedError(f"File format [{file_format}] not supported.")
 
         df.dropna(axis="index", inplace=True, how="all")
         return df
@@ -756,7 +757,7 @@ class PbkModelAnnotator:
         for term in cv_terms:
             num_resources = term.getNumResources()
             for j in range(num_resources):
-                if qualifier_type == None or term.getQualifierType() == qualifier_type:
+                if qualifier_type is None or term.getQualifierType() == qualifier_type:
                     if term.getQualifierType() == ls.BIOLOGICAL_QUALIFIER \
                         and (qualifier is None or term.getBiologicalQualifierType() == qualifier):
                         uris.append({
@@ -770,17 +771,3 @@ class PbkModelAnnotator:
                             'uri': term.getResourceURI(j)
                         })
         return uris
-
-    @staticmethod
-    def print_element_terms(
-        document: ls.SBMLDocument,
-        element_id: str
-    ) -> None:
-        model = document.getModel()
-        element = model.getElementBySId(element_id)
-        if not element.isSetAnnotation():
-            return
-
-        print(f"-----{element.getElementName()} ({element_id}) annotation -----")
-        print(element.getAnnotationString())
-        print("\n")

@@ -1,9 +1,9 @@
-from pathlib import Path
 import unittest
-import sys
 import os
-import libsbml as ls
+import sys
+from pathlib import Path
 
+import libsbml as ls
 from sbmlpbkutils import ParametrisationsTemplateGenerator
 
 sys.path.append('../sbmlpbkutils/')
@@ -14,7 +14,6 @@ __test_models_path__ = './tests/models/'
 class ParametrisationsTemplateGeneratorTests(unittest.TestCase):
 
     def setUp(self):
-        from pathlib import Path
         Path(__test_outputs_path__).mkdir(parents=True, exist_ok=True)
 
     @classmethod

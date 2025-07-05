@@ -1,8 +1,9 @@
-import libsbml as ls
 import os
 import sys
 import unittest
+from pathlib import Path
 
+import libsbml as ls
 from sbmlpbkutils import PbkModelInfosExtractor
 
 sys.path.append('../sbmlpbkutils/')
@@ -13,7 +14,6 @@ __test_models_path__ = './tests/models/'
 class PbkModelInfosExtractorTests(unittest.TestCase):
 
     def setUp(self):
-        from pathlib import Path
         Path(__test_outputs_path__).mkdir(parents=True, exist_ok=True)
 
     def test_get_input_compartments_simple(self):

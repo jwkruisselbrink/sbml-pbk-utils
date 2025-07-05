@@ -1,12 +1,13 @@
-import libsbml as ls
 import logging
 import os
-import pandas as pd
 import sys
 import unittest
 import uuid
 from pathlib import Path
 from parameterized import parameterized
+
+import pandas as pd
+import libsbml as ls
 
 from sbmlpbkutils import PbkModelValidator, PbkModelAnnotator
 from sbmlpbkutils import ErrorCode, ValidationStatus
@@ -19,7 +20,6 @@ __test_outputs_path__ = './tests/__testoutputs__'
 class PbkModelValidatorTests(unittest.TestCase):
 
     def setUp(self):
-        from pathlib import Path
         Path(__test_outputs_path__).mkdir(parents=True, exist_ok=True)
 
     @parameterized.expand([

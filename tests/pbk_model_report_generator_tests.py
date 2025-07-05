@@ -1,8 +1,9 @@
 import unittest
 import sys
 import os
-import libsbml as ls
 from pathlib import Path
+
+import libsbml as ls
 from parameterized import parameterized
 from sbmlpbkutils import RenderMode, PbkModelReportGenerator
 
@@ -14,7 +15,6 @@ __test_outputs_path__ = './tests/__testoutputs__'
 class PbkModelReportGeneratorTests(unittest.TestCase):
 
     def setUp(self):
-        from pathlib import Path
         Path(__test_outputs_path__).mkdir(parents=True, exist_ok=True)
 
     @parameterized.expand([
@@ -51,7 +51,7 @@ class PbkModelReportGeneratorTests(unittest.TestCase):
         document = ls.readSBML(sbml_file)
         generator = PbkModelReportGenerator(document)
         result = generator.get_transfer_equations_as_str(render_mode)
-        for key, val in result.items():
+        for _, val in result.items():
             print(f"{val['id']}: {val['products'][0]}\t <= \t{val['equation']}\n")
         self.assertTrue(result)
 

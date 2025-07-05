@@ -1,14 +1,13 @@
+import logging
 import unittest
 import uuid
 import sys
 import os
-import logging
-import libsbml as ls
-import pandas as pd
 from pathlib import Path
 
+import libsbml as ls
+import pandas as pd
 from parameterized import parameterized
-
 from sbmlpbkutils import PbkModelAnnotator
 
 sys.path.append('../sbmlpbkutils/')
@@ -19,7 +18,6 @@ __test_models_path__ = './tests/models/'
 class PbkModelAnnotatorTests(unittest.TestCase):
 
     def setUp(self):
-        from pathlib import Path
         Path(__test_outputs_path__).mkdir(parents=True, exist_ok=True)
 
     @classmethod
@@ -82,7 +80,7 @@ class PbkModelAnnotatorTests(unittest.TestCase):
         self.assertIsNotNone(document)
         model = document.getModel()
         for i in range(0, model.getNumUnitDefinitions()):
-            if (model.getUnitDefinition(i).getId() == 'MilliL'):
+            if model.getUnitDefinition(i).getId() == 'MilliL':
                 unit_def = model.getUnitDefinition(i)
                 break
         self.assertIsNotNone(unit_def)
