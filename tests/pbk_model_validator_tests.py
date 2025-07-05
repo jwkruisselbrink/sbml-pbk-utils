@@ -9,7 +9,7 @@ from pathlib import Path
 from parameterized import parameterized
 
 from sbmlpbkutils import PbkModelValidator, PbkModelAnnotator
-from sbmlpbkutils import ErrorCode, StatusLevel
+from sbmlpbkutils import ErrorCode, ValidationStatus
 
 sys.path.append('../sbmlpbkutils/')
 
@@ -46,8 +46,7 @@ class PbkModelValidatorTests(unittest.TestCase):
         validator = PbkModelValidator()
         element = document.getElementBySId('Gut')
         result = validator.check_element_annotation(element)
-        self.assertTrue(result[0])
-        self.assertFalse(result[1])
+        self.assertTrue(result.level == ValidationStatus.OK)
 
     def test_validate_compartment_not_valid(self):
         annotations_df = self._fake_single_annotation_record(
@@ -60,8 +59,8 @@ class PbkModelValidatorTests(unittest.TestCase):
         validator = PbkModelValidator()
         element = document.getElementBySId('Gut')
         result = validator.check_element_annotation(element)
-        self.assertFalse(result[0])
-        self.assertEqual(result[1][0].code, ErrorCode.COMPARTMENT_MISSING_BQM_TERM)
+        self.assertTrue(result.level == ValidationStatus.ERROR)
+        self.assertEqual(result.code, ErrorCode.COMPARTMENT_MISSING_PBPKO_BQM_IS_TERM)
 
     def test_validate_parameter_no_chebi(self):
         annotations_df = self._fake_single_annotation_record(
@@ -74,8 +73,8 @@ class PbkModelValidatorTests(unittest.TestCase):
         validator = PbkModelValidator()
         element = document.getElementBySId('PCLiver')
         result = validator.check_element_annotation(element)
-        self.assertFalse(result[0])
-        self.assertEqual(result[1][0].code, ErrorCode.PARAMETER_MISSING_BQB_IS_TERM)
+        self.assertTrue(result.level == ValidationStatus.ERROR)
+        self.assertEqual(result.code, ErrorCode.PARAMETER_MISSING_CHEBI_BQB_IS_TERM)
 
     def test_validate_parameter_valid(self):
         annotations_df = pd.concat([
@@ -96,8 +95,7 @@ class PbkModelValidatorTests(unittest.TestCase):
         validator = PbkModelValidator()
         element = document.getElementBySId('PCLiver')
         result = validator.check_element_annotation(element)
-        self.assertTrue(result[0])
-        self.assertFalse(result[1])
+        self.assertTrue(result.level == ValidationStatus.OK)
 
     def test_validate_parameter_invalid(self):
         annotations_df = self._fake_single_annotation_record(
@@ -110,9 +108,8 @@ class PbkModelValidatorTests(unittest.TestCase):
         validator = PbkModelValidator()
         element = document.getElementBySId('PCLiver')
         result = validator.check_element_annotation(element)
-        self.assertFalse(result[0])
-        self.assertEqual(result[1][0].level, StatusLevel.ERROR)
-        self.assertEqual(result[1][0].code, ErrorCode.PARAMETER_MISSING_BQM_TERM)
+        self.assertEqual(result.level, ValidationStatus.ERROR)
+        self.assertEqual(result.code, ErrorCode.PARAMETER_MISSING_PBPKO_BQM_IS_TERM)
 
     def test_validate_parameters_duplicate_use(self):
         annotations_df = pd.concat([
@@ -132,10 +129,10 @@ class PbkModelValidatorTests(unittest.TestCase):
         document = self._annotate_model('simple.sbml', annotations_df)
         validator = PbkModelValidator()
         result = validator.check_parameter_annotations(document)
-        self.assertFalse(result[0])
-        messages = [r for r in result[1] if r.code == ErrorCode.PARAMETER_MULTIPLE_ANNOTATION_USE]
-        self.assertEqual(messages[0].level, StatusLevel.ERROR)
-        self.assertEqual(messages[0].code, ErrorCode.PARAMETER_MULTIPLE_ANNOTATION_USE)
+        self.assertTrue(any(r.level == ValidationStatus.ERROR for r in result))
+        records = [r for r in result if r.code == ErrorCode.PARAMETER_MULTIPLE_ANNOTATION_USE]
+        self.assertEqual(records[0].level, ValidationStatus.ERROR)
+        self.assertEqual(records[0].code, ErrorCode.PARAMETER_MULTIPLE_ANNOTATION_USE)
 
     def test_validate_parameters_duplicate_use_chemical_specific(self):
         annotations_df = pd.concat([
@@ -155,21 +152,19 @@ class PbkModelValidatorTests(unittest.TestCase):
         document = self._annotate_model('simple.sbml', annotations_df)
         validator = PbkModelValidator()
         result = validator.check_parameter_annotations(document)
-        messages = [r for r in result[1] if r.code == ErrorCode.PARAMETER_MULTIPLE_ANNOTATION_USE]
+        messages = [r for r in result if r.code == ErrorCode.PARAMETER_MULTIPLE_ANNOTATION_USE]
         self.assertEqual(len(messages), 0)
 
     def test_validate_parameter_warning(self):
-        '''
-        Annotation of internal parameters is not mandatory. Validation should yield a warning.
-        '''
+        '''Annotation of internal parameters is not mandatory. Validation
+        should yield a warning.'''
         sbml_file = os.path.join(__test_models_path__, 'simple.sbml') 
         document = ls.readSBML(sbml_file)
         element = document.getElementBySId('QC')
         validator = PbkModelValidator()
         result = validator.check_element_annotation(element)
-        self.assertTrue(result[0])
-        self.assertEqual(result[1][0].level, StatusLevel.WARNING)
-        self.assertEqual(result[1][0].code, ErrorCode.PARAMETER_MISSING_BQM_TERM)
+        self.assertEqual(result.level, ValidationStatus.WARNING)
+        self.assertEqual(result.code, ErrorCode.PARAMETER_MISSING_PBPKO_BQM_IS_TERM)
 
     def _fake_single_annotation_record(
         self,

@@ -14,7 +14,7 @@ from .pbk_model_infos_extractor import PbkModelInfosExtractor
 from .pbk_model_annotator import PbkModelAnnotator
 from .pbk_model_validator import PbkModelValidator
 from .pbk_model_validator import ErrorCode
-from .pbk_model_validator import StatusLevel
+from .pbk_model_validator import ValidationStatus
 from .pbk_model_report_generator import PbkModelReportGenerator
 from .pbk_model_report_generator import RenderMode
 from .annotations_template_generator import AnnotationsTemplateGenerator
