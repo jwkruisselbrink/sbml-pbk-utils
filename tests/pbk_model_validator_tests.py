@@ -31,7 +31,8 @@ class PbkModelValidatorTests(unittest.TestCase):
         sbml_file = os.path.join(__test_models_path__, file)
         validator = PbkModelValidator()
         sbml_basename = os.path.basename(sbml_file)
-        log_file = os.path.join(__test_outputs_path__, Path(sbml_basename).with_suffix('.validation.log'))
+        log_file = os.path.join(__test_outputs_path__, Path(sbml_basename)
+                                .with_suffix('.validation.log'))
         logger = self._create_file_logger(log_file)
         validator.validate(sbml_file, logger)
 
@@ -133,6 +134,39 @@ class PbkModelValidatorTests(unittest.TestCase):
         records = [r for r in result if r.code == ErrorCode.PARAMETER_MULTIPLE_ANNOTATION_USE]
         self.assertEqual(records[0].level, ValidationStatus.ERROR)
         self.assertEqual(records[0].code, ErrorCode.PARAMETER_MULTIPLE_ANNOTATION_USE)
+
+    def test_validate_parameters_allowed_duplicate_use(self):
+        annotations_df = pd.concat([
+            self._fake_single_annotation_record(
+                'PCLiver_P',
+                'parameter',
+                'BQM_IS',
+                'http://purl.obolibrary.org/obo/PBPKO_00577'
+            ),
+            self._fake_single_annotation_record(
+                'PCLiver_P',
+                'parameter',
+                'BQB_IS',
+                'urn:miriam:chebi:24431'
+            ),
+            self._fake_single_annotation_record(
+                'PCLiver_M',
+                'parameter',
+                'BQM_IS',
+                'http://purl.obolibrary.org/obo/PBPKO_00577'
+            ),
+            self._fake_single_annotation_record(
+                'PCLiver_M',
+                'parameter',
+                'BQB_IS',
+                'urn:miriam:chebi:CHEBI:25212'
+            )
+        ])
+        document = self._annotate_model('simple_metab.sbml', annotations_df)
+        validator = PbkModelValidator()
+        result = validator.check_parameter_annotations(document)
+        messages = [r for r in result if r.code == ErrorCode.PARAMETER_MULTIPLE_ANNOTATION_USE]
+        self.assertEqual(len(messages), 0)
 
     def test_validate_parameters_duplicate_use_chemical_specific(self):
         annotations_df = pd.concat([

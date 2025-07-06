@@ -179,7 +179,7 @@ class PbkModelValidator:
                 num_resources = term.getNumResources()
                 for j in range(num_resources):
                     iri = term.getResourceURI(j)
-                    if self.ontology_checker.check_is_chemical_entity(iri):
+                    if self.ontology_checker.check_is_chemical(iri):
                         return ValidationRecord(ValidationStatus.OK)
         return ValidationRecord(
             ValidationStatus.ERROR,
@@ -260,7 +260,8 @@ class PbkModelValidator:
                 if self.ontology_checker.check_is_parameter(iri):
                     if (key[0] == ls.MODEL_QUALIFIER and key[1] == ls.BQM_IS):
                         if not self.ontology_checker.check_is_chemical_specific_parameter(iri):
-                            # For parameters that are not chemical specific, the same IRI can only be used once for a BQM_IS
+                            # For parameters that are not chemical specific, the same IRI can only
+                            # be used once for a BQM_IS
                             element_ids_str = ','.join(values)
                             msg = f"PBPKO term [{iri}] used as BQM_IS resource by multiple parameters [{element_ids_str}]."
                             result.append(
@@ -270,7 +271,24 @@ class PbkModelValidator:
                                     msg
                                 )
                             )
-                        # TODO: else-check for chemical specific parameters: check for different chemical
+                        else:
+                            # For chemical specific parameters, check whether they have different
+                            # BQB_IS ChEBI terms
+                            elements = [doc.getElementBySId(element_id) for element_id in values]
+                            chebi_terms = [
+                                self._get_chebi_bqb_is_annotation(element)
+                                for element in elements
+                            ]
+                            non_none_terms = [term for term in chebi_terms if term is not None]
+                            if len(set(non_none_terms)) != len(non_none_terms):
+                                result.append(
+                                    ValidationRecord(
+                                        ValidationStatus.ERROR,
+                                        ErrorCode.PARAMETER_MULTIPLE_ANNOTATION_USE,
+                                        msg
+                                    )
+                                )
+
         return result
 
     def check_element_annotation(
@@ -438,8 +456,8 @@ class PbkModelValidator:
         return lookup
 
     def _get_cv_terms_by_type(
-            self,
-            element: ls.SBase
+        self,
+        element: ls.SBase
     ):
         lookup = {}
         cv_terms = element.getCVTerms()
@@ -454,3 +472,37 @@ class PbkModelValidator:
             for j in range(num_resources):
                 lookup[qualifier_type].append(term.getResourceURI(j))
         return lookup
+
+    def _get_chebi_bqb_is_annotation(
+        self,
+        element: ls.SBase,
+    ):
+        annotations = self._get_annotations(element, ls.BIOLOGICAL_QUALIFIER, ls.BQB_IS)
+        annotations = [iri for iri in annotations 
+                       if self.ontology_checker.check_is_chemical(iri)]
+        if len(annotations) > 0:
+            return annotations[0]
+        return None
+
+    def _get_annotations(
+        self,
+        element: ls.SBase,
+        qualifier_type: int,
+        qualifier: int
+    ):
+        result = []
+        cv_terms = element.getCVTerms()
+        for term in cv_terms:
+            if qualifier_type == ls.BIOLOGICAL_QUALIFIER \
+                and term.getQualifierType() == ls.BIOLOGICAL_QUALIFIER \
+                and term.getBiologicalQualifierType() == qualifier:
+                num_resources = term.getNumResources()
+                for j in range(num_resources):
+                    result.append(term.getResourceURI(j))
+            elif qualifier_type == ls.BIOLOGICAL_QUALIFIER \
+                and term.getQualifierType() == ls.MODEL_QUALIFIER \
+                and term.getModelQualifierType() == qualifier:
+                num_resources = term.getNumResources()
+                for j in range(num_resources):
+                    result.append(term.getResourceURI(j))
+        return result

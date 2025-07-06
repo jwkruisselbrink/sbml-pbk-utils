@@ -58,6 +58,10 @@ class PbkOntologyChecker():
             "replacement": "http://purl.obolibrary.org/obo/CHEBI_"
         },
         {
+            "pattern": "http://identifiers.org/chebi/",
+            "replacement": "http://purl.obolibrary.org/obo/CHEBI_"
+        },
+        {
             "pattern": "urn:miriam:chebi:",
             "replacement": "http://purl.obolibrary.org/obo/CHEBI_"
         },
@@ -129,14 +133,22 @@ class PbkOntologyChecker():
         return list(self.pbpko_obo.PBPKO_00002.descendants())
 
     def check_is_animal_species(self, iri: str):
+        '''Checks whether the specified IRI refers to a NCBI taxon (NCBITaxon_40674) or a descendant
+        of it.'''
         element = self._get_class(iri, self.ncbitaxon, self.ncbitaxon_namespaces)
         return element is not None and self.ncbitaxon_obo.NCBITaxon_40674 in element.ancestors()
 
-    def check_is_chemical_entity(self, iri: str):
+    def check_is_chemical(self, iri: str):
+        '''Checks whether the specified IRI refers to a ChEBI chemical entity (CHEBI_24431), a
+        descendant of a chemical entity (CHEBI_50906) or a descendant of a role (CHEBI_24431).'''
         element = self._get_class(iri, self.chebi, self.chebi_namespaces)
-        return element is not None and self.chebi_obo.CHEBI_24431 in element.ancestors()
+        return element is not None and (element is self.chebi_obo.CHEBI_24431 \
+            or self.chebi_obo.CHEBI_50906 in element.ancestors()
+            or self.chebi_obo.CHEBI_24431 in element.ancestors())
 
     def check_is_compartment(self, iri: str):
+        '''Checks whether the specified IRI refers to a PBPKO compartment (PBPKO_00446) or a
+        descendant of it.'''
         pbpko_class = self._get_class(iri, self.pbpko, self.pbpko_namespaces)
         return pbpko_class is not None and self.pbpko_obo.PBPKO_00446 in pbpko_class.ancestors()
 

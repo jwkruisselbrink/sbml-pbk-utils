@@ -115,6 +115,17 @@ class PbkOntologyCheckerTests(unittest.TestCase):
         checker = PbkOntologyChecker()
         self.assertTrue(checker.check_is_animal_species(iri))
 
+    @parameterized.expand([
+        ("http://identifiers.org/chebi/CHEBI:24431", True), # chemical entity
+        ("http://identifiers.org/chebi/CHEBI:25212", True), # metabolite
+        ("http://identifiers.org/chebi/CHEBI:33585", True), # lead molecular entity
+        ("urn:miriam:chebi:24431", True),
+        ("http://purl.obolibrary.org/obo/NCBITaxon_9606", False)
+    ])
+    def test_is_chemical(self, iri, expected):
+        checker = PbkOntologyChecker()
+        self.assertEqual(checker.check_is_chemical(iri), expected)
+
     def test_is_compartment(self):
         checker = PbkOntologyChecker()
         self.assertTrue(checker.check_is_compartment("http://purl.obolibrary.org/obo/PBPKO_00477"))
