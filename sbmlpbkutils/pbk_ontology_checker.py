@@ -1,7 +1,6 @@
 import gzip
 import shutil
 import time
-import re
 import urllib.request
 from pathlib import Path
 
@@ -89,6 +88,9 @@ class PbkOntologyChecker():
     def check_in_ncbitaxon(self, iri: str):
         return self._check_iri_in_ontology(iri, self.ncbitaxon, self.ncbitaxon_namespaces)
 
+    def check_in_chebi(self, iri: str):
+        return self._check_iri_in_ontology(iri, self.chebi, self.chebi_namespaces)
+
     def get_pbpko_class(self, iri):
         return self._get_class(iri, self.pbpko, self.pbpko_namespaces)
 
@@ -97,18 +99,6 @@ class PbkOntologyChecker():
 
     def get_chebi_class(self, iri):
         return self._get_class(iri, self.chebi, self.chebi_namespaces)
-
-    def check_in_chebi(self, iri: str):
-        # Full regex for namespace + ChEBI ID
-        full_iri_pattern = r"^http://purl.obolibrary.org/obo/CHEBI_\d+$"
-
-        # If an ontology definition is provided, check the modified IRI
-        for onto_namespace in self.chebi_namespaces:
-            # Replace the namespace in the IRI
-            modified_iri = iri.replace(onto_namespace['pattern'], onto_namespace['replacement'])
-            if bool(re.match(full_iri_pattern, modified_iri)):
-                return True
-        return False
 
     def get_available_classes(self, element_type: str):
         if element_type == 'taxon':
@@ -244,4 +234,3 @@ def load_ontology(world: World, onto_spec):
 
     # Load with owlready2
     world.get_ontology(owl_filename).load()
-

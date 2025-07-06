@@ -7,16 +7,19 @@ sys.path.append('../sbmlpbkutils/')
 
 class PbkOntologyCheckerTests(unittest.TestCase):
 
-    def test_check_in_ncbitaxon(self):
+    @parameterized.expand([
+        ("http://purl.obolibrary.org/obo/NCBITaxon_9606", True),
+        ("obo:NCBITaxon_9606", True),
+        ("urn:miriam:taxonomy:10095", True),
+        ("https://purl.obolibrary.org/obo/NCBITaxon_9606", False),
+        ("NCBITaxon_9606", False),
+        ("obo/NCBITaxon_9606", False),
+        ("obo.NCBITaxon_9606", False),
+        ("obo:PBPKO_00450", False)
+    ])
+    def test_check_in_ncbitaxon(self, iri, expected):
         checker = PbkOntologyChecker()
-        self.assertTrue(checker.check_in_ncbitaxon("http://purl.obolibrary.org/obo/NCBITaxon_9606"))
-        self.assertTrue(checker.check_in_ncbitaxon("obo:NCBITaxon_9606"))
-        self.assertTrue(checker.check_in_ncbitaxon("urn:miriam:taxonomy:10095"))
-        self.assertFalse(checker.check_in_ncbitaxon("https://purl.obolibrary.org/obo/NCBITaxon_9606"))
-        self.assertFalse(checker.check_in_ncbitaxon("NCBITaxon_9606"))
-        self.assertFalse(checker.check_in_ncbitaxon("obo/NCBITaxon_9606"))
-        self.assertFalse(checker.check_in_ncbitaxon("obo.NCBITaxon_9606"))
-        self.assertFalse(checker.check_in_ncbitaxon("obo:PBPKO_00450"))
+        self.assertEqual(expected, checker.check_in_ncbitaxon(iri))
 
     def test_check_in_pbpko(self):
         checker = PbkOntologyChecker()
@@ -27,16 +30,19 @@ class PbkOntologyCheckerTests(unittest.TestCase):
         self.assertFalse(checker.check_in_pbpko("obo/PBPKO_00450"))
         self.assertFalse(checker.check_in_pbpko("obo.PBPKO_0x450"))
 
-    def test_check_in_chebi(self):
+    @parameterized.expand([
+        ("http://purl.obolibrary.org/obo/CHEBI_25212", True),
+        ("https://purl.obolibrary.org/obo/CHEBI_25212", False),
+        ("https://purl.obolibrary.org/obo/PBPKO_00450", False),
+        ("http://identifiers.org/chebi/CHEBI:24431", True),
+        ("http://identifiers.org/CHEBI:24431", True),
+        ("obo:CHEBI_25212", True),
+        ("obo/CHEBI_25212", False),
+        ("obo.CHEBI_25212", False)
+    ])
+    def test_check_in_chebi(self, iri, expected):
         checker = PbkOntologyChecker()
-        self.assertTrue(checker.check_in_chebi("http://purl.obolibrary.org/obo/CHEBI_25212"))
-        self.assertFalse(checker.check_in_chebi("https://purl.obolibrary.org/obo/CHEBI_25212"))
-        self.assertFalse(checker.check_in_chebi("https://purl.obolibrary.org/obo/PBPKO_00450"))
-        self.assertTrue(checker.check_in_chebi("http://identifiers.org/chebi/CHEBI:24431"))
-        self.assertTrue(checker.check_in_chebi("http://identifiers.org/CHEBI:24431"))
-        self.assertTrue(checker.check_in_chebi("obo:CHEBI_25212"))
-        self.assertFalse(checker.check_in_chebi("obo/CHEBI_25212"))
-        self.assertFalse(checker.check_in_chebi("obo.CHEBI_25212"))
+        self.assertEqual(expected, checker.check_in_chebi(iri))
 
     def test_get_pbpko_class(self):
         checker = PbkOntologyChecker()
