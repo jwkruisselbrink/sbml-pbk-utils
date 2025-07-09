@@ -281,6 +281,8 @@ class PbkModelValidator:
                             ]
                             non_none_terms = [term for term in chebi_terms if term is not None]
                             if len(set(non_none_terms)) != len(non_none_terms):
+                                element_ids_str = ','.join(values)
+                                msg = f"PBPKO term [{iri}] used as BQM_IS resource by multiple parameters [{element_ids_str}]."
                                 result.append(
                                     ValidationRecord(
                                         ValidationStatus.ERROR,
