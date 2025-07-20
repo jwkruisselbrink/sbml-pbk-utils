@@ -4,16 +4,16 @@
 [![Build](https://img.shields.io/github/actions/workflow/status/jwkruisselbrink/sbml-pbk-utils/build.yml?label=build)](https://github.com/jwkruisselbrink/sbml-pbk-utils/actions/workflows/build.yml)
 [![Unit-test](https://img.shields.io/github/actions/workflow/status/jwkruisselbrink/sbml-pbk-utils/unit-test.yml?label=unit-test)](https://github.com/jwkruisselbrink/sbml-pbk-utils/actions/workflows/unit-test.yml)
 
-The `sbmlpbkutils` package is a small Python package that contains utility functions for FAIR PBK model implementation in SBML. It provides a number of utility functions and classes for annotating, validating and running SBML PBK models. It is currently being developed in an explorative manner to evaluate the use of SBML as a harmonized exchange format for FAIR PBK models, and to develop and test a strategy/standard for annotation of terms and units specifically for PBK models. In its current state it should therefore be regarded as an experimental toolset.
+The `sbmlpbkutils` package is a small Python package that contains utility functions for FAIR PBK model implementation in SBML. It provides functionality for annotating and validating SBML PBK models. It is currently being developed in an explorative manner to evaluate the use of SBML as a harmonized exchange format for FAIR PBK models, and to develop and test a strategy/standard for annotation of terms and units specifically for PBK models. In its current state it should therefore be regarded as an experimental toolset.
 
 ## Installation
 
 ### Install from GitHub
 
-To install a specific version, use the version tag. For instance, for version `v0.27.0`, use:
+To install a specific version, use the version tag. For instance, for version `v0.28.0`, use:
 
 ````
-pip install git+https://github.com/jwkruisselbrink/sbml-pbk-utils.git@v0.27.0
+pip install git+https://github.com/jwkruisselbrink/sbml-pbk-utils.git@v0.28.0
 ````
 
 To install the latest version available on the main Git branch, type:
@@ -66,5 +66,7 @@ At present, the following resources are considered essential for building up a s
 - The [libSBML](https://github.com/sbmlteam/python-libsbml) python package provides the essential functionality for manipulating SBML models. For instance, for enriching SBML model implementations with annotations, units and descriptions of the model elements.
 - For (semantic) annotation of PBK models, the controlled vocabularies of the following ontologies are considered relevant:
   - Use of the (currently being developed) [PBPK ontology](https://github.com/InSilicoVida-Research-Lab/pbpko) for annotation of all model elements (e.g., compartments, species, parameters).
-  - Alignment with the [Unified Code for Units of Measure (UCUM)](https://ucum.org/) and the [QUDT Ontologies](https://qudt.org/) for annotation of units, combined with the facilities for specification of units available in SBML.
+  - Use of the [ChEBI](https://www.ebi.ac.uk/chebi/) ontology for associating PBK model elements with the chemical entities they represent.
+  - Use of the [NCBI Taxonomy](https://www.ncbi.nlm.nih.gov/taxonomy) for associating PBK models with the (classes of) animal species for which they are applicable.
   - Use of the [UBERON](https://obophenotype.github.io/uberon/about/) ontology for relating PBK model compartments to the biological entities they represent.
+  - Alignment with the [Unified Code for Units of Measure (UCUM)](https://ucum.org/) and the [QUDT Ontologies](https://qudt.org/) for annotation of units, combined with the facilities for specification of units available in SBML.
