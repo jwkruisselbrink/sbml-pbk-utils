@@ -7,6 +7,7 @@ class UnitType(enum.Enum):
     VOLUME_UNIT = 3             # Liters
     TIME_UNIT = 4               # Seconds
     CONCENTRATION_UNIT = 5      # Grams per mass or volume
+    TEMPERATURE_UNIT = 6        # Temperature (Kelvin)
     OTHER = 99                  # Anything other than the above
 
 _si_prefix_string = {
@@ -51,7 +52,8 @@ _base_unit_strings = {
     ls.UNIT_KIND_LITRE: 'L',
     ls.UNIT_KIND_METER: 'm',
     ls.UNIT_KIND_METRE: 'm',
-    ls.UNIT_KIND_MOLE: 'mol'
+    ls.UNIT_KIND_MOLE: 'mol',
+    ls.UNIT_KIND_KELVIN: 'K'
 }
 
 _base_unit_strings_ext = {
@@ -62,7 +64,8 @@ _base_unit_strings_ext = {
     ls.UNIT_KIND_LITRE: 'liter',
     ls.UNIT_KIND_METER: 'meter',
     ls.UNIT_KIND_METRE: 'meter',
-    ls.UNIT_KIND_MOLE: 'mole'
+    ls.UNIT_KIND_MOLE: 'mole',
+    ls.UNIT_KIND_KELVIN: 'Kelvin'
 }
 
 # Unit definitions, translating a unit string to the elementary unit
@@ -1067,6 +1070,19 @@ unit_definitions = [
             { "kind": ls.UNIT_KIND_METRE, "exponent": -1, "multiplier": 1, "scale": 0 },
             { "kind": ls.UNIT_KIND_SECOND, "exponent": -2, "multiplier": 1, "scale": 0 }
         ]
+    },
+    # Temperature units
+    {
+        "id" : "K",
+        "qudt" : "K",
+        "UCUM" : "K",
+        "synonyms" : [
+            "K",
+            "Kelvin"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_KELVIN, "exponent": 1, "multiplier": 1, "scale": 0 }
+        ]
     }
 ]
 
@@ -1094,6 +1110,14 @@ def get_time_unit_definitions() -> list[dict]:
             res.append(unit_def)
     return res
 
+def get_temperature_unit_definitions() -> list[dict]:
+    res = []
+    for _, unit_def in enumerate(unit_definitions):
+        if len(unit_def['units']) == 1 \
+            and _is_temperature_unit_part(unit_def['units'][0]):
+            res.append(unit_def)
+    return res
+
 def get_unit_definition(
     unit_str: str
 ) -> dict:
@@ -1113,7 +1137,7 @@ def get_ucum_unit_string(
     unit_str: str
 ) -> str:
     """Tries to get the (UCUM formated) unit string of the specified element."""
-    if (unit_str):
+    if unit_str:
         for _, value in enumerate(unit_definitions):
             if unit_str.lower() == value['id'].lower() \
                 or any(val.lower() == unit_str.lower() for val in value['synonyms']):
@@ -1157,7 +1181,7 @@ def _create_unit_part_string(
     exponent = u.getExponentAsDouble()
     multiplier = u.getMultiplier()
     if kind == ls.UNIT_KIND_SECOND:
-        if multiplier in _time_unit_multipliers.keys():
+        if multiplier in _time_unit_multipliers:
             base_unit_str = _time_unit_multipliers[multiplier]
             multiplier = 1
         else:
@@ -1190,6 +1214,8 @@ def get_unit_type(unit_def: dict) -> UnitType:
             return UnitType.VOLUME_UNIT
         elif _is_time_unit_part(unit):
             return UnitType.TIME_UNIT
+        elif _is_temperature_unit_part(unit):
+            return UnitType.TEMPERATURE_UNIT
         else:
             return UnitType.OTHER
     elif len(unit_def['units']) == 2:
@@ -1224,6 +1250,6 @@ def _is_time_unit_part(unit_part: dict):
     return unit_part['kind'] == ls.UNIT_KIND_SECOND \
         and unit_part['exponent'] == 1
 
-def _is_per_time_unit_part(unit_part: dict):
-    return unit_part['kind'] == ls.UNIT_KIND_SECOND \
-        and unit_part['exponent'] == -1
+def _is_temperature_unit_part(unit_part: dict):
+    return unit_part['kind'] == ls.UNIT_KIND_KELVIN \
+        and unit_part['exponent'] == 1

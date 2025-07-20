@@ -3,6 +3,7 @@ from .unit_definitions import UnitType
 from .unit_definitions import get_volume_unit_definitions
 from .unit_definitions import get_mass_unit_definitions
 from .unit_definitions import get_time_unit_definitions
+from .unit_definitions import get_temperature_unit_definitions
 from .unit_definitions import get_unit_definition
 from .unit_definitions import set_unit_definition
 from .unit_definitions import get_unit_type

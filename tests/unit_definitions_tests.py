@@ -6,7 +6,7 @@ from parameterized import parameterized
 from sbmlpbkutils import unit_definitions, UnitType
 from sbmlpbkutils.unit_definitions import _si_prefix_string, _si_prefix_strings_ext, _time_unit_multipliers
 from sbmlpbkutils import create_unit_string, set_unit_definition, get_unit_definition, get_unit_type
-from sbmlpbkutils import get_volume_unit_definitions, get_mass_unit_definitions, get_time_unit_definitions
+from sbmlpbkutils import get_volume_unit_definitions, get_mass_unit_definitions, get_time_unit_definitions, get_temperature_unit_definitions
 
 sys.path.append('../sbmlpbkutils/')
 
@@ -91,6 +91,28 @@ class UnitDefinitionsTests(unittest.TestCase):
                 self.assertIn(ucum_str, unit_def['synonyms'])
                 self.assertIn(unit_def, time_unit_defs)
 
+    def test_temperature_unit_definitions(self):
+        temp_unit_defs = get_temperature_unit_definitions()
+        self.assertEqual(len(temp_unit_defs), 1)
+
+    @parameterized.expand([
+        ("K", "K"),
+        ("Kelvin", "K")
+    ])
+    def test_temperature_unit_definition(self, key, expected_unit_id):
+        temp_unit_defs = get_temperature_unit_definitions()
+        unit_def = get_unit_definition(key)
+        self.assertEqual(unit_def['id'], expected_unit_id)
+        self.assertEqual(len(unit_def['units']), 1)
+        unit = unit_def['units'][0]
+        self.assertEqual(unit['multiplier'], 1, f"Incorrect multiplier for {key}.")
+        sbml_unit_def = ls.UnitDefinition(3, 2)
+        set_unit_definition(sbml_unit_def, unit_def)
+        ucum_str = create_unit_string(sbml_unit_def)
+        self.assertEqual(unit_def['UCUM'], ucum_str)
+        self.assertIn(ucum_str, unit_def['synonyms'])
+        self.assertIn(unit_def, temp_unit_defs)
+
     @parameterized.expand([
         ("unitless", UnitType.DIMENSIONLESS),
         ("h", UnitType.TIME_UNIT),
@@ -101,7 +123,8 @@ class UnitDefinitionsTests(unittest.TestCase):
         ("L", UnitType.VOLUME_UNIT),
         ("mL", UnitType.VOLUME_UNIT),
         ("mg/L", UnitType.CONCENTRATION_UNIT),
-        ("mg/kg", UnitType.CONCENTRATION_UNIT)
+        ("mg/kg", UnitType.CONCENTRATION_UNIT),
+        ("K", UnitType.TEMPERATURE_UNIT)
     ])
     def test_get_unit_type(self, unit_str, expected_unit_type):
         unit_definition = get_unit_definition(unit_str)
