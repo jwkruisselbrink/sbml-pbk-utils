@@ -520,7 +520,8 @@ unit_definitions = [
         "UCUM" : "mg/L",
         "synonyms" : [
             "mg_per_L",
-            "mg/L"
+            "mg/L",
+            "mg.L-1"
         ],
         "units": [
             { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -3 },
@@ -533,7 +534,8 @@ unit_definitions = [
         "UCUM" : "g/L",
         "synonyms" : [
             "g_per_L",
-            "g/L"
+            "g/L",
+            "g.L-1"
         ],
         "units": [
             { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": 0 },
@@ -547,10 +549,39 @@ unit_definitions = [
         "synonyms" : [
             "kg_per_L",
             "kg/L",
+            "kg.L-1"
         ],
         "units": [
             { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": 3 },
             { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": 0 }
+        ]
+    },
+    {
+        "id" : "MicroGM_PER_MilliL",
+        "qudt" : "MicroGM-PER-MilliL",
+        "UCUM" : "ug/mL",
+        "synonyms" : [
+            "ug_per_mL",
+            "ug/mL",
+            "ug.mL-1"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -6 },
+            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": -3 }
+        ]
+    },
+    {
+        "id" : "MilliGM_PER_MilliL",
+        "qudt" : "MilliGM-PER-MilliL",
+        "UCUM" : "mg/mL",
+        "synonyms" : [
+            "mg_per_mL",
+            "mg/mL",
+            "mg.mL-1"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -3 },
+            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": -3 }
         ]
     },
     {
@@ -742,6 +773,21 @@ unit_definitions = [
         ]
     },
     {
+        "id" : "MilliGM_PER_DAY",
+        "qudt" : "",
+        "UCUM" : "mg/d",
+        "synonyms" : [
+            "mg_per_day",
+            "mg/d",
+            "mg/day",
+            "mg.d-1"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -3 },
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 }
+        ]
+    },
+    {
         "id" : "MicroGM_PER_DAY",
         "qudt" : "",
         "UCUM" : "ug/d",
@@ -782,6 +828,21 @@ unit_definitions = [
         ],
         "units": [
             { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": 0 },
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 }
+        ]
+    },
+    {
+        "id" : "MilliL_PER_DAY",
+        "qudt" : "MilliL-PER-DAY",
+        "UCUM" : "mL/d",
+        "synonyms" : [
+            "MilliL_PER_DAY",
+            "mL/d",
+            "mL/day",
+            "mL.d-1"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": -3 },
             { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 }
         ]
     },
@@ -862,6 +923,21 @@ unit_definitions = [
         ]
     },
     {
+        "id" : "MilliL_PER_DAY_PER_GM",
+        "qudt" : "",
+        "UCUM" : "mL/d/g",
+        "synonyms" : [
+            "mL/d/g",
+            "mL/(d.g)",
+            "mL.d-1.g-1"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": -3 },
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 0 },
+        ]
+    },
+    {
         "id" : "L_PER_HR_PER_KiloGM0P75",
         "qudt" : "",
         "UCUM" : "L/(h.kg^0.75)",
@@ -913,7 +989,7 @@ unit_definitions = [
         ]
     },
     {
-        "id" : "MicroGM_PER_HRY_PER_KiloGM0P75",
+        "id" : "MicroGM_PER_HR_PER_KiloGM0P75",
         "qudt" : "",
         "UCUM" : "ug/(h.kg^0.75)",
         "synonyms" : [
@@ -941,6 +1017,21 @@ unit_definitions = [
             { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -6 },
             { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
             { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
+        ]
+    },
+    {
+        "id" : "MilliGM_PER_DAY_PER_GM",
+        "qudt" : "",
+        "UCUM" : "mg/d/g",
+        "synonyms" : [
+            "mg/d/g",
+            "mg/(d.g)",
+            "mg.d-1.g-1"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -3 },
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 0 },
         ]
     },
     {
@@ -998,6 +1089,20 @@ unit_definitions = [
         "units": [
             { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -9 },
             { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 60, "scale": 0 },
+            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": -3 },
+        ]
+    },
+    {
+        "id" : "MicroGM_PER_DAY_PER_MilliL",
+        "qudt" : "",
+        "UCUM" : "ug/d/mL",
+        "synonyms" : [
+            "ug/d/mL",
+            "ug/(d.mL)"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -6 },
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
             { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": -3 },
         ]
     },
