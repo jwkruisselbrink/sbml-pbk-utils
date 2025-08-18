@@ -133,7 +133,8 @@ class UnitDefinitionsTests(unittest.TestCase):
 
     @parameterized.expand([
         ("L/h", "L/h"),
-        ("L.h-1", "L/h")
+        ("L.h-1", "L/h"),
+        ("DAY", "d")
     ])
     def test_create_unit_string(self, unit_str, expected_unit_str):
         unit_definition = get_unit_definition(unit_str)
@@ -141,6 +142,17 @@ class UnitDefinitionsTests(unittest.TestCase):
         set_unit_definition(sbml_unit_definition, unit_definition)
         formatted_unit_string = create_unit_string(sbml_unit_definition)
         self.assertEqual(formatted_unit_string, expected_unit_str)
+
+    def test_create_time_unit_string(self):
+        sbml_unit_definition = ls.UnitDefinition(3, 2)
+        sbml_unit_definition.setId("DAY")
+        u = sbml_unit_definition.createUnit()
+        u.setKind(ls.UNIT_KIND_SECOND)
+        u.setExponent(1)
+        u.setMultiplier(8.64)
+        u.setScale(4)
+        formatted_unit_string = create_unit_string(sbml_unit_definition)
+        self.assertEqual(formatted_unit_string, "d")
 
 if __name__ == '__main__':
     unittest.main()

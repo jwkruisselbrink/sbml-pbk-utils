@@ -1286,9 +1286,11 @@ def _create_unit_part_string(
     exponent = u.getExponentAsDouble()
     multiplier = u.getMultiplier()
     if kind == ls.UNIT_KIND_SECOND:
-        if multiplier in _time_unit_multipliers:
-            base_unit_str = _time_unit_multipliers[multiplier]
+        effective_multiplier = multiplier * (10 ** scale)
+        if effective_multiplier in _time_unit_multipliers:
+            base_unit_str = _time_unit_multipliers[effective_multiplier]
             multiplier = 1
+            scale = 0
         else:
             base_unit_str = 's'
     else:
@@ -1313,23 +1315,21 @@ def get_unit_type(unit_def: dict) -> UnitType:
         unit = unit_def['units'][0]
         if unit['kind'] == ls.UNIT_KIND_DIMENSIONLESS:
             return UnitType.DIMENSIONLESS
-        elif _is_mass_unit_part(unit):
+        if _is_mass_unit_part(unit):
             return UnitType.MASS_UNIT
-        elif _is_volume_unit_part(unit):
+        if _is_volume_unit_part(unit):
             return UnitType.VOLUME_UNIT
-        elif _is_time_unit_part(unit):
+        if _is_time_unit_part(unit):
             return UnitType.TIME_UNIT
-        elif _is_temperature_unit_part(unit):
+        if _is_temperature_unit_part(unit):
             return UnitType.TEMPERATURE_UNIT
-        else:
-            return UnitType.OTHER
-    elif len(unit_def['units']) == 2:
+        return UnitType.OTHER
+    if len(unit_def['units']) == 2:
         if any(_is_mass_unit_part(part) for part in unit_def['units']) \
             and (any(_is_per_volume_unit_part(part) for part in unit_def['units']) \
             or any(_is_per_mass_unit_part(part) for part in unit_def['units'])):
             return UnitType.CONCENTRATION_UNIT
-    else:
-        return UnitType.OTHER
+    return UnitType.OTHER
 
 def _is_mass_unit_part(unit_part: dict):
     return (unit_part['kind'] == ls.UNIT_KIND_GRAM \
