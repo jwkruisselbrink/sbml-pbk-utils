@@ -179,7 +179,8 @@ class PbkModelReportGenerator():
         model = self.document.getModel()
         for i in range(0, model.getNumCompartments()):
             element = model.getCompartment(i)
-            bqm_is_class = self.infos_extractor.get_pbko_class(element)
+            cv_terms = element.getCVTerms()
+            bqm_is_class = self.infos_extractor.get_pbko_class(cv_terms)
             unit = self._get_unit_string(element.getUnits())
             name = element.getName()
             dt.append(
@@ -199,7 +200,8 @@ class PbkModelReportGenerator():
         model = self.document.getModel()
         for i in range(0, model.getNumSpecies()):
             element = model.getSpecies(i)
-            bqm_is_class = self.infos_extractor.get_pbko_class(element)
+            cv_terms = element.getCVTerms()
+            bqm_is_class = self.infos_extractor.get_pbko_class(cv_terms)
             unit = self._get_unit_string(element.getUnits())
             name = element.getName()
             dt.append(
@@ -219,7 +221,8 @@ class PbkModelReportGenerator():
         col_names = ["id", "name", "unit", "model qualifier"]
         for i in range(0, model.getNumParameters()):
             element = model.getParameter(i)
-            bqm_is_class = self.infos_extractor.get_pbko_class(element)
+            cv_terms = element.getCVTerms()
+            bqm_is_class = self.infos_extractor.get_pbko_class(cv_terms)
             unit = self._get_unit_string(element.getUnits())
             name = element.getName()
             dt.append(
