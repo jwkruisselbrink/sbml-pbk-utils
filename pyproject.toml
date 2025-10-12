@@ -21,6 +21,7 @@ dependencies = [
     "sbmlutils>=0.9.0",
     "tellurium>=2.2.10",
     "owlready2>=0.47",
+    "graphviz>=0.20.3",
     "pyyaml>=6.0.1"
 ]
 keywords=["pbk","sbml","fair"]

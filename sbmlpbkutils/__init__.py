@@ -18,6 +18,7 @@ from .pbk_model_validator import ErrorCode
 from .pbk_model_validator import ValidationStatus
 from .pbk_model_report_generator import PbkModelReportGenerator
 from .pbk_model_report_generator import RenderMode
+from .diagram_creator import DiagramCreator, NamesDisplay
 from .annotations_template_generator import AnnotationsTemplateGenerator
 from .parametrisations_template_generator import ParametrisationsTemplateGenerator
 from .pbk_model_report_generator import PbkModelReportGenerator

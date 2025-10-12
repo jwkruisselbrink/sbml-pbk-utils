@@ -1,7 +1,11 @@
+from enum import Enum
 import libsbml as ls
+import os
+from pathlib import Path
 import pandas as pd
 from sbmlutils.report.mathml import astnode_to_latex
-from enum import Enum
+
+from sbmlpbkutils.diagram_creator import DiagramCreator, NamesDisplay
 
 from . import PbkModelInfosExtractor
 from . import create_unit_string
@@ -31,14 +35,17 @@ class PbkModelReportGenerator():
             # Write the title
             f.write(f"# {name}\n\n")
 
-            # Write the model creators table
-            f.write("## Creators\n\n")
-            table = self.get_model_creators()
-            if table is not None:
-                f.write(table.to_markdown())
-                f.write("\n\n")
-            else:
-                f.write("*not specified*\n\n")
+            # Generate and write the diagram
+            diagram_file = Path(output_file).with_suffix('.svg')
+            diagram_creator = DiagramCreator()
+            diagram_creator.create_diagram(
+                self.document,
+                diagram_file,
+                names_display=NamesDisplay.ELEMENT_IDS_AND_ONTO_IDS,
+                draw_species=True,
+                draw_reaction_ids=True
+            )
+            f.write(f"![Diagram]({diagram_file.name})\n\n")
 
             # Write the model overview table
             f.write("## Overview\n\n")
@@ -91,6 +98,16 @@ class PbkModelReportGenerator():
             for fct_id, equation in function_defs.items():
                 f.write(f"${equation}$\n\n")
             f.write("\n\n")
+
+            # Write the model creators table
+            f.write("## Creators\n\n")
+            table = self.get_model_creators()
+            if table is not None:
+                f.write(table.to_markdown())
+                f.write("\n\n")
+            else:
+                f.write("*not specified*\n\n")
+
 
     def get_model_creators(self) -> pd.DataFrame:
         dt = []
