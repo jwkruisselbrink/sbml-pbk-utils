@@ -2,18 +2,18 @@
 <sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2">
   <model metaid="simple" id="simple">
     <listOfCompartments>
-      <compartment id="Blood" spatialDimensions="3" size="5.18" constant="false"/>
-      <compartment id="Liver" spatialDimensions="3" size="1.799" constant="false"/>
-      <compartment id="Rest" spatialDimensions="3" size="63.021" constant="false"/>
-      <compartment id="Gut" spatialDimensions="3" size="1" constant="true"/>
-      <compartment id="Urine" spatialDimensions="3" size="1" constant="true"/>
+      <compartment id="Blood" spatialDimensions="3" constant="false"/>
+      <compartment id="Liver" spatialDimensions="3" constant="false"/>
+      <compartment id="Rest" spatialDimensions="3" constant="false"/>
+      <compartment id="Gut" spatialDimensions="3" constant="true"/>
+      <compartment id="Urine" spatialDimensions="3" constant="true"/>
     </listOfCompartments>
     <listOfSpecies>
-      <species id="ABlood" compartment="Blood" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="ALiver" compartment="Liver" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="ARest" compartment="Rest" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="AGut" compartment="Gut" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="AUrine" compartment="Urine" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="ABlood" compartment="Blood" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="ALiver" compartment="Liver" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="ARest" compartment="Rest" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="AGut" compartment="Gut" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="AUrine" compartment="Urine" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
     </listOfSpecies>
     <listOfParameters>
       <parameter id="BW" value="70" constant="true"/>
@@ -27,9 +27,9 @@
       <parameter id="PCRest" value="1.2" constant="true"/>
       <parameter id="CLUrine" value="1" constant="true"/>
       <parameter id="Ka" value="0.05" constant="true"/>
-      <parameter id="QC" value="363.006823874038" constant="false"/>
-      <parameter id="QL" value="82.4025490194066" constant="false"/>
-      <parameter id="QR" value="280.604274854631" constant="false"/>
+      <parameter id="QC" constant="false"/>
+      <parameter id="QL" constant="false"/>
+      <parameter id="QR" constant="false"/>
     </listOfParameters>
     <listOfRules>
       <assignmentRule variable="Blood">

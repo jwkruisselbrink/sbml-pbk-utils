@@ -111,35 +111,35 @@
       </functionDefinition>
     </listOfFunctionDefinitions>
     <listOfCompartments>
-      <compartment id="Air" spatialDimensions="3" size="1" constant="true"/>
-      <compartment id="Urine" spatialDimensions="3" size="1" constant="true"/>
-      <compartment id="Fat" spatialDimensions="3" size="14.63" constant="false"/>
-      <compartment id="Rich" spatialDimensions="3" size="7.35" constant="false"/>
-      <compartment id="Liver" spatialDimensions="3" size="1.68" constant="false"/>
-      <compartment id="Art" spatialDimensions="3" size="1.58666666666667" constant="false"/>
-      <compartment id="Ven" spatialDimensions="3" size="3.17333333333333" constant="false"/>
-      <compartment id="Skin_e" spatialDimensions="3" size="0.2318" constant="false"/>
-      <compartment id="Skin_u" spatialDimensions="3" size="2.0862" constant="false"/>
-      <compartment id="Skin_sc_e" spatialDimensions="3" size="0.0019" constant="false"/>
-      <compartment id="Skin_sc_u" spatialDimensions="3" size="0.0171" constant="false"/>
-      <compartment id="Poor" spatialDimensions="3" size="32.243" constant="false"/>
-      <compartment id="Gut" spatialDimensions="3" size="1" constant="true"/>
+      <compartment id="Air" spatialDimensions="3" constant="true"/>
+      <compartment id="Urine" spatialDimensions="3" constant="true"/>
+      <compartment id="Fat" spatialDimensions="3" constant="false"/>
+      <compartment id="Rich" spatialDimensions="3" constant="false"/>
+      <compartment id="Liver" spatialDimensions="3" constant="false"/>
+      <compartment id="Art" spatialDimensions="3" constant="false"/>
+      <compartment id="Ven" spatialDimensions="3" constant="false"/>
+      <compartment id="Skin_e" spatialDimensions="3" constant="false"/>
+      <compartment id="Skin_u" spatialDimensions="3" constant="false"/>
+      <compartment id="Skin_sc_e" spatialDimensions="3" constant="false"/>
+      <compartment id="Skin_sc_u" spatialDimensions="3" constant="false"/>
+      <compartment id="Poor" spatialDimensions="3" constant="false"/>
+      <compartment id="Gut" spatialDimensions="3" constant="true"/>
     </listOfCompartments>
     <listOfSpecies>
-      <species id="QFat" compartment="Fat" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="QRich" compartment="Rich" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="QPoor" compartment="Poor" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="QLiver" compartment="Liver" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="QMetab" compartment="Liver" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="QGut" compartment="Gut" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="QSkin_u" compartment="Skin_u" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="QSkin_e" compartment="Skin_e" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="QSkin_sc_u" compartment="Skin_sc_u" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="QSkin_sc_e" compartment="Skin_sc_e" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="QArt" compartment="Art" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="QVen" compartment="Ven" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="QExcret" compartment="Urine" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="QAir" compartment="Air" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="QFat" compartment="Fat" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="QRich" compartment="Rich" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="QPoor" compartment="Poor" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="QLiver" compartment="Liver" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="QMetab" compartment="Liver" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="QGut" compartment="Gut" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="QSkin_u" compartment="Skin_u" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="QSkin_e" compartment="Skin_e" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="QSkin_sc_u" compartment="Skin_sc_u" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="QSkin_sc_e" compartment="Skin_sc_e" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="QArt" compartment="Art" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="QVen" compartment="Ven" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="QExcret" compartment="Urine" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="QAir" compartment="Air" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
     </listOfSpecies>
     <listOfParameters>
       <parameter id="BM" value="70" constant="true"/>
@@ -172,17 +172,17 @@
       <parameter id="kGut" value="1" constant="true"/>
       <parameter id="CLH" value="132" constant="true"/>
       <parameter id="Ke" value="7.5" constant="true"/>
-      <parameter id="f_su" value="1.71" constant="false"/>
-      <parameter id="f_se" value="0.19" constant="false"/>
-      <parameter id="VBlood" value="4.76" constant="false"/>
-      <parameter id="FBlood" value="336" constant="false"/>
-      <parameter id="FFat" value="28.56" constant="false"/>
-      <parameter id="FPoor" value="40.32" constant="false"/>
-      <parameter id="FLiver" value="90.72" constant="false"/>
-      <parameter id="FSkin" value="16.8" constant="false"/>
-      <parameter id="FRich" value="159.6" constant="false"/>
-      <parameter id="FSkin_e" value="1.68" constant="false"/>
-      <parameter id="FSkin_u" value="15.12" constant="false"/>
+      <parameter id="f_su" constant="false"/>
+      <parameter id="f_se" constant="false"/>
+      <parameter id="VBlood" constant="false"/>
+      <parameter id="FBlood" constant="false"/>
+      <parameter id="FFat" constant="false"/>
+      <parameter id="FPoor" constant="false"/>
+      <parameter id="FLiver" constant="false"/>
+      <parameter id="FSkin" constant="false"/>
+      <parameter id="FRich" constant="false"/>
+      <parameter id="FSkin_e" constant="false"/>
+      <parameter id="FSkin_u" constant="false"/>
     </listOfParameters>
     <listOfRules>
       <assignmentRule variable="Fat">

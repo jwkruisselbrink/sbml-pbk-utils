@@ -22,7 +22,8 @@ dependencies = [
     "tellurium>=2.2.10",
     "owlready2>=0.47",
     "graphviz>=0.20.3",
-    "pyyaml>=6.0.1"
+    "pyyaml>=6.0.1",
+    "tabulate>=0.9.0"
 ]
 keywords=["pbk","sbml","fair"]
 classifiers = [

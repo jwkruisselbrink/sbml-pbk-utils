@@ -27,7 +27,7 @@ for file in os.listdir('./tests/models/'):
         sbml_file = Path(ant_file).with_suffix('.sbml')
         print(f"Creating SBML file [{sbml_file}] from Antimony file [{ant_file}].")
         r = te.loada(ant_file)
-        r.exportToSBML(sbml_file)
+        r.exportToSBML(sbml_file, current=False)
 
 for file in os.listdir('./tests/models/'):
     if file.endswith('.sbml') and not file.endswith('.annotated.sbml'):
