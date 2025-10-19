@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2">
+  <model metaid="simple_lifetime" id="simple_lifetime">
+    <listOfFunctionDefinitions>
+      <functionDefinition id="f_BW">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <lambda>
+            <bvar>
+              <ci> age </ci>
+            </bvar>
+            <bvar>
+              <ci> BW_birth </ci>
+            </bvar>
+            <bvar>
+              <ci> BW_adult </ci>
+            </bvar>
+            <bvar>
+              <ci> k_growth </ci>
+            </bvar>
+            <apply>
+              <times/>
+              <ci> BW_adult </ci>
+              <apply>
+                <exp/>
+                <apply>
+                  <times/>
+                  <apply>
+                    <ln/>
+                    <apply>
+                      <divide/>
+                      <ci> BW_birth </ci>
+                      <ci> BW_adult </ci>
+                    </apply>
+                  </apply>
+                  <apply>
+                    <exp/>
+                    <apply>
+                      <times/>
+                      <apply>
+                        <minus/>
+                        <ci> k_growth </ci>
+                      </apply>
+                      <ci> age </ci>
+                    </apply>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </lambda>
+        </math>
+      </functionDefinition>
+    </listOfFunctionDefinitions>
+    <listOfCompartments>
+      <compartment id="Gut" spatialDimensions="3" constant="true"/>
+      <compartment id="Blood" spatialDimensions="3" constant="false"/>
+      <compartment id="Liver" spatialDimensions="3" constant="false"/>
+      <compartment id="Rest" spatialDimensions="3" constant="false"/>
+      <compartment id="Urine" spatialDimensions="3" constant="true"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species id="AGut" compartment="Gut" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="ABlood" compartment="Blood" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="ALiver" compartment="Liver" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="ARest" compartment="Rest" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="AUrine" compartment="Urine" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter id="AgeInit" value="10" constant="true"/>
+      <parameter id="BWRef" value="50" constant="true"/>
+      <parameter id="AgeRef" value="18" constant="true"/>
+      <parameter id="Age" constant="false"/>
+      <parameter id="BWBirth" value="3.5" constant="true"/>
+      <parameter id="BWAdult" value="70" constant="true"/>
+      <parameter id="kGrowth" value="0.2" constant="true"/>
+      <parameter id="deltaBW" constant="false"/>
+      <parameter id="BW" constant="false"/>
+      <parameter id="VRc" value="0.9003" constant="true"/>
+      <parameter id="VLc" value="0.0257" constant="true"/>
+      <parameter id="VBc" value="0.074" constant="true"/>
+      <parameter id="QCC" value="15" constant="true"/>
+      <parameter id="QRc" value="0.773" constant="true"/>
+      <parameter id="QLc" value="0.227" constant="true"/>
+      <parameter id="PCLiver" value="2" constant="true"/>
+      <parameter id="PCRest" value="1.2" constant="true"/>
+      <parameter id="CLUrine" value="10" constant="true"/>
+      <parameter id="Ka" value="0.05" constant="true"/>
+      <parameter id="QC" constant="false"/>
+      <parameter id="QL" constant="false"/>
+      <parameter id="QR" constant="false"/>
+    </listOfParameters>
+    <listOfInitialAssignments>
+      <initialAssignment symbol="Age">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <ci> AgeInit </ci>
+        </math>
+      </initialAssignment>
+    </listOfInitialAssignments>
+    <listOfRules>
+      <assignmentRule variable="Blood">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <times/>
+            <ci> BW </ci>
+            <ci> VBc </ci>
+          </apply>
+        </math>
+      </assignmentRule>
+      <assignmentRule variable="Liver">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <times/>
+            <ci> BW </ci>
+            <ci> VLc </ci>
+          </apply>
+        </math>
+      </assignmentRule>
+      <assignmentRule variable="Rest">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <times/>
+            <ci> BW </ci>
+            <ci> VRc </ci>
+          </apply>
+        </math>
+      </assignmentRule>
+      <rateRule variable="Age">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <divide/>
+            <cn type="integer"> 1 </cn>
+            <apply>
+              <times/>
+              <cn type="integer"> 24 </cn>
+              <cn> 365.25 </cn>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+      <assignmentRule variable="deltaBW">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <divide/>
+            <ci> BWRef </ci>
+            <apply>
+              <ci> f_BW </ci>
+              <ci> AgeRef </ci>
+              <ci> BWBirth </ci>
+              <ci> BWAdult </ci>
+              <ci> kGrowth </ci>
+            </apply>
+          </apply>
+        </math>
+      </assignmentRule>
+      <assignmentRule variable="BW">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <times/>
+            <ci> deltaBW </ci>
+            <apply>
+              <ci> f_BW </ci>
+              <ci> Age </ci>
+              <ci> BWBirth </ci>
+              <ci> BWAdult </ci>
+              <ci> kGrowth </ci>
+            </apply>
+          </apply>
+        </math>
+      </assignmentRule>
+      <assignmentRule variable="QC">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <times/>
+            <ci> QCC </ci>
+            <apply>
+              <power/>
+              <ci> BW </ci>
+              <cn> 0.75 </cn>
+            </apply>
+          </apply>
+        </math>
+      </assignmentRule>
+      <assignmentRule variable="QL">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <times/>
+            <ci> QC </ci>
+            <ci> QLc </ci>
+          </apply>
+        </math>
+      </assignmentRule>
+      <assignmentRule variable="QR">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <times/>
+            <ci> QC </ci>
+            <ci> QRc </ci>
+          </apply>
+        </math>
+      </assignmentRule>
+    </listOfRules>
+    <listOfReactions>
+      <reaction id="_J0" reversible="true">
+        <listOfReactants>
+          <speciesReference species="AGut" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="ALiver" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> AGut </ci>
+              <ci> Ka </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="_J1" reversible="true">
+        <listOfReactants>
+          <speciesReference species="ABlood" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="ALiver" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> QL </ci>
+                <ci> ABlood </ci>
+              </apply>
+              <ci> Blood </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="_J2" reversible="true">
+        <listOfReactants>
+          <speciesReference species="ALiver" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="ABlood" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> QL </ci>
+                <apply>
+                  <divide/>
+                  <ci> ALiver </ci>
+                  <ci> Liver </ci>
+                </apply>
+              </apply>
+              <ci> PCLiver </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="_J3" reversible="true">
+        <listOfReactants>
+          <speciesReference species="ABlood" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="ARest" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> QR </ci>
+                <ci> ABlood </ci>
+              </apply>
+              <ci> Blood </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="_J4" reversible="true">
+        <listOfReactants>
+          <speciesReference species="ARest" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="ABlood" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <divide/>
+              <apply>
+                <times/>
+                <ci> QR </ci>
+                <apply>
+                  <divide/>
+                  <ci> ARest </ci>
+                  <ci> Rest </ci>
+                </apply>
+              </apply>
+              <ci> PCRest </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="_J5" reversible="true">
+        <listOfReactants>
+          <speciesReference species="ABlood" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="AUrine" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <apply>
+                <divide/>
+                <ci> ABlood </ci>
+                <ci> Blood </ci>
+              </apply>
+              <ci> CLUrine </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+    </listOfReactions>
+  </model>
+</sbml>

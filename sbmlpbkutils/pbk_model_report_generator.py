@@ -449,7 +449,7 @@ class PbkModelReportGenerator():
             math = rule.getMath()
             equation = PbkModelReportGenerator._ast_node_to_str(math, render_mode)
             if render_mode == RenderMode.LATEX:
-                result[variable] = f'\\frac{{d{variable}}}{{dt}} = {equation}'
+                result[variable] = f'\\frac{{d[{variable}]}}{{dt}} = {equation}'
             else:
                 result[variable] = f'd{variable}/dt = {equation}'
 

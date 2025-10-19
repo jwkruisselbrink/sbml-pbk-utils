@@ -1,0 +1,96 @@
+function f_BW(age, BW_birth, BW_adult, k_growth)
+    BW_adult * exp(log(BW_birth / BW_adult) * exp(-k_growth * age))
+end
+
+model simple_lifetime()
+
+  # Parameters
+
+  ## Physiology
+
+  ### Age
+  AgeInit = 10       # body weight at start of simulation [kg]
+
+  BWRef = 50         # reference body weight [kg]
+  AgeRef = 18        # reference age [kg]
+
+  Age = AgeInit      # age during simulation [yr]
+
+  ### Body size
+  BWBirth = 3.5      # body weight at start of simulation [kg]
+  BWAdult = 70.0     # asymptotic/mature body weight [kg]
+  kGrowth = 0.2      # growth-rate constant [1/h]
+
+  deltaBW := BWRef / f_BW(AgeRef, BWBirth, BWAdult, kGrowth)  # individual deviation of nominal BW [-]
+  BW := deltaBW * f_BW(Age, BWBirth, BWAdult, kGrowth)        # body weight during simulation [kg]
+
+  ### Compartment sizes
+  VRc = 0.9003       # rest-of-body volume as fraction body weight [L/kg]
+  VLc = 0.0257       # liver volume as fraction of body weight [L/kg]
+  VBc = 0.074        # blood volume as fraction of body weight [L/kg]
+
+  ### Flow rates
+  QCC = 15           # cardiac output as function of body weight [L/h/kg^0.75]
+  QRc = 0.773        # fraction of blood flow to rest-of-body [-]
+  QLc = 0.227        # fraction of blood flow to liver [-]
+
+  ## Biochemical parameters
+
+  ### Partition coefficients
+  PCLiver = 2        # partition coefficient liver:blood [-]
+  PCRest = 1.2       # partition coefficient rest:blood [-]
+
+  ### Metabolism and excretion
+  CLUrine = 10       # urinary excretion rate [L/h]
+
+  ### Absorption
+  Ka = 0.05          # absorption rate from gut to liver [/h]
+
+  # Assignments
+
+  ## Physiology
+
+  ### Flow rates
+  const QC := QCC * BW^0.75 # cardiac output adjusted for body weight [L/h] 
+  const QL := QC * QLc      # blood flow to liver [L/h]
+  const QR := QC * QRc      # blood flow to rest-of-body [L/h]
+
+  # Compartments
+  compartment Gut
+  compartment Blood := BW * VBc
+  compartment Liver := BW * VLc
+  compartment Rest := BW * VRc
+  compartment Urine
+
+  # Species
+  substanceOnly species AGut in Gut
+  substanceOnly species ABlood in Blood
+  substanceOnly species ALiver in Liver
+  substanceOnly species ARest in Rest
+  substanceOnly species AUrine in Urine
+
+  # Initial values
+  ABlood = 0
+  ALiver = 0
+  ARest = 0
+  AGut = 0
+  AUrine = 0
+
+  # Model equations
+
+  ## Growth
+  Age' = 1/(24*365.25) # Age increase
+
+  ## Absorption
+  AGut -> ALiver; AGut * Ka
+
+  ## Distribution
+  ABlood -> ALiver; QL * ABlood / Blood
+  ALiver -> ABlood; QL * (ALiver / Liver) / PCLiver
+  ABlood -> ARest; QR * ABlood / Blood
+  ARest -> ABlood; QR * (ARest / Rest) / PCRest
+
+  ## Excretion
+  ABlood -> AUrine; ABlood / Blood * CLUrine
+
+end

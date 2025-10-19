@@ -20,6 +20,7 @@ class PbkModelReportGeneratorTests(unittest.TestCase):
     @parameterized.expand([
         ("simple.sbml"),
         ("simple.annotated.sbml"),
+        ("simple_lifetime.annotated.sbml"),
         ("euromix.annotated.sbml")
     ])
     def test_generate_report(self, file):
