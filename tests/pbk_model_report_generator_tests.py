@@ -19,7 +19,8 @@ class PbkModelReportGeneratorTests(unittest.TestCase):
 
     @parameterized.expand([
         ("simple.sbml"),
-        ("simple.annotated.sbml")
+        ("simple.annotated.sbml"),
+        ("euromix.annotated.sbml")
     ])
     def test_generate_report(self, file):
         sbml_file = os.path.join(__test_models_path__, file)
@@ -53,6 +54,19 @@ class PbkModelReportGeneratorTests(unittest.TestCase):
         result = generator.get_transfer_equations_as_str(render_mode)
         for _, val in result.items():
             print(f"{val['id']}: {val['products'][0]}\t <= \t{val['equation']}\n")
+        self.assertTrue(result)
+
+    @parameterized.expand([
+        (RenderMode.TEXT),
+        (RenderMode.LATEX)
+    ])
+    def test_get_assignment_rules_as_str(self, render_mode):
+        sbml_file = os.path.join(__test_models_path__, 'simple.annotated.sbml')
+        document = ls.readSBML(sbml_file)
+        generator = PbkModelReportGenerator(document)
+        result = generator.get_assignment_rules_as_str(render_mode)
+        for key, val in result.items():
+            print(f"{key}\t\t{val}\n")
         self.assertTrue(result)
 
     @parameterized.expand([

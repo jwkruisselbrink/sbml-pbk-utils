@@ -35,7 +35,14 @@ class PbkModelReportGenerator():
             # Write the title
             f.write(f"# {name}\n\n")
 
+            # Write the model overview table
+            f.write("## Overview\n\n")
+            table = self.get_model_overview()
+            f.write(table.to_markdown(index=False))
+            f.write("\n\n")
+
             # Generate and write the diagram
+            f.write("## Diagram\n\n")
             diagram_file = Path(output_file).with_suffix('.svg')
             diagram_creator = DiagramCreator()
             diagram_creator.create_diagram(
@@ -45,43 +52,26 @@ class PbkModelReportGenerator():
                 draw_species=True,
                 draw_reaction_ids=True
             )
-            f.write(f"![Diagram]({diagram_file.name})\n\n")
-
-            # Write the model overview table
-            f.write("## Overview\n\n")
-            table = self.get_model_overview()
-            f.write(table.to_markdown(index=False))
+            f.write(f"![Diagram]({diagram_file.name})")
             f.write("\n\n")
 
             # Write compartment infos table
             f.write("## Compartments\n\n")
-            table = self.get_compartment_infos()
-            f.write(table.to_markdown(index=False))
-            f.write("\n\n")
+            if (model.getNumCompartments() > 0):
+                table = self.get_compartment_infos()
+                f.write(table.to_markdown(index=False))
+                f.write("\n\n")
+            else:
+                f.write("*no compartments defined in the model*\n\n")
 
             # Write compartment infos table
             f.write("## Species\n\n")
-            table = self.get_species_infos()
-            f.write(table.to_markdown(index=False))
-            f.write("\n\n")
-
-            # Write compartment infos table
-            f.write("## Parameters\n\n")
-            table = self.get_parameter_infos()
-            f.write(table.to_markdown(index=False))
-            f.write("\n\n")
-
-            # Write ODEs
-            f.write("## ODEs\n\n")
-            odes = self.get_odes_as_str(RenderMode.LATEX)
-            for _, equation in odes.items():
-                f.write(f"${equation}$\n\n")
-            f.write("\n\n")
-
-            function_defs = self.get_function_as_str(RenderMode.LATEX)
-            for _, equation in function_defs.items():
-                f.write(f"${equation}$\n\n")
-            f.write("\n\n")
+            if (model.getNumSpecies() > 0):
+                table = self.get_species_infos()
+                f.write(table.to_markdown(index=False))
+                f.write("\n\n")
+            else:
+                f.write("*no species defined in the model*\n\n")
 
             # Write Transfer equations
             f.write("## Transfer equations\n\n")
@@ -93,11 +83,50 @@ class PbkModelReportGenerator():
                 'equation': [ f"${x['equation']}$" for x in transfer_equations ]
             })
             f.write(table.to_markdown(index=False))
-
-            function_defs = self.get_function_as_str(RenderMode.LATEX)
-            for fct_id, equation in function_defs.items():
-                f.write(f"${equation}$\n\n")
             f.write("\n\n")
+
+            # Write ODEs
+            f.write("## ODEs\n\n")
+            odes = self.get_odes_as_str(RenderMode.LATEX)
+            for _, equation in odes.items():
+                f.write(f"${equation}$\n\n")
+
+            # Write rate rules
+            rate_rules = self.get_rate_rules_as_str(RenderMode.LATEX)
+            if (len(rate_rules) > 0):
+                f.write("## Rate rules\n\n")
+                for _, equation in rate_rules.items():
+                    f.write(f"${equation}$\n\n")
+
+            # Write assignment rules
+            assignment_rules = self.get_assignment_rules_as_str(RenderMode.LATEX)
+            if (len(assignment_rules) > 0):
+                f.write("## Assignment rules\n\n")
+                for _, equation in assignment_rules.items():
+                    f.write(f"${equation}$\n\n")
+
+            # Write assignment rules
+            initial_assignments = self.get_initial_assigments_as_str(RenderMode.LATEX)
+            if (len(initial_assignments) > 0):
+                f.write("## Initial assignments\n\n")
+                for _, equation in initial_assignments.items():
+                    f.write(f"${equation}$\n\n")
+
+            # Write functions
+            function_defs = self.get_function_as_str(RenderMode.LATEX)
+            if (len(function_defs) > 0):
+                f.write("## Function definitions\n\n")
+                for _, equation in function_defs.items():
+                    f.write(f"${equation}$\n\n")
+
+            # Write compartment infos table
+            f.write("## Parameters\n\n")
+            if (model.getNumParameters() > 0):
+                table = self.get_parameter_infos()
+                f.write(table.to_markdown(index=False))
+                f.write("\n\n")
+            else:
+                f.write("*no parameters defined in the model*\n\n")
 
             # Write the model creators table
             f.write("## Creators\n\n")
@@ -306,10 +335,18 @@ class PbkModelReportGenerator():
             if species_id in reaction_rates:
                 new_line = '\n'
                 pref = f'{new_line}{" " * (len(species_id) + 8)}'
-                equation = f"\\frac{{d[{PbkModelReportGenerator._math_print_element(species_id)}]}}{{dt}} = {f'{pref} + '.join(reaction_rates[species_id])}"
-                differential_equations[species_id] = equation \
-                    .replace("+ -", "-") \
-                    .replace("·", "\cdot ")
+                if render_mode == RenderMode.LATEX:
+                    equation = f"\\frac{{d[{PbkModelReportGenerator._math_print_element(species_id)}]}}{{dt}} = {f'{pref} + '.join(reaction_rates[species_id])}"
+                    equation = equation \
+                        .replace("+ -", "-") \
+                        .replace("·", "\\cdot ")
+                else:
+                    equation = f"d[{species_id}]/dt = {f'{pref} + '.join(reaction_rates[species_id])}"
+                    equation = equation \
+                        .replace("+ -", "-") \
+                        .replace("·", "*")
+
+                differential_equations[species_id] = equation
 
         return differential_equations
 
@@ -342,7 +379,6 @@ class PbkModelReportGenerator():
         render_mode: RenderMode = RenderMode.TEXT
     ):
         model = self.document.getModel()
-
         result = {}
         for function in model.getListOfFunctionDefinitions():
             args = []
@@ -350,6 +386,73 @@ class PbkModelReportGenerator():
                 args.append(PbkModelReportGenerator._ast_node_to_str(function.getArgument(i), render_mode))
             eq = f'{function.getId()}({", ".join(args)}) = {PbkModelReportGenerator._ast_node_to_str(function.getMath(), render_mode)}'
             result[function.getId()] = eq
+        return result
+
+    def get_initial_assigments_as_str(
+        self,
+        render_mode: RenderMode = RenderMode.TEXT
+    ):
+        """Return a dict of initial assignments with their variable and rendered equation.
+        Keyed by the target variable name.
+        """
+        result = {}
+        model = self.document.getModel()
+
+        for initial_assignment in model.getListOfInitialAssignments():
+            variable = initial_assignment.getId()
+            math = initial_assignment.getMath()
+            equation = PbkModelReportGenerator._ast_node_to_str(math, render_mode)
+            result[variable] = f'{variable} = {equation}'
+
+        return result
+
+    def get_assignment_rules_as_str(
+        self,
+        render_mode: RenderMode = RenderMode.TEXT
+    ):
+        """Return a dict of assignment rules with their variable and rendered equation.
+        Keyed by the target variable name.
+        """
+        result = {}
+        model = self.document.getModel()
+
+        for rule in model.getListOfRules():
+            is_assignment = (rule.getTypeCode() == ls.SBML_ASSIGNMENT_RULE)
+            # Only consider assignment rules
+            if not is_assignment:
+                continue
+
+            variable = rule.getVariable()
+            math = rule.getMath()
+            equation = PbkModelReportGenerator._ast_node_to_str(math, render_mode)
+            result[variable] = f'{variable} = {equation}'
+
+        return result
+
+    def get_rate_rules_as_str(
+        self,
+        render_mode: RenderMode = RenderMode.TEXT
+    ):
+        """Return a dict of rate rules with their variable and rendered equation.
+        Keyed by the target variable name.
+        """
+        result = {}
+        model = self.document.getModel()
+
+        for rule in model.getListOfRules():
+            is_rate_rule = rule.getTypeCode() == ls.SBML_RATE_RULE
+            # Only consider rate rules
+            if not is_rate_rule:
+                continue
+
+            variable = rule.getVariable()
+            math = rule.getMath()
+            equation = PbkModelReportGenerator._ast_node_to_str(math, render_mode)
+            if render_mode == RenderMode.LATEX:
+                result[variable] = f'\\frac{{d{variable}}}{{dt}} = {equation}'
+            else:
+                result[variable] = f'd{variable}/dt = {equation}'
+
         return result
 
     @staticmethod
@@ -370,7 +473,7 @@ class PbkModelReportGenerator():
         if render_mode == RenderMode.TEXT:
             return ls.formulaToString(ast_node).strip()
         elif render_mode == RenderMode.LATEX:
-            return astnode_to_latex(ast_node).replace("·", "\cdot ")
+            return astnode_to_latex(ast_node).replace("·", "\\cdot ")
 
     @staticmethod
     def _math_print_element(element_id):
