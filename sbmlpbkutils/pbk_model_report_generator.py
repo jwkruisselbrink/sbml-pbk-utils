@@ -1,6 +1,5 @@
 from enum import Enum
 import libsbml as ls
-import os
 from pathlib import Path
 import pandas as pd
 from sbmlutils.report.mathml import astnode_to_latex

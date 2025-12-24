@@ -2,7 +2,6 @@ import unittest
 import sys
 import os
 from pathlib import Path
-
 import libsbml as ls
 from sbmlpbkutils import AnnotationsTemplateGenerator
 
