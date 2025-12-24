@@ -1,9 +1,7 @@
 import unittest
-import sys
 from parameterized import parameterized
-from sbmlpbkutils import PbkOntologyChecker
 
-sys.path.append('../sbmlpbkutils/')
+from sbmlpbkutils import PbkOntologyChecker
 
 class PbkOntologyCheckerTests(unittest.TestCase):
 
@@ -135,7 +133,7 @@ class PbkOntologyCheckerTests(unittest.TestCase):
     def test_is_compartment(self):
         checker = PbkOntologyChecker()
         self.assertTrue(checker.check_is_compartment("http://purl.obolibrary.org/obo/PBPKO_00477"))
-        self.assertFalse(checker.check_is_compartment("http://purl.obolibrary.org/obo/PBPKO_00029")) 
+        self.assertFalse(checker.check_is_compartment("http://purl.obolibrary.org/obo/PBPKO_00029"))
         self.assertFalse(checker.check_is_compartment("XXXX"))
         result = checker.get_compartment_classes()
         for item in result:
@@ -168,7 +166,7 @@ class PbkOntologyCheckerTests(unittest.TestCase):
     def test_is_parameter(self):
         checker = PbkOntologyChecker()
         self.assertFalse(checker.check_is_parameter("http://purl.obolibrary.org/obo/PBPKO_00477"))
-        self.assertTrue(checker.check_is_parameter("http://purl.obolibrary.org/obo/PBPKO_00029")) 
+        self.assertTrue(checker.check_is_parameter("http://purl.obolibrary.org/obo/PBPKO_00029"))
         self.assertTrue(checker.check_is_parameter("http://purl.obolibrary.org/obo/PBPKO_00078"))
         self.assertFalse(checker.check_is_parameter("XXXX"))
         result = checker.get_parameter_classes()
@@ -242,7 +240,7 @@ class PbkOntologyCheckerTests(unittest.TestCase):
         self.assertFalse(checker.check_is_chemical_specific_parameter("http://purl.obolibrary.org/obo/PBPKO_00008"))
 
         # Invalid URI: False
-        self.assertFalse(checker.check_is_chemical_specific_parameter("XXXX")) 
+        self.assertFalse(checker.check_is_chemical_specific_parameter("XXXX"))
         result = checker.get_parameter_classes()
         for item in result:
             #print(f'[{item.iri}] - {item.label}')

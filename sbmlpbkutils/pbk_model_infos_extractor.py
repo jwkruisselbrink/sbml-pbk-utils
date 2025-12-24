@@ -1,4 +1,4 @@
-from typing import assert_never, cast
+from typing import Dict, assert_never, cast
 
 import libsbml as ls
 
@@ -198,7 +198,7 @@ class PbkModelInfosExtractor:
                             result.append(chemical)
         return result
 
-    def get_input_compartments(self):
+    def get_input_compartments(self) -> Dict[str, str]:
         input_compartments = {}
         for i in range(0, self.model.getNumCompartments()):
             compartment = self.model.getCompartment(i)

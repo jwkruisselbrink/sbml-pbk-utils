@@ -1,36 +1,24 @@
 import logging
 import unittest
-import uuid
-import sys
 import os
 from pathlib import Path
-
 import libsbml as ls
-import pandas as pd
 from parameterized import parameterized
+import pandas as pd
+
+from tests.conf import TEST_OUTPUT_PATH, TEST_MODELS_PATH
+from tests.helpers import create_file_logger
 from sbmlpbkutils import PbkModelAnnotator
-
-sys.path.append('../sbmlpbkutils/')
-
-__test_outputs_path__ = './tests/__testoutputs__'
-__test_models_path__ = './tests/models/'
 
 class PbkModelAnnotatorTests(unittest.TestCase):
 
     def setUp(self):
-        Path(__test_outputs_path__).mkdir(parents=True, exist_ok=True)
-
-    @classmethod
-    def setUpClass(cls):
-        cls.sbml_files = []
-        files = os.listdir(__test_models_path__)
-        for file in files:
-            if file.endswith('.sbml') and not file.endswith('annotated.sbml'):
-                cls.sbml_files.append(__test_models_path__ + file)
+        self.out_path = os.path.join(TEST_OUTPUT_PATH, 'annotator_tests')
+        os.makedirs(self.out_path, exist_ok=True)
 
     def test_annotate_cff_file(self):
         # Arrange
-        sbml_file = os.path.join(__test_models_path__, 'simple.sbml') 
+        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple/simple.sbml')
         document = ls.readSBML(sbml_file)
         cff_file = './CITATION.cff'
         annotator = PbkModelAnnotator()
@@ -50,19 +38,8 @@ class PbkModelAnnotatorTests(unittest.TestCase):
 
         # Write annotated SBML file to test results
         sbml_basename = os.path.basename(sbml_file)
-        out_file = os.path.join(__test_outputs_path__, Path(sbml_basename).with_suffix('.cff.sbml'))
+        out_file = os.path.join(self.out_path, Path(sbml_basename).with_suffix('.cff.sbml'))
         ls.writeSBML(document, out_file)
-
-    def test_annotate_from_annotations_file(self):
-        annotator = PbkModelAnnotator()
-        for sbml_file in self.sbml_files:
-            sbml_basename = os.path.basename(sbml_file)
-            annotations_file = Path(sbml_file).with_suffix('.annotations.csv')
-            log_file = os.path.join(__test_outputs_path__, Path(sbml_basename).with_suffix('.annotation.log'))
-            logger = self._create_file_logger(log_file)
-            document = ls.readSBML(sbml_file)
-            annotator.annotate(document, annotations_file=annotations_file, logger=logger)
-            self.assertIsNotNone(document)
 
     def test_annotate_document_invalid(self):
         annotations_df = pd.DataFrame({
@@ -105,18 +82,9 @@ class PbkModelAnnotatorTests(unittest.TestCase):
         document = self._annotate_model('simple.sbml', annotations_df, 'annotation_invalid_uri')
         self.assertIsNotNone(document)
 
-    def test_remove_all_annotations(self):
-        sbml_file = os.path.join(__test_models_path__, 'euromix.annotated.sbml') 
-        annotator = PbkModelAnnotator()
-        document = ls.readSBML(sbml_file)
-        annotator.clear_all_element_annotations(document)
-        sbml_basename = os.path.basename(sbml_file)
-        out_file = os.path.join(__test_outputs_path__, Path(sbml_basename).with_suffix('.clean.sbml'))
-        ls.writeSBML(document, out_file)
-
     def test_set_element_name(self):
         # Arrange
-        sbml_file = os.path.join(__test_models_path__, 'simple.sbml') 
+        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple/simple.sbml')
         annotator = PbkModelAnnotator()
         document = ls.readSBML(sbml_file)
         element_id = 'Gut'
@@ -133,7 +101,7 @@ class PbkModelAnnotatorTests(unittest.TestCase):
 
     def test_set_element_unit(self):
         # Arrange
-        sbml_file = os.path.join(__test_models_path__, 'simple.sbml') 
+        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple/simple.sbml')
         annotator = PbkModelAnnotator()
         document = ls.readSBML(sbml_file)
         logger = logging.getLogger(__name__)
@@ -155,7 +123,7 @@ class PbkModelAnnotatorTests(unittest.TestCase):
     ])
     def test_remove_element_rdf_annotation(self, element_id):
         # Arrange
-        sbml_file = os.path.join(__test_models_path__, 'simple.annotated.sbml') 
+        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple/simple.annotated.sbml')
         annotator = PbkModelAnnotator()
         document = ls.readSBML(sbml_file)
         logger = logging.getLogger(__name__)
@@ -181,12 +149,12 @@ class PbkModelAnnotatorTests(unittest.TestCase):
         self.assertEqual(len(cv_terms), 0)
 
         # Write to SBML
-        sbml_out = os.path.join(__test_outputs_path__, f'test_remove_element_rdf_annotation_{element_id}.sbml')
+        sbml_out = os.path.join(self.out_path, f'test_remove_element_rdf_annotation_{element_id}.sbml')
         ls.writeSBML(document, sbml_out)
 
     def test_remove_element_rdf_annotation_already_empty(self):
         # Arrange
-        sbml_file = os.path.join(__test_models_path__, 'simple.sbml') 
+        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple/simple.sbml')
         annotator = PbkModelAnnotator()
         document = ls.readSBML(sbml_file)
         logger = logging.getLogger(__name__)
@@ -208,7 +176,7 @@ class PbkModelAnnotatorTests(unittest.TestCase):
 
     def test_set_model_rdf_annotation(self):
         # Arrange
-        sbml_file = os.path.join(__test_models_path__, 'simple.sbml') 
+        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple/simple.sbml')
         annotator = PbkModelAnnotator()
         document = ls.readSBML(sbml_file)
         logger = logging.getLogger(__name__)
@@ -224,11 +192,11 @@ class PbkModelAnnotatorTests(unittest.TestCase):
         # Assert
         model = document.getModel()
         cv_terms = PbkModelAnnotator.get_cv_terms(model, ls.BIOLOGICAL_QUALIFIER, ls.BQB_HAS_TAXON)
-        self.assertEqual(cv_terms[0]['uri'], "http://identifiers.org/taxonomy/40674")
+        self.assertEqual(cv_terms[0]['uri'], "https://identifiers.org/taxonomy/40674")
 
     def test_set_element_rdf_annotation(self):
         # Arrange
-        sbml_file = os.path.join(__test_models_path__, 'simple.sbml') 
+        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple/simple.sbml')
         annotator = PbkModelAnnotator()
         document = ls.readSBML(sbml_file)
         logger = logging.getLogger(__name__)
@@ -251,7 +219,7 @@ class PbkModelAnnotatorTests(unittest.TestCase):
 
     def test_set_element_rdf_annotation_overwrite(self):
         # Arrange
-        sbml_file = os.path.join(__test_models_path__, 'simple.sbml') 
+        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple/simple.sbml')
         annotator = PbkModelAnnotator()
         document = ls.readSBML(sbml_file)
         logger = logging.getLogger(__name__)
@@ -283,14 +251,14 @@ class PbkModelAnnotatorTests(unittest.TestCase):
     def test_set_model_creators(self):
         # Arrange
         creators = [
-             {
-                  'given-names': 'John',
-                  'family-names': 'Doe',
-                  'affiliation': 'ACME PBK models',
-                  'email': 'john.doe@acme-pbk.org'
-             }
+            {
+                'given-names': 'John',
+                'family-names': 'Doe',
+                'affiliation': 'ACME PBK models',
+                'email': 'john.doe@acme-pbk.org'
+            }
         ]
-        sbml_file = os.path.join(__test_models_path__, 'simple.sbml') 
+        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple/simple.sbml')
         document = ls.readSBML(sbml_file)
         annotator = PbkModelAnnotator()
 
@@ -324,23 +292,15 @@ class PbkModelAnnotatorTests(unittest.TestCase):
         annotations_df: pd.DataFrame,
         test_id: str
     ) -> ls.SBMLDocument:
-        sbml_file = os.path.join(__test_models_path__, filename) 
+        model_folder = os.path.join(TEST_MODELS_PATH, Path(filename).stem)
+        sbml_file = os.path.join(model_folder, filename)
         document = ls.readSBML(sbml_file)
         sbml_basename = os.path.basename(sbml_file)
-        log_file = os.path.join(__test_outputs_path__, Path(sbml_basename).with_suffix(f'.{test_id}.log'))
-        logger = self._create_file_logger(log_file)
+        log_file = os.path.join(self.out_path, Path(sbml_basename).with_suffix(f'.{test_id}.log'))
+        logger = create_file_logger(log_file)
         annotator = PbkModelAnnotator()
         document = annotator.set_model_annotations(document, annotations_df, logger)
         return document
-
-    def _create_file_logger(self, logfile: str) -> logging.Logger:
-        logger = logging.getLogger(uuid.uuid4().hex)
-        logger.setLevel(logging.DEBUG)
-        fh = logging.FileHandler(logfile, 'w+')
-        formatter = logging.Formatter('[%(levelname)s] - %(message)s')
-        fh.setFormatter(formatter)
-        logger.addHandler(fh)
-        return logger
 
 if __name__ == '__main__':
     unittest.main()

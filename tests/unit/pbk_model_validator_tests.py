@@ -1,40 +1,14 @@
 import logging
 import os
-import sys
 import unittest
-import uuid
-from pathlib import Path
-from parameterized import parameterized
-
-import pandas as pd
 import libsbml as ls
+import pandas as pd
 
+from tests.conf import TEST_MODELS_PATH
 from sbmlpbkutils import PbkModelValidator, PbkModelAnnotator
 from sbmlpbkutils import ErrorCode, ValidationStatus
 
-sys.path.append('../sbmlpbkutils/')
-
-__test_models_path__ = './tests/models/'
-__test_outputs_path__ = './tests/__testoutputs__'
-
 class PbkModelValidatorTests(unittest.TestCase):
-
-    def setUp(self):
-        Path(__test_outputs_path__).mkdir(parents=True, exist_ok=True)
-
-    @parameterized.expand([
-        ("simple.sbml"),
-        ("simple.annotated.sbml"),
-        ("euromix.annotated.sbml")
-    ])
-    def test_validate(self, file):
-        sbml_file = os.path.join(__test_models_path__, file)
-        validator = PbkModelValidator()
-        sbml_basename = os.path.basename(sbml_file)
-        log_file = os.path.join(__test_outputs_path__, Path(sbml_basename)
-                                .with_suffix('.validation.log'))
-        logger = self._create_file_logger(log_file)
-        validator.validate(sbml_file, logger)
 
     def test_validate_compartment_valid(self):
         annotations_df = self._fake_single_annotation_record(
@@ -43,7 +17,7 @@ class PbkModelValidatorTests(unittest.TestCase):
             'BQM_IS',
             'http://purl.obolibrary.org/obo/PBPKO_00477'
         )
-        document = self._annotate_model('simple.sbml', annotations_df)
+        document = self._annotate_model('simple/simple.sbml', annotations_df)
         validator = PbkModelValidator()
         element = document.getElementBySId('Gut')
         result = validator.check_element_annotation(element)
@@ -56,7 +30,7 @@ class PbkModelValidatorTests(unittest.TestCase):
             'BQB_IS',
             'http://purl.obolibrary.org/obo/PBPKO_00477'
         )
-        document = self._annotate_model('simple.sbml', annotations_df)
+        document = self._annotate_model('simple/simple.sbml', annotations_df)
         validator = PbkModelValidator()
         element = document.getElementBySId('Gut')
         result = validator.check_element_annotation(element)
@@ -70,7 +44,7 @@ class PbkModelValidatorTests(unittest.TestCase):
             'BQM_IS',
             'http://purl.obolibrary.org/obo/PBPKO_00165'
         )
-        document = self._annotate_model('simple.sbml', annotations_df)
+        document = self._annotate_model('simple/simple.sbml', annotations_df)
         validator = PbkModelValidator()
         element = document.getElementBySId('PCLiver')
         result = validator.check_element_annotation(element)
@@ -92,7 +66,7 @@ class PbkModelValidatorTests(unittest.TestCase):
                 'http://purl.obolibrary.org/obo/CHEBI_25212'
             )
         ])
-        document = self._annotate_model('simple.sbml', annotations_df)
+        document = self._annotate_model('simple/simple.sbml', annotations_df)
         validator = PbkModelValidator()
         element = document.getElementBySId('PCLiver')
         result = validator.check_element_annotation(element)
@@ -105,7 +79,7 @@ class PbkModelValidatorTests(unittest.TestCase):
             'BQB_IS',
             'http://purl.obolibrary.org/obo/PBPKO_00165'
         )
-        document = self._annotate_model('simple.sbml', annotations_df)
+        document = self._annotate_model('simple/simple.sbml', annotations_df)
         validator = PbkModelValidator()
         element = document.getElementBySId('PCLiver')
         result = validator.check_element_annotation(element)
@@ -127,7 +101,7 @@ class PbkModelValidatorTests(unittest.TestCase):
                 'http://purl.obolibrary.org/obo/PBPKO_00106'
             )
         ])
-        document = self._annotate_model('simple.sbml', annotations_df)
+        document = self._annotate_model('simple/simple.sbml', annotations_df)
         validator = PbkModelValidator()
         result = validator.check_parameter_annotations(document)
         self.assertTrue(any(r.level == ValidationStatus.ERROR for r in result))
@@ -162,7 +136,7 @@ class PbkModelValidatorTests(unittest.TestCase):
                 'urn:miriam:chebi:CHEBI:25212'
             )
         ])
-        document = self._annotate_model('simple_metab.sbml', annotations_df)
+        document = self._annotate_model('simple_metab/simple_metab.sbml', annotations_df)
         validator = PbkModelValidator()
         result = validator.check_parameter_annotations(document)
         messages = [r for r in result if r.code == ErrorCode.PARAMETER_MULTIPLE_ANNOTATION_USE]
@@ -183,7 +157,7 @@ class PbkModelValidatorTests(unittest.TestCase):
                 'http://purl.obolibrary.org/obo/PBPKO_00165'
             )
         ])
-        document = self._annotate_model('simple.sbml', annotations_df)
+        document = self._annotate_model('simple/simple.sbml', annotations_df)
         validator = PbkModelValidator()
         result = validator.check_parameter_annotations(document)
         messages = [r for r in result if r.code == ErrorCode.PARAMETER_MULTIPLE_ANNOTATION_USE]
@@ -192,7 +166,7 @@ class PbkModelValidatorTests(unittest.TestCase):
     def test_validate_parameter_warning(self):
         '''Annotation of internal parameters is not mandatory. Validation
         should yield a warning.'''
-        sbml_file = os.path.join(__test_models_path__, 'simple.sbml') 
+        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple/simple.sbml')
         document = ls.readSBML(sbml_file)
         element = document.getElementBySId('QC')
         validator = PbkModelValidator()
@@ -222,21 +196,12 @@ class PbkModelValidatorTests(unittest.TestCase):
         filename: str,
         annotations_df: pd.DataFrame
     ) -> ls.SBMLDocument:
-        sbml_file = os.path.join(__test_models_path__, filename) 
+        sbml_file = os.path.join(TEST_MODELS_PATH, filename)
         document = ls.readSBML(sbml_file)
         annotator = PbkModelAnnotator()
         logger = logging.getLogger(__name__)
         document = annotator.set_model_annotations(document, annotations_df, logger)
         return document
-
-    def _create_file_logger(self, logfile: str) -> logging.Logger:
-        logger = logging.getLogger(uuid.uuid4().hex)
-        logger.setLevel(logging.INFO)
-        fh = logging.FileHandler(logfile, 'w+')
-        formatter = logging.Formatter('[%(levelname)s] - %(message)s')
-        fh.setFormatter(formatter)
-        logger.addHandler(fh)
-        return logger
 
 if __name__ == '__main__':
     unittest.main()

@@ -1,17 +1,25 @@
 import unittest
-import sys
 import libsbml as ls
 from parameterized import parameterized
 
 from sbmlpbkutils import unit_definitions, UnitType
-from sbmlpbkutils.unit_definitions import _si_prefix_string, _si_prefix_strings_ext, _time_unit_multipliers
-from sbmlpbkutils import create_unit_string, set_unit_definition, get_unit_definition, get_unit_type
-from sbmlpbkutils import get_volume_unit_definitions, get_mass_unit_definitions, get_time_unit_definitions, get_temperature_unit_definitions
-
-sys.path.append('../sbmlpbkutils/')
-
-__test_outputs_path__ = './tests/__testoutputs__'
-__test_models_path__ = './tests/models/'
+from sbmlpbkutils.unit_definitions import (
+    _si_prefix_string,
+    _si_prefix_strings_ext,
+    _time_unit_multipliers
+)
+from sbmlpbkutils import (
+    create_unit_string,
+    set_unit_definition,
+    get_unit_definition,
+    get_unit_type
+)
+from sbmlpbkutils import (
+    get_volume_unit_definitions,
+    get_mass_unit_definitions,
+    get_time_unit_definitions,
+    get_temperature_unit_definitions
+)
 
 class UnitDefinitionsTests(unittest.TestCase):
 

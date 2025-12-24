@@ -1,15 +1,15 @@
-id: simple
-label: simple
+id: oral
+label: oral
 model_instances:
   - id: simple
     label: simple
-    model_path: tests/models/simple.annotated.sbml
+    model_path: tests/resources/models/simple/simple.annotated.sbml
     target_mappings:
       AGut: AGut
       ABlood: ABlood
   - id: simple_metab
     label: simple_metab
-    model_path: tests/models/simple_metab.annotated.sbml
+    model_path: tests/resources/models/simple_metab/simple_metab.annotated.sbml
     target_mappings:
       AGut: AGut_P
       ABlood: ABlood_P

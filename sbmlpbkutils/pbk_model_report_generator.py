@@ -92,35 +92,35 @@ class PbkModelReportGenerator():
 
             # Write rate rules
             rate_rules = self.get_rate_rules_as_str(RenderMode.LATEX)
-            if (len(rate_rules) > 0):
+            if len(rate_rules) > 0:
                 f.write("## Rate rules\n\n")
                 for _, equation in rate_rules.items():
                     f.write(f"${equation}$\n\n")
 
             # Write assignment rules
             assignment_rules = self.get_assignment_rules_as_str(RenderMode.LATEX)
-            if (len(assignment_rules) > 0):
+            if len(assignment_rules) > 0:
                 f.write("## Assignment rules\n\n")
                 for _, equation in assignment_rules.items():
                     f.write(f"${equation}$\n\n")
 
             # Write assignment rules
             initial_assignments = self.get_initial_assigments_as_str(RenderMode.LATEX)
-            if (len(initial_assignments) > 0):
+            if len(initial_assignments) > 0:
                 f.write("## Initial assignments\n\n")
                 for _, equation in initial_assignments.items():
                     f.write(f"${equation}$\n\n")
 
             # Write functions
             function_defs = self.get_function_as_str(RenderMode.LATEX)
-            if (len(function_defs) > 0):
+            if len(function_defs) > 0:
                 f.write("## Function definitions\n\n")
                 for _, equation in function_defs.items():
                     f.write(f"${equation}$\n\n")
 
             # Write compartment infos table
             f.write("## Parameters\n\n")
-            if (model.getNumParameters() > 0):
+            if model.getNumParameters() > 0:
                 table = self.get_parameter_infos()
                 f.write(table.to_markdown(index=False))
                 f.write("\n\n")
@@ -137,7 +137,7 @@ class PbkModelReportGenerator():
                 f.write("*not specified*\n\n")
 
 
-    def get_model_creators(self) -> pd.DataFrame:
+    def get_model_creators(self) -> pd.DataFrame | None:
         dt = []
         col_names = ["first-name", "last-name", "affiliation", "email"]
         model = self.document.getModel()
@@ -416,7 +416,7 @@ class PbkModelReportGenerator():
         model = self.document.getModel()
 
         for rule in model.getListOfRules():
-            is_assignment = (rule.getTypeCode() == ls.SBML_ASSIGNMENT_RULE)
+            is_assignment = rule.getTypeCode() == ls.SBML_ASSIGNMENT_RULE
             # Only consider assignment rules
             if not is_assignment:
                 continue
@@ -471,8 +471,9 @@ class PbkModelReportGenerator():
     ):
         if render_mode == RenderMode.TEXT:
             return ls.formulaToString(ast_node).strip()
-        elif render_mode == RenderMode.LATEX:
+        if render_mode == RenderMode.LATEX:
             return astnode_to_latex(ast_node).replace("·", "\\cdot ")
+        raise TypeError(f"Unknown render mode type {render_mode}")
 
     @staticmethod
     def _math_print_element(element_id):

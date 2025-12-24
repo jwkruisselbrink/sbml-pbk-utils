@@ -1,31 +1,33 @@
 import unittest
 import os
-import logging
 from parameterized import parameterized
 
+from tests.helpers import create_console_logger
+from tests.conf import TEST_OUTPUT_PATH, TEST_SCENARIOS_PATH
 from sbmlpbkutils import run_config, load_config, plot_simulation_results
 
-__test_outputs_path__ = './tests/__testoutputs__'
-__test_scenarios_path__ = './tests/resources/scenarios/'
-
 class ScenarioSimulationTests(unittest.TestCase):
+
+    def setUp(self):
+        self.out_path = os.path.join(TEST_OUTPUT_PATH, 'scenarios')
+        os.makedirs(self.out_path, exist_ok=True)
 
     @parameterized.expand([
         ("oral.yaml")
     ])
-    def test_generate_report(self, filename):
-        file_path = os.path.join(__test_scenarios_path__, filename)
+    def test_simulation_scenarios(self, filename):
+        # Get file path from filename
+        file_path = os.path.join(TEST_SCENARIOS_PATH, filename)
+
         # Load config
         config = load_config(file_path)
 
         # Create output directory if it does not exist
-        out_path = os.path.join(__test_outputs_path__, 'scenarios', config.id)
-
-        # Ensure output path
+        out_path = os.path.join(self.out_path, config.id)
         os.makedirs(out_path, exist_ok=True)
 
         # Run simulations
-        logger = _create_console_logger()
+        logger = create_console_logger()
         run_config(
             config = config,
             out_path = out_path,
@@ -39,13 +41,4 @@ class ScenarioSimulationTests(unittest.TestCase):
             out_path = out_path
         )
 
-def _create_console_logger() -> logging.Logger:
-    # Configure logger for formatted console output
-    logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
-    handler = logging.StreamHandler()
-    handler.setLevel(logging.INFO)
-    handler.setFormatter(logging.Formatter('[%(levelname)s] %(message)s'))
-    if not logger.handlers:
-        logger.addHandler(handler)
-    return logger
+

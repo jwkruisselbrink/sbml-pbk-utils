@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import List, Union
+from typing import Dict, List, Union
 from logging import Logger
 
 import libsbml as ls
@@ -86,7 +86,7 @@ class PbkModelAnnotator:
         document: ls.SBMLDocument,
         annotations_df: pd.DataFrame,
         logger: Logger
-    ) -> None:
+    ) -> ls.SBMLDocument:
         """Annotate the units of the SBML file using the annotations
         file and write results to the specified out file."""
         model = document.getModel()
@@ -197,7 +197,7 @@ class PbkModelAnnotator:
     def set_model_creators(
         self,
         document: ls.SBMLDocument,
-        creators: dict
+        creators: List[Dict]
     ) -> None:
         """Sets the model creators in the SBML document based on the provided
         creators dictionary. The creators dictionary follows the structure of
