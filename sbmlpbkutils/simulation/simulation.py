@@ -26,6 +26,11 @@ class DosingEvent:
     until: float | None = None
 
 @dataclass
+class InitialState:
+    target: str
+    amount: float
+
+@dataclass
 class Output:
     id: str
     label: str
@@ -37,7 +42,8 @@ class Scenario:
     label: str
     duration: int
     evaluation_resolution: int
-    dosing_events: List[DosingEvent]
+    initial_states: List[InitialState] | None
+    dosing_events: List[DosingEvent] | None
     outputs: List[Output]
     time_unit: TimeUnit
     amount_unit: AmountUnit
@@ -153,7 +159,7 @@ def dosing_events_to_eventspecs(
     time_unit_multiplier: float,
     amount_unit_multiplier: float,
     target_mappings: Dict[str, str] | None
-) -> List[EventSpec] | None:
+) -> List[EventSpec]:
     if event.type == "single_bolus":
         return events_single_bolus(
             event,
@@ -196,7 +202,10 @@ def load_config(path: str) -> SimulationConfig:
 
     scenarios = []
     for s in data["scenarios"]:
-        dosing_events = [DosingEvent(**e) for e in s["dosing_events"]]
+        dosing_events = ([DosingEvent(**e) for e in s["dosing_events"]]
+            if "dosing_events" in s.keys() else None)
+        initial_states = ([InitialState(**e) for e in s["initial_states"]]
+            if "initial_states" in s.keys() else None)
         outputs = [Output(**c) for c in s["outputs"]]
 
         scenarios.append(
@@ -205,6 +214,7 @@ def load_config(path: str) -> SimulationConfig:
                 label=s["label"],
                 duration=s["duration"],
                 evaluation_resolution=s["evaluation_resolution"],
+                initial_states=initial_states,
                 dosing_events=dosing_events,
                 outputs=outputs,
                 time_unit=TimeUnit[s["time_unit"]],
@@ -272,33 +282,48 @@ def run_scenario(
     time_unit_multiplier = get_time_unit_alignment_factor(ls_model, scenario.time_unit)
     amount_unit_multiplier = get_amount_unit_alignment_factor(ls_model, scenario.amount_unit)
 
-    # Get events from scenario
-    event_specs = create_rr_events(
-        scenario.dosing_events,
-        time_unit_multiplier,
-        amount_unit_multiplier,
-        instance.target_mappings
-    )
+    # Set initial amounts according to scenario
+    if scenario.initial_states is not None:
+        for item in scenario.initial_states:
+            target = (instance.target_mappings[item.target]
+                if instance.target_mappings is not None
+                    and item.target in instance.target_mappings.keys()
+                else item.target
+            )
+            amount = amount_unit_multiplier * item.amount
+            logger.info(f"- Initial amount in {target}: {amount}")
+            rr_model.setInitAmount(target, amount)
 
-    # Set boundary condition for continuous targets
-    continuous_targets = set(
-        instance.target_mappings[r.target] 
-            if instance.target_mappings is not None and r.target in instance.target_mappings.keys()
-                else r.target
-            for r in scenario.dosing_events
-                if r.type == 'single_continuous' or r.type == 'repeated_continuous'
-    )
-    for target in continuous_targets:
-        rr_model.setBoundary(target, True)
+    # If the scenario has dosing event definitions
+    if scenario.dosing_events is not None:
 
-    # Set events
-    event_count = 0
-    for ev in event_specs:
-        event_count += 1
-        eid = f"ev_{event_count}"
-        rr_model.addEvent(eid, False, ev.trigger, False)
-        rr_model.addEventAssignment(eid, ev.target, ev.assignment, False)
-    rr_model.regenerateModel(True, True)
+        # Get events from scenario
+        event_specs = create_rr_events(
+            scenario.dosing_events,
+            time_unit_multiplier,
+            amount_unit_multiplier,
+            instance.target_mappings
+        )
+
+        # Set boundary condition for continuous targets
+        continuous_targets = set(
+            instance.target_mappings[r.target]
+                if instance.target_mappings is not None and r.target in instance.target_mappings.keys()
+                    else r.target
+                for r in scenario.dosing_events
+                    if r.type in ['single_continuous', 'repeated_continuous']
+        )
+        for target in continuous_targets:
+            rr_model.setBoundary(target, True)
+
+        # Set events
+        event_count = 0
+        for ev in event_specs:
+            event_count += 1
+            eid = f"ev_{event_count}"
+            rr_model.addEvent(eid, False, ev.trigger, False)
+            rr_model.addEventAssignment(eid, ev.target, ev.assignment, False)
+        rr_model.regenerateModel(True, True)
 
     # Set instance parametrisation
     if instance.param_file is not None:

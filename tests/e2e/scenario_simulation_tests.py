@@ -13,7 +13,8 @@ class ScenarioSimulationTests(unittest.TestCase):
         os.makedirs(self.out_path, exist_ok=True)
 
     @parameterized.expand([
-        ("oral.yaml")
+        ("oral.yaml"),
+        ("liver.yaml")
     ])
     def test_simulation_scenarios(self, filename):
         # Get file path from filename
