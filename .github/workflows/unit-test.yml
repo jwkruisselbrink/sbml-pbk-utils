@@ -20,6 +20,6 @@ jobs:
       - name: Install graphviz
         run: sudo apt-get install graphviz
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install -e .[dev,test]
       - name: Run tests
         run: python -m unittest discover -s 'tests/' -p '*_tests.py'

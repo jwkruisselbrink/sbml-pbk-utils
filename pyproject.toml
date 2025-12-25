@@ -14,16 +14,17 @@ maintainers = [
     {name = "Johannes Kruisselbrink", email = "jwkruisselbrink@gmail.com"}
 ]
 dependencies = [
-    "PyYAML==6.0.1",
-    "antimony>=2.15.0",
-    "numpy>=1.26.4",
-    "python-libsbml>=5.20.2",
-    "sbmlutils>=0.9.0",
-    "tellurium>=2.2.10",
-    "owlready2>=0.47",
-    "graphviz>=0.20.3",
-    "pyyaml>=6.0.1",
-    "tabulate>=0.9.0"
+    "antimony>=3.1.1",
+    "graphviz>=0.21",
+    "matplotlib>=3.10.8",
+    "numpy>=2.4.0",
+    "owlready2>=0.49",
+    "pandas>=2.3.3",
+    "python-libsbml>=5.20.5",
+    "pyyaml>=6.0.3",
+    "sbmlutils>=0.9.4",
+    "tabulate>=0.9.0",
+    "tellurium>=2.2.11.2"
 ]
 keywords=["pbk","sbml","fair"]
 classifiers = [
@@ -34,6 +35,14 @@ classifiers = [
 ]
 license = {file = "LICENSE"}
 requires-python = ">=3.12"
+
+[project.optional-dependencies]
+dev = [
+    "setuptools>=80.9.0"
+]
+test = [
+    "parameterized>=0.9.0"
+]
 
 [project.urls]
 Homepage = "https://github.com/jwkruisselbrink/sbml-pbk-utils"
