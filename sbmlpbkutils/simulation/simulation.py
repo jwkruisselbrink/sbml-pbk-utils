@@ -388,12 +388,19 @@ def plot_scenario_results(
     scenario: Scenario,
     out_path: str
 ):
+    # Line and marker styles
+    linestyles = ['-', '--', '-.', ':']
+    markers = ['x', 'o', 's', '*', '^', 'v', 'p', '.']
+
+    # Iterate over outputs
     for output in scenario.outputs:
         # Create figure
         fig, ax = plt.subplots(figsize=(7, 5))
 
         # Loop over instance results and plot
-        for instance in instances:
+        # Cycle through a small set of linestyles so multiple instances are
+        # visually distinguishable even when colors are similar.
+        for idx, instance in enumerate(instances):
             # Get instance scenario output file
             out_file = os.path.join(out_path, f"{scenario.id}-{instance.id}.csv")
             output_df = pd.read_csv(out_file, skipinitialspace=True)
@@ -404,12 +411,13 @@ def plot_scenario_results(
                 if instance.target_mappings is not None else output.id
             values = output_df[output_id].to_numpy(dtype=float)
 
-            # Plot lines
-            ax.plot(times, values, linewidth=1, label=instance.label)
+            # Plot time series
+            linestyle = linestyles[idx % len(linestyles)]
+            ax.plot(times, values, linewidth=1, linestyle=linestyle, label=instance.label)
 
         # Plot reference data/series
         if scenario.reference_data:
-            for item in scenario.reference_data:
+            for idx, item in enumerate(scenario.reference_data):
                 reference_series = [o for o in item.outputs if o.output == output.id]
                 time_unit_multiplier = get_time_unit_alignment_factor(
                     item.time_unit,
@@ -423,11 +431,20 @@ def plot_scenario_results(
                     times = reference_df['time'].apply(lambda v: v / time_unit_multiplier)
                     values = reference_df[series.id].to_numpy(dtype=float)
 
-                    # Plot lines
                     if item.series_type == SeriesType.CHECKPOINTS:
-                        ax.scatter(times, values, marker='x', label=item.label)
+                        # Plot points
+                        marker = markers[idx % len(linestyles)]
+                        ax.scatter(times, values, marker=marker, label=item.label)
                     else:
-                        ax.plot(times, values, linewidth=1, label=item.label)
+                        # Plot lines
+                        linestyle = linestyles[(idx + len(scenario.outputs)) % len(linestyles)]
+                        ax.plot(
+                            times,
+                            values,
+                            linewidth=1,
+                            linestyle=linestyle,
+                            label=item.label
+                        )
 
         # Set plot layout
         ax.set_xlabel(f'Time ({str(scenario.time_unit)})', fontsize=12, fontweight='bold')
