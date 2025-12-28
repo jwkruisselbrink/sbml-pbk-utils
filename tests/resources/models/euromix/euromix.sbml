@@ -126,18 +126,18 @@
       <compartment id="Gut" spatialDimensions="3" constant="true"/>
     </listOfCompartments>
     <listOfSpecies>
-      <species id="QFat" compartment="Fat" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="QRich" compartment="Rich" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="QPoor" compartment="Poor" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="QLiver" compartment="Liver" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="QMetab" compartment="Liver" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="QGut" compartment="Gut" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="QSkin_u" compartment="Skin_u" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="QSkin_e" compartment="Skin_e" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="QSkin_sc_u" compartment="Skin_sc_u" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="QSkin_sc_e" compartment="Skin_sc_e" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="QArt" compartment="Art" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="QVen" compartment="Ven" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="QFat" compartment="Fat" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="QRich" compartment="Rich" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="QPoor" compartment="Poor" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="QLiver" compartment="Liver" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="QMetab" compartment="Liver" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="QGut" compartment="Gut" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="QSkin_u" compartment="Skin_u" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="QSkin_e" compartment="Skin_e" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="QSkin_sc_u" compartment="Skin_sc_u" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="QSkin_sc_e" compartment="Skin_sc_e" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="QArt" compartment="Art" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="QVen" compartment="Ven" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
       <species id="QExcret" compartment="Urine" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
       <species id="QAir" compartment="Air" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
     </listOfSpecies>

@@ -58,11 +58,11 @@
       <compartment id="Urine" spatialDimensions="3" constant="true"/>
     </listOfCompartments>
     <listOfSpecies>
-      <species id="AGut" compartment="Gut" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="ABlood" compartment="Blood" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="ALiver" compartment="Liver" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="ARest" compartment="Rest" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="AUrine" compartment="Urine" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="AGut" compartment="Gut" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="ABlood" compartment="Blood" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="ALiver" compartment="Liver" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="ARest" compartment="Rest" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="AUrine" compartment="Urine" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
     </listOfSpecies>
     <listOfParameters>
       <parameter id="AgeInit" value="10" constant="true"/>

@@ -6,12 +6,12 @@
         <rdf:Description rdf:about="#simple">
           <bqbiol:hasTaxon>
             <rdf:Bag>
-              <rdf:li rdf:resource="http://identifiers.org/taxonomy/40674"/>
+              <rdf:li rdf:resource="https://identifiers.org/taxonomy/40674"/>
             </rdf:Bag>
           </bqbiol:hasTaxon>
           <bqbiol:hasProperty>
             <rdf:Bag>
-              <rdf:li rdf:resource="http://identifiers.org/CHEBI:24431"/>
+              <rdf:li rdf:resource="https://identifiers.org/CHEBI:24431"/>
             </rdf:Bag>
           </bqbiol:hasProperty>
         </rdf:Description>
@@ -151,8 +151,8 @@
       </compartment>
     </listOfCompartments>
     <listOfSpecies>
-      <species id="ABlood" name="amount of chemical in blood" compartment="Blood" initialConcentration="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species metaid="meta_ALiver" id="ALiver" name="amount of chemical in liver" compartment="Liver" initialConcentration="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
+      <species id="ABlood" name="amount of chemical in blood" compartment="Blood" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species metaid="meta_ALiver" id="ALiver" name="amount of chemical in liver" compartment="Liver" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
             <rdf:Description rdf:about="#meta_ALiver">
@@ -165,7 +165,7 @@
           </rdf:RDF>
         </annotation>
       </species>
-      <species metaid="meta_ARest" id="ARest" name="amount of chemical in rest-of-body" compartment="Rest" initialConcentration="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
+      <species metaid="meta_ARest" id="ARest" name="amount of chemical in rest-of-body" compartment="Rest" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
             <rdf:Description rdf:about="#meta_ARest">
@@ -178,7 +178,7 @@
           </rdf:RDF>
         </annotation>
       </species>
-      <species metaid="meta_AGut" id="AGut" name="amount of chemical in gut" compartment="Gut" initialConcentration="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
+      <species metaid="meta_AGut" id="AGut" name="amount of chemical in gut" compartment="Gut" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
             <rdf:Description rdf:about="#meta_AGut">
@@ -191,7 +191,7 @@
           </rdf:RDF>
         </annotation>
       </species>
-      <species metaid="meta_AUrine" id="AUrine" name="amount of chemical in urine" compartment="Urine" initialConcentration="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
+      <species metaid="meta_AUrine" id="AUrine" name="amount of chemical in urine" compartment="Urine" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
             <rdf:Description rdf:about="#meta_AUrine">

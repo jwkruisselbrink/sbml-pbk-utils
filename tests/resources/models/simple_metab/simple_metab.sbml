@@ -9,16 +9,16 @@
       <compartment id="Urine" spatialDimensions="3" constant="true"/>
     </listOfCompartments>
     <listOfSpecies>
-      <species id="AGut_P" compartment="Gut" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="ALiver_P" compartment="Liver" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="ABlood_P" compartment="Blood" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="ARest_P" compartment="Rest" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="AUrine_P" compartment="Urine" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="AGut_M" compartment="Gut" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="ALiver_M" compartment="Liver" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="ABlood_M" compartment="Blood" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="ARest_M" compartment="Rest" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="AUrine_M" compartment="Urine" initialConcentration="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="AGut_P" compartment="Gut" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="ALiver_P" compartment="Liver" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="ABlood_P" compartment="Blood" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="ARest_P" compartment="Rest" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="AUrine_P" compartment="Urine" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="AGut_M" compartment="Gut" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="ALiver_M" compartment="Liver" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="ABlood_M" compartment="Blood" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="ARest_M" compartment="Rest" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="AUrine_M" compartment="Urine" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
     </listOfSpecies>
     <listOfParameters>
       <parameter id="BW" value="70" constant="true"/>

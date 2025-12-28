@@ -125,16 +125,16 @@
       </compartment>
     </listOfCompartments>
     <listOfSpecies>
-      <species id="AGut_P" name="amount in gut parent" compartment="Gut" initialConcentration="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="ALiver_P" name="amount in liver parent" compartment="Liver" initialConcentration="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="ABlood_P" name="amount in blood parent" compartment="Blood" initialConcentration="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="ARest_P" name="amount in rest-of-body parent" compartment="Rest" initialConcentration="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="AUrine_P" name="amount in urine parent" compartment="Urine" initialConcentration="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="AGut_M" name="amount in gut metabolite" compartment="Gut" initialConcentration="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="ALiver_M" name="amount in liver metabolite" compartment="Liver" initialConcentration="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="ABlood_M" name="amount in blood metabolite" compartment="Blood" initialConcentration="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="ARest_M" name="amount in rest-of-body metabolite" compartment="Rest" initialConcentration="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="AUrine_M" name="amount in urine metabolite" compartment="Urine" initialConcentration="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="AGut_P" name="amount in gut parent" compartment="Gut" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="ALiver_P" name="amount in liver parent" compartment="Liver" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="ABlood_P" name="amount in blood parent" compartment="Blood" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="ARest_P" name="amount in rest-of-body parent" compartment="Rest" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="AUrine_P" name="amount in urine parent" compartment="Urine" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="AGut_M" name="amount in gut metabolite" compartment="Gut" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="ALiver_M" name="amount in liver metabolite" compartment="Liver" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="ABlood_M" name="amount in blood metabolite" compartment="Blood" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="ARest_M" name="amount in rest-of-body metabolite" compartment="Rest" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species id="AUrine_M" name="amount in urine metabolite" compartment="Urine" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
     </listOfSpecies>
     <listOfParameters>
       <parameter metaid="meta_BW" id="BW" name="body weight" value="70" units="KiloGM" constant="true">

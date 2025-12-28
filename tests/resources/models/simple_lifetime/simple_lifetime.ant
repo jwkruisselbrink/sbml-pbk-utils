@@ -51,9 +51,9 @@ model simple_lifetime()
   ## Physiology
 
   ### Flow rates
-  const QC := QCC * BW^0.75 # cardiac output adjusted for body weight [L/h] 
-  const QL := QC * QLc      # blood flow to liver [L/h]
-  const QR := QC * QRc      # blood flow to rest-of-body [L/h]
+  QC := QCC * BW^0.75 # cardiac output adjusted for body weight [L/h] 
+  QL := QC * QLc      # blood flow to liver [L/h]
+  QR := QC * QRc      # blood flow to rest-of-body [L/h]
 
   # Compartments
   compartment Gut
