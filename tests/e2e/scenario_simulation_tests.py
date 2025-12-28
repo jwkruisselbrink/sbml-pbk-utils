@@ -14,6 +14,7 @@ class ScenarioSimulationTests(unittest.TestCase):
 
     @parameterized.expand([
         ("oral.yaml"),
+        ("inhalation.yaml"),
         ("liver.yaml")
     ])
     def test_simulation_scenarios(self, filename):

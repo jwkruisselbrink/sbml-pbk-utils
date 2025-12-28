@@ -96,6 +96,8 @@ def repeated_continuous(
 ) -> List[EventSpec]:
     if event.duration is None:
         raise ValueError("duration is required for repeated continous dosing event")
+    if event.until is None:
+        raise ValueError("until is required for repeated continous dosing event")
     if event.interval is None:
         raise ValueError("interval is required for repeated continous dosing event")
     target = target_mappings[event.target] \
@@ -104,16 +106,18 @@ def repeated_continuous(
     time_start = time_unit_multiplier * event.time
     time_stop = time_unit_multiplier * (event.time + event.duration)
     interval = time_unit_multiplier * event.interval
+    duration = time_unit_multiplier * event.duration
+    until = time_unit_multiplier * event.until
     amount = amount_unit_multiplier * event.amount
     return [
         EventSpec(
             target = target,
-            trigger = f"(time >= {time_start}) && time % {interval} > {time_start}",
+            trigger = f"time >= {time_start} && time % {interval} > 0 && time < {until}",
             assignment = f"{target} + {amount}"
         ),
         EventSpec(
             target = target,
-            trigger = f"(time >= {time_stop}) && time % {interval} < {time_start}",
+            trigger = f"time > {time_stop} && time % {interval} > {duration} && time <= {until} + {duration}",
             assignment = "0"
         )
     ]
@@ -304,17 +308,6 @@ def run_scenario(
             amount_unit_multiplier,
             instance.target_mappings
         )
-
-        # Set boundary condition for continuous targets
-        continuous_targets = set(
-            instance.target_mappings[r.target]
-                if instance.target_mappings is not None and r.target in instance.target_mappings.keys()
-                    else r.target
-                for r in scenario.dosing_events
-                    if r.type in ['single_continuous', 'repeated_continuous']
-        )
-        for target in continuous_targets:
-            rr_model.setBoundary(target, True)
 
         # Set events
         event_count = 0

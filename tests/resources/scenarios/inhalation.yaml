@@ -1,0 +1,57 @@
+id: inhalation
+label: inhalation
+model_instances:
+  - id: simple_inhalation
+    label: simple inhalation
+    model_path: tests/resources/models/simple_inhalation/simple_inhalation.annotated.sbml
+    target_mappings:
+      AAir: AAlv
+      ABlood: ABlood
+
+scenarios:
+  - id: inhalation_single
+    label: Inhalation single dose
+    time_unit: DAY
+    amount_unit: MICROGRAMS
+    duration: 4
+    evaluation_resolution: 24
+    dosing_events:
+      - type: single_continuous
+        target: AAir
+        amount: 1
+        time: 1
+        duration: 0.5
+    outputs:
+      - id: AAir
+        label: Amount in air
+        output: AAir
+      - id: ABlood
+        label: Amount in blood
+        output: ABlood
+      - id: ALiver
+        label: Amount in liver
+        output: ALiver
+  - id: inhalation_repeated
+    label: Inhalation repeated dose
+    time_unit: DAY
+    amount_unit: MICROGRAMS
+    duration: 10
+    evaluation_resolution: 24
+    dosing_events:
+      - type: repeated_continuous
+        target: AAir
+        amount: 1
+        time: 1
+        duration: 0.5
+        interval: 1
+        until: 6
+    outputs:
+      - id: AAir
+        label: Amount in air
+        output: AAir
+      - id: ABlood
+        label: Amount in blood
+        output: ABlood
+      - id: ALiver
+        label: Amount in liver
+        output: ALiver
