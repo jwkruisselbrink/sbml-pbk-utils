@@ -148,7 +148,7 @@ def get_model_amount_unit(model: ls.Model) -> AmountUnit:
         f"maps to unsupported mass: {base_grams} grams."
     )
 
-def get_time_unit_alignment_factor(
+def get_model_time_unit_alignment_factor(
     model: ls.Model,
     target_unit: TimeUnit
 ) -> float:
@@ -163,6 +163,20 @@ def get_time_unit_alignment_factor(
     # Resolve model time unit
     model_unit = get_model_time_unit(model)
 
+    return get_time_unit_alignment_factor(model_unit, target_unit)
+
+def get_time_unit_alignment_factor(
+    source_unit: TimeUnit,
+    target_unit: TimeUnit
+) -> float:
+    """
+    Compute a conversion factor such that:
+
+        time_in_target_units = source_time_unit * factor
+
+    The conversion is performed by converting both units to seconds.
+    """
+
     # Conversion map time unit to seconds
     map = {
         TimeUnit.SECOND: 1.0,
@@ -171,13 +185,13 @@ def get_time_unit_alignment_factor(
         TimeUnit.DAY: 86400.0,
     }
 
-    if model_unit not in map:
-        raise Exception(f"Unsupported model time unit: {model_unit}")
+    if source_unit not in map:
+        raise Exception(f"Unsupported model time unit: {source_unit}")
 
     if target_unit not in map:
         raise Exception(f"Unsupported target time unit: {target_unit}")
 
-    model_seconds = map[model_unit]
+    model_seconds = map[source_unit]
     target_seconds = map[target_unit]
     return target_seconds / model_seconds
 

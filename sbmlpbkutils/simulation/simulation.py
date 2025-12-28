@@ -1,19 +1,25 @@
-import os
+from enum import Enum
 from dataclasses import dataclass
 from logging import Logger
+import os
 from typing import Dict, List
+import libsbml as ls
+import matplotlib.pyplot as plt
 import pandas as pd
 import tellurium as te
-import matplotlib.pyplot as plt
-import libsbml as ls
 import yaml
 
 from .simulation_units import (
     AmountUnit,
     TimeUnit,
+    get_model_time_unit_alignment_factor,
     get_time_unit_alignment_factor,
     get_amount_unit_alignment_factor
 )
+
+class SeriesType(str, Enum):
+    TIMELINE = "timeline"
+    CHECKPOINTS = "checkpoints"
 
 @dataclass
 class DosingEvent:
@@ -37,6 +43,15 @@ class Output:
     output: str
 
 @dataclass
+class ReferenceData:
+    id: str
+    label: str
+    file_path: str
+    series_type: SeriesType
+    time_unit: TimeUnit
+    outputs: List[Output]
+
+@dataclass
 class Scenario:
     id: str
     label: str
@@ -45,6 +60,7 @@ class Scenario:
     initial_states: List[InitialState] | None
     dosing_events: List[DosingEvent] | None
     outputs: List[Output]
+    reference_data: List[ReferenceData] | None
     time_unit: TimeUnit
     amount_unit: AmountUnit
 
@@ -211,6 +227,18 @@ def load_config(path: str) -> SimulationConfig:
         initial_states = ([InitialState(**e) for e in s["initial_states"]]
             if "initial_states" in s.keys() else None)
         outputs = [Output(**c) for c in s["outputs"]]
+        reference_data = []
+        if 'reference_data' in s.keys():
+            for r in s['reference_data']:
+                reference_series = ReferenceData(
+                    id = r['id'],
+                    label = r['label'],
+                    file_path = r['file_path'],
+                    series_type = SeriesType[r['series_type']],
+                    time_unit = TimeUnit[r['time_unit']],
+                    outputs = [Output(**c) for c in r['outputs']]
+                )
+                reference_data.append(reference_series)
 
         scenarios.append(
             Scenario(
@@ -221,6 +249,7 @@ def load_config(path: str) -> SimulationConfig:
                 initial_states=initial_states,
                 dosing_events=dosing_events,
                 outputs=outputs,
+                reference_data=reference_data,
                 time_unit=TimeUnit[s["time_unit"]],
                 amount_unit=AmountUnit[s["amount_unit"]],
             )
@@ -283,7 +312,7 @@ def run_scenario(
     rr_model = te.loadSBMLModel(sbml_file)
 
     # Simulation time and amount unit alignment
-    time_unit_multiplier = get_time_unit_alignment_factor(ls_model, scenario.time_unit)
+    time_unit_multiplier = get_model_time_unit_alignment_factor(ls_model, scenario.time_unit)
     amount_unit_multiplier = get_amount_unit_alignment_factor(ls_model, scenario.amount_unit)
 
     # Set initial amounts according to scenario
@@ -359,7 +388,7 @@ def plot_scenario_results(
     scenario: Scenario,
     out_path: str
 ):
-    for comparison in scenario.outputs:
+    for output in scenario.outputs:
         # Create figure
         fig, ax = plt.subplots(figsize=(7, 5))
 
@@ -367,28 +396,50 @@ def plot_scenario_results(
         for instance in instances:
             # Get instance scenario output file
             out_file = os.path.join(out_path, f"{scenario.id}-{instance.id}.csv")
-            output_df = pd.read_csv(out_file)
+            output_df = pd.read_csv(out_file, skipinitialspace=True)
 
             # Extract time and output variable from output
             times = output_df['time'].to_numpy(dtype=float)
-            output_id = instance.target_mappings.get(comparison.id, comparison.id) \
-                if instance.target_mappings is not None else comparison.id
+            output_id = instance.target_mappings.get(output.id, output.id) \
+                if instance.target_mappings is not None else output.id
             values = output_df[output_id].to_numpy(dtype=float)
 
             # Plot lines
             ax.plot(times, values, linewidth=1, label=instance.label)
 
+        # Plot reference data/series
+        if scenario.reference_data:
+            for item in scenario.reference_data:
+                reference_series = [o for o in item.outputs if o.output == output.id]
+                time_unit_multiplier = get_time_unit_alignment_factor(
+                    item.time_unit,
+                    scenario.time_unit
+                )
+                for series in reference_series:
+                    # Get instance scenario output file
+                    reference_df = pd.read_csv(item.file_path, skipinitialspace=True)
+
+                    # Extract time and output variable from output
+                    times = reference_df['time'].apply(lambda v: v / time_unit_multiplier)
+                    values = reference_df[series.id].to_numpy(dtype=float)
+
+                    # Plot lines
+                    if item.series_type == SeriesType.CHECKPOINTS:
+                        ax.scatter(times, values, marker='x', label=item.label)
+                    else:
+                        ax.plot(times, values, linewidth=1, label=item.label)
+
         # Set plot layout
         ax.set_xlabel(f'Time ({str(scenario.time_unit)})', fontsize=12, fontweight='bold')
-        ax.set_ylabel(f'{comparison.label} ({str(scenario.amount_unit)})', fontsize=12, fontweight='bold')
-        ax.set_title(f'{scenario.label} - {comparison.label}', fontsize=14)
+        ax.set_ylabel(f'{output.label} ({str(scenario.amount_unit)})', fontsize=12, fontweight='bold')
+        ax.set_title(f'{scenario.label} - {output.label}', fontsize=14)
         ax.grid(True, alpha=0.3, linestyle='--')
         ax.set_xlim(left=0)
         ax.set_ylim(bottom=0)
         ax.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
 
         # Set output file
-        out_file = os.path.join(out_path, f"{scenario.id}-{comparison.id}.png")
+        out_file = os.path.join(out_path, f"{scenario.id}-{output.id}.png")
         plt.tight_layout()
         plt.legend()
         plt.savefig(out_file)
@@ -411,7 +462,7 @@ def create_rr_events(
     return out
 
 def load_parametrisation(model, filename):
-    df = pd.read_csv(filename)
+    df = pd.read_csv(filename, skipinitialspace=True)
     df['Value'] = df['Value'].astype(float)
     for index, row in df.iterrows():
         model[str(row['Parameter'])] = row['Value']

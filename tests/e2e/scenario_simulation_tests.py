@@ -43,5 +43,3 @@ class ScenarioSimulationTests(unittest.TestCase):
             config = config,
             out_path = out_path
         )
-
-

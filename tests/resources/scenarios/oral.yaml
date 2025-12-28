@@ -8,7 +8,7 @@ model_instances:
       AGut: AGut
       ABlood: ABlood
   - id: simple_metab
-    label: simple_metab
+    label: simple metab
     model_path: tests/resources/models/simple_metab/simple_metab.annotated.sbml
     target_mappings:
       AGut: AGut_P
@@ -18,6 +18,8 @@ model_instances:
 scenarios:
   - id: oral_single
     label: Oral single dose
+    time_unit: DAY
+    amount_unit: MICROGRAMS
     duration: 4
     evaluation_resolution: 24
     dosing_events:
@@ -32,10 +34,10 @@ scenarios:
       - id: ALiver
         label: Amount in liver
         output: ALiver
-    time_unit: DAY
-    amount_unit: MICROGRAMS
   - id: oral_repeated
     label: Oral repeated dose
+    time_unit: DAY
+    amount_unit: MICROGRAMS
     duration: 10
     evaluation_resolution: 24
     dosing_events:
@@ -52,5 +54,16 @@ scenarios:
       - id: ALiver
         label: Amount in liver
         output: ALiver
-    time_unit: DAY
-    amount_unit: MICROGRAMS
+    reference_data:
+      - id: reference
+        label: reference
+        file_path: tests/resources/scenarios/reference_data/oral_repeated.csv
+        series_type: CHECKPOINTS
+        time_unit: DAY
+        outputs:
+        - id: ABlood
+          label: Amount in blood
+          output: ABlood
+        - id: ALiver
+          label: Amount in liver
+          output: ALiver
