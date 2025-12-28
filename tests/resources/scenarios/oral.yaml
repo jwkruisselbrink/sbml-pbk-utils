@@ -58,7 +58,7 @@ scenarios:
       - id: reference
         label: reference
         file_path: tests/resources/scenarios/reference_data/oral_repeated.csv
-        series_type: CHECKPOINTS
+        series_type: TIMELINE
         time_unit: DAY
         outputs:
         - id: ABlood
