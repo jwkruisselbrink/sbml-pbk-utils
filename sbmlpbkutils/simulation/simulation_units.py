@@ -14,6 +14,9 @@ class AmountUnit(str, Enum):
     MICROGRAMS = "ug"
     MILLIGRAMS = "mg"
     GRAMS = "g"
+    MICROMOLES = "umol"
+    MILLIMOLES = "mmol"
+    MOLES = "mol"
 
     def __str__(self) -> str:
         return self.value
@@ -27,9 +30,7 @@ def get_model_time_unit(model: ls.Model) -> TimeUnit:
 
     # Validate existence
     if not unit_def_id:
-        raise Exception(
-            f"Time unit not defined in model [{model.getId()}]."
-        )
+        raise Exception(f"Time unit not defined in model [{model.getId()}].")
 
     unit_def = model.getUnitDefinition(unit_def_id)
     if unit_def is None:
@@ -88,8 +89,12 @@ def get_model_time_unit(model: ls.Model) -> TimeUnit:
         )
 
 def get_model_amount_unit(model: ls.Model) -> AmountUnit:
-    """
-    Determine the substance/amount unit from an SBML model and map it to AmountUnit.
+    """Determine the substance/amount unit from an SBML model and map it to
+    :class:`AmountUnit`.
+
+    Supports both mass-based (grams family) and amount-based (mole family)
+    SBML units. Raises an :class:`Exception` when the unit definition cannot
+    be mapped to a known :class:`AmountUnit`.
     """
 
     unit_def_id = model.getSubstanceUnits()
@@ -113,39 +118,67 @@ def get_model_amount_unit(model: ls.Model) -> AmountUnit:
 
     u = unit_def.getUnit(0)
 
-    # Validate it is a substance amount unit (kilogram family)
-    if u.getKind() != ls.UNIT_KIND_GRAM:
+    # Handle gram-based units
+    if u.getKind() == ls.UNIT_KIND_GRAM:
+        # Extract SBML unit information
+        multiplier = u.getMultiplier()  # typical: 1
+        scale = u.getScale()            # log10 factor
+        exponent = u.getExponent()      # should be 1
+
+        if exponent != 1:
+            raise Exception(
+                f"Amount unit [{unit_def_id}] exponent {exponent} is unsupported."
+            )
+
+        # Compute actual grams represented (unit = multiplier * 10^scale grams)
+        base_grams = multiplier * (10 ** scale)
+
+        eps = 1e-12
+
+        # Map to enum
+        if abs(base_grams - 1e-6) < eps:
+            return AmountUnit.MICROGRAMS
+        elif abs(base_grams - 1e-3) < eps:
+            return AmountUnit.MILLIGRAMS
+        elif abs(base_grams - 1) < eps:
+            return AmountUnit.GRAMS
+        else:
+            raise Exception(
+                f"Amount unit [{unit_def_id}] in model [{model.getId()}] "
+                f"maps to unsupported mass: {base_grams} grams."
+            )
+
+    # Handle mole-based units
+    if u.getKind() == ls.UNIT_KIND_MOLE:
+        multiplier = u.getMultiplier()
+        scale = u.getScale()
+        exponent = u.getExponent()
+
+        if exponent != 1:
+            raise Exception(
+                f"Amount unit [{unit_def_id}] exponent {exponent} is unsupported."
+            )
+
+        base_moles = multiplier * (10 ** scale)
+
+        eps = 1e-12
+
+        if abs(base_moles - 1e-6) < eps:
+            return AmountUnit.MICROMOLES
+        elif abs(base_moles - 1e-3) < eps:
+            return AmountUnit.MILLIMOLES
+        elif abs(base_moles - 1) < eps:
+            return AmountUnit.MOLES
+
         raise Exception(
-            f"UnitDefinition [{unit_def_id}] in model [{model.getId()}] "
-            f"is not a mass/amount unit (kind={ls.UnitKind_toString(u.getKind())})."
+            f"Amount unit [{unit_def_id}] in model [{model.getId()}] "
+            f"maps to unsupported amount: {base_moles} moles."
         )
 
-    # Extract SBML unit information
-    multiplier = u.getMultiplier()  # typical: 1
-    scale = u.getScale()            # log10 factor
-    exponent = u.getExponent()      # should be 1
-
-    if exponent != 1:
-        raise Exception(
-            f"Amount unit [{unit_def_id}] exponent {exponent} is unsupported."
-        )
-
-    # Compute actual grams represented (unit = multiplier * 10^scale grams)
-    base_grams = multiplier * (10 ** scale)
-
-    eps = 1e-12
-
-    # Map to enum
-    if abs(base_grams - 1e-6) < eps:
-        return AmountUnit.MICROGRAMS
-    elif abs(base_grams - 1e-3) < eps:
-        return AmountUnit.MILLIGRAMS
-    elif abs(base_grams - 1) < eps:
-        return AmountUnit.GRAMS
-
+    # If we reach here, the unit kind is not supported
     raise Exception(
-        f"Amount unit [{unit_def_id}] in model [{model.getId()}] "
-        f"maps to unsupported mass: {base_grams} grams."
+        f"UnitDefinition [{unit_def_id}] in model [{model.getId()}] "
+        f"is not a supported amount unit (kind={ls.UnitKind_toString(u.getKind())})."
     )
 
 def get_model_time_unit_alignment_factor(
@@ -197,32 +230,71 @@ def get_time_unit_alignment_factor(
 
 def get_amount_unit_alignment_factor(
     model: ls.Model,
-    target_unit: AmountUnit
+    target_unit: AmountUnit,
+    molar_mass: float | None = None
 ) -> float:
-    """
-    Compute a conversion factor such that:
+    """Compute a conversion factor such that::
 
         amount_in_target_units = amount_in_model_units * factor
 
-    The conversion is performed by converting both units to grams.
+    The conversion supports conversions within the same family (grams <-> grams,
+    moles <-> moles) and cross-family conversions (grams <-> moles) which
+    require a ``molar_mass`` argument (grams per mole).
+
+    Parameters
+    ----------
+    model
+        The SBML model from which the source amount unit is resolved.
+    target_unit
+        The desired target :class:`AmountUnit`.
+    molar_mass
+        Optional molar mass (grams per mole) required when converting between
+        mass and amount families.
     """
 
-    # Resolve model amount unit
     model_unit = get_model_amount_unit(model)
 
-    # Conversion map time unit to seconds
-    map = {
+    mass_map = {
         AmountUnit.GRAMS: 1.0,
         AmountUnit.MILLIGRAMS: 1e-3,
         AmountUnit.MICROGRAMS: 1e-6,
     }
+    mole_map = {
+        AmountUnit.MOLES: 1.0,
+        AmountUnit.MILLIMOLES: 1e-3,
+        AmountUnit.MICROMOLES: 1e-6,
+    }
 
-    if model_unit not in map:
-        raise Exception(f"Unsupported model amount unit: {model_unit}")
+    # Same family: mass -> mass
+    if model_unit in mass_map and target_unit in mass_map:
+        model_amount = mass_map[model_unit]
+        target_amount = mass_map[target_unit]
+        return model_amount / target_amount
 
-    if target_unit not in map:
-        raise Exception(f"Unsupported target amount unit: {target_unit}")
+    # Same family: mole -> mole
+    if model_unit in mole_map and target_unit in mole_map:
+        model_amount = mole_map[model_unit]
+        target_amount = mole_map[target_unit]
+        return model_amount / target_amount
 
-    model_amount = map[model_unit]
-    target_amount = map[target_unit]
-    return model_amount / target_amount
+    # Cross-family conversion requires molar_mass (grams per mole)
+    if molar_mass is None:
+        raise Exception("Cross-family amount/mass conversion requires molar mass (g/mol).")
+
+    # model mass -> target mole
+    if model_unit in mass_map and target_unit in mole_map:
+        model_grams = mass_map[model_unit]
+        # grams -> moles
+        model_moles = model_grams / molar_mass
+        target_mole_size = mole_map[target_unit]
+        # 1 model unit equals model_moles / target_mole_size target units
+        return model_moles / target_mole_size
+
+    # model mole -> target mass
+    if model_unit in mole_map and target_unit in mass_map:
+        model_moles = mole_map[model_unit]
+        model_grams = model_moles * molar_mass
+        target_gram_size = mass_map[target_unit]
+        return model_grams / target_gram_size
+
+    raise Exception(f"Unsupported conversion from {model_unit} to {target_unit}")
