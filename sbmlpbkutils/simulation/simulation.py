@@ -272,7 +272,7 @@ def run_config(
         for instance in config.model_instances:
             # Simulation output csv file
             logger.info("Running scenario %s for instance %s", scenario.id, instance.id)
-            out_file = os.path.join(out_path, f"{scenario.id}-{instance.id}.csv")
+            out_file = os.path.join(out_path, f"{scenario.id}_{instance.id}.csv")
             run_scenario(
                 instance,
                 scenario,
@@ -402,7 +402,7 @@ def plot_scenario_results(
         # visually distinguishable even when colors are similar.
         for idx, instance in enumerate(instances):
             # Get instance scenario output file
-            out_file = os.path.join(out_path, f"{scenario.id}-{instance.id}.csv")
+            out_file = os.path.join(out_path, f"{scenario.id}_{instance.id}.csv")
             output_df = pd.read_csv(out_file, skipinitialspace=True)
 
             # Extract time and output variable from output
@@ -456,7 +456,7 @@ def plot_scenario_results(
         ax.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
 
         # Set output file
-        out_file = os.path.join(out_path, f"{scenario.id}-{output.id}.png")
+        out_file = os.path.join(out_path, f"{scenario.id}_{output.id}.png")
         plt.tight_layout()
         plt.legend()
         plt.savefig(out_file)
