@@ -1,7 +1,16 @@
+"""Unit helpers and conversion utilities for simulation.
+
+This module provides enums and helpers to define amount and time units
+of simulation scenarios and to compute alignment factors between model
+native units and desired scenario units.
+"""
+
 from enum import Enum
 import libsbml as ls
 
 class TimeUnit(str, Enum):
+    """Enumeration of time units for specifying simulation scenarios.
+    """
     SECOND = "seconds"
     MINUTE = "minutes"
     HOUR = "hours"
@@ -11,6 +20,8 @@ class TimeUnit(str, Enum):
         return self.value
 
 class AmountUnit(str, Enum):
+    """Enumeration of amount units for specifying simulation scenarios.
+    """
     MICROGRAMS = "ug"
     MILLIGRAMS = "mg"
     GRAMS = "g"
@@ -211,21 +222,21 @@ def get_time_unit_alignment_factor(
     """
 
     # Conversion map time unit to seconds
-    map = {
+    conversion_map = {
         TimeUnit.SECOND: 1.0,
         TimeUnit.MINUTE: 60.0,
         TimeUnit.HOUR: 3600.0,
         TimeUnit.DAY: 86400.0,
     }
 
-    if source_unit not in map:
-        raise Exception(f"Unsupported model time unit: {source_unit}")
+    if source_unit not in conversion_map:
+        raise Exception(f"Unsupported model time unit: {source_unit}.")
 
-    if target_unit not in map:
-        raise Exception(f"Unsupported target time unit: {target_unit}")
+    if target_unit not in conversion_map:
+        raise Exception(f"Unsupported target time unit: {target_unit}.")
 
-    model_seconds = map[source_unit]
-    target_seconds = map[target_unit]
+    model_seconds = conversion_map[source_unit]
+    target_seconds = conversion_map[target_unit]
     return target_seconds / model_seconds
 
 def get_amount_unit_alignment_factor(
@@ -297,4 +308,4 @@ def get_amount_unit_alignment_factor(
         target_gram_size = mass_map[target_unit]
         return model_grams / target_gram_size
 
-    raise Exception(f"Unsupported conversion from {model_unit} to {target_unit}")
+    raise Exception(f"Unsupported conversion from {model_unit} to {target_unit}.")

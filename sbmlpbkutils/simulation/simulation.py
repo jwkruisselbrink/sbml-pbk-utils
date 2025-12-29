@@ -1,5 +1,10 @@
-from enum import Enum
-from dataclasses import dataclass
+"""Methods for running PBK model simulation scenarios.
+
+This module provides methods for running PBK model simulation
+scenarios, plot results and compare model outputs against
+reference series.
+"""
+
 from logging import Logger
 import os
 from typing import Dict, List
@@ -10,209 +15,32 @@ import pandas as pd
 import tellurium as te
 import yaml
 
-from .simulation_units import (
+from .units import (
     AmountUnit,
     TimeUnit,
-    get_model_time_unit_alignment_factor,
     get_time_unit_alignment_factor,
+    get_model_time_unit_alignment_factor,
     get_amount_unit_alignment_factor
 )
 
-class SeriesType(str, Enum):
-    TIMELINE = "timeline"
-    CHECKPOINTS = "checkpoints"
-
-@dataclass
-class DosingEvent:
-    type: str
-    target: str
-    amount: float
-    time: float
-    duration: float | None = None
-    interval: float | None = None
-    until: float | None = None
-
-@dataclass
-class InitialState:
-    target: str
-    amount: float
-
-@dataclass
-class Output:
-    id: str
-    label: str
-    output: str
-
-@dataclass
-class ReferenceData:
-    id: str
-    label: str
-    file_path: str
-    series_type: SeriesType
-    time_unit: TimeUnit
-    outputs: List[Output]
-
-@dataclass
-class Scenario:
-    id: str
-    label: str
-    duration: int
-    evaluation_resolution: int
-    initial_states: List[InitialState] | None
-    dosing_events: List[DosingEvent] | None
-    outputs: List[Output]
-    reference_data: List[ReferenceData] | None
-    time_unit: TimeUnit
-    amount_unit: AmountUnit
-
-@dataclass
-class ModelInstance:
-    id: str
-    label: str
-    model_path: str
-    param_file: str | None = None
-    target_mappings: Dict[str, str] | None = None
-
-@dataclass
-class SimulationConfig:
-    id: str
-    label: str
-    scenarios: List[Scenario]
-    model_instances: List[ModelInstance]
-
-@dataclass
-class EventSpec:
-    target: str
-    trigger: str
-    assignment: str
-
-def events_single_continuous(
-    event: DosingEvent,
-    time_unit_multiplier: float,
-    amount_unit_multiplier: float,
-    target_mappings: Dict[str, str] | None
-) -> List[EventSpec]:
-    if event.duration is None:
-        raise ValueError("duration is required for single continous dosing event")
-    target = target_mappings[event.target] \
-        if target_mappings is not None and event.target in target_mappings.keys() \
-        else event.target
-    time_start = time_unit_multiplier * event.time
-    time_stop = time_unit_multiplier * (event.time + event.duration)
-    amount = amount_unit_multiplier * event.amount
-    return [
-        EventSpec(target, f"(time >= {time_start})", f"{target} + {amount}"),
-        EventSpec(target, f"(time >= {time_stop})", "0")
-    ]
-
-def repeated_continuous(
-    event: DosingEvent,
-    time_unit_multiplier: float,
-    amount_unit_multiplier: float,
-    target_mappings: Dict[str, str] | None
-) -> List[EventSpec]:
-    if event.duration is None:
-        raise ValueError("duration is required for repeated continous dosing event")
-    if event.until is None:
-        raise ValueError("until is required for repeated continous dosing event")
-    if event.interval is None:
-        raise ValueError("interval is required for repeated continous dosing event")
-    target = target_mappings[event.target] \
-        if target_mappings is not None and event.target in target_mappings.keys() \
-        else event.target
-    time_start = time_unit_multiplier * event.time
-    time_stop = time_unit_multiplier * (event.time + event.duration)
-    interval = time_unit_multiplier * event.interval
-    duration = time_unit_multiplier * event.duration
-    until = time_unit_multiplier * event.until
-    amount = amount_unit_multiplier * event.amount
-    return [
-        EventSpec(
-            target = target,
-            trigger = f"time >= {time_start} && time % {interval} > 0 && time < {until}",
-            assignment = f"{target} + {amount}"
-        ),
-        EventSpec(
-            target = target,
-            trigger = f"time > {time_stop} && time % {interval} > {duration} && time <= {until} + {duration}",
-            assignment = "0"
-        )
-    ]
-
-def events_single_bolus(
-    event: DosingEvent,
-    time_unit_multiplier: float,
-    amount_unit_multiplier: float,
-    target_mappings: Dict[str, str] | None
-) -> List[EventSpec]:
-    target = target_mappings[event.target] \
-        if target_mappings is not None and event.target in target_mappings.keys() \
-        else event.target
-    time = time_unit_multiplier * event.time
-    amount = amount_unit_multiplier * event.amount
-    trigger = f"(time >= {time})"
-    assignment = f"{target} + {amount}"
-    return [EventSpec(target, trigger, assignment)]
-
-def events_repeated_bolus(
-    event: DosingEvent,
-    time_unit_multiplier: float,
-    amount_unit_multiplier: float,
-    target_mappings: Dict[str, str] | None
-) -> List[EventSpec]:
-    if event.interval is None:
-        raise ValueError("interval is required for repeated_bolus")
-    if event.until is None:
-        raise ValueError("until is required for repeated_bolus")
-    target = target_mappings[event.target] \
-        if target_mappings is not None and event.target in target_mappings.keys() \
-        else event.target
-    time = time_unit_multiplier * event.time
-    interval = time_unit_multiplier * event.interval
-    until = time_unit_multiplier * event.until
-    amount = amount_unit_multiplier * event.amount
-    trigger = f"time >= {time} && time % {interval} == 0 && time < {until}"
-    assignment = f"{target} + {amount}"
-    return [EventSpec(target, trigger, assignment)]
-
-def dosing_events_to_eventspecs(
-    event: DosingEvent,
-    time_unit_multiplier: float,
-    amount_unit_multiplier: float,
-    target_mappings: Dict[str, str] | None
-) -> List[EventSpec]:
-    if event.type == "single_bolus":
-        return events_single_bolus(
-            event,
-            time_unit_multiplier,
-            amount_unit_multiplier,
-            target_mappings
-        )
-    elif event.type == "repeated_bolus":
-        return events_repeated_bolus(
-            event,
-            time_unit_multiplier,
-            amount_unit_multiplier,
-            target_mappings
-        )
-    elif event.type == "single_continuous":
-        return events_single_continuous(
-            event,
-            time_unit_multiplier,
-            amount_unit_multiplier,
-            target_mappings
-        )
-    elif event.type == "repeated_continuous":
-        return repeated_continuous(
-            event,
-            time_unit_multiplier,
-            amount_unit_multiplier,
-            target_mappings
-        )
-    else:
-        raise ValueError(f"Unknown dose_type: {event.type}")
+from .definitions import (
+    SeriesType,
+    DosingEvent,
+    InitialState,
+    Output,
+    ReferenceData,
+    Scenario,
+    ModelInstance,
+    SimulationConfig,
+    EventSpec
+)
 
 def load_config(path: str) -> SimulationConfig:
+    """Load a YAML simulation configuration and return a SimulationConfig.
+
+    The YAML should contain `model_instances` and `scenarios` sections that map
+    onto the dataclasses defined in this module.
+    """
     with open(path, "r", encoding="utf-8") as f:
         data = yaml.safe_load(f)
 
@@ -269,6 +97,11 @@ def run_config(
     force_recompute: bool,
     logger: Logger
 ):
+    """Run all scenarios in a configuration for all model instances.
+
+    For each scenario-instance pair a CSV output file named
+    `{scenario.id}_{instance.id}.csv` is written into `out_path`.
+    """
     for scenario in config.scenarios:
         for instance in config.model_instances:
             # Simulation output csv file
@@ -286,6 +119,10 @@ def plot_simulation_results(
     config: SimulationConfig,
     out_path: str
 ):
+    """Generate plots for all scenarios in a configuration.
+
+    Writes PNG files for each scenario and output variable into `out_path`.
+    """
     for scenario in config.scenarios:
         # Plot combined instances scenario results
         plot_scenario_results(
@@ -308,6 +145,12 @@ def run_scenario(
     force_recompute: bool,
     logger: Logger
 ):
+    """Execute a single scenario for a model instance and save results.
+
+    Loads the SBML model, applies initial states, dosing events and any
+    parameter file, runs the simulation and writes a CSV with time and
+    selected outputs.
+    """
     # Skip if output already available and no forced recalculation
     if os.path.exists(out_file) and not force_recompute:
         logger.info("Skipping scenario %s: results already available", scenario.id)
@@ -391,11 +234,26 @@ def run_scenario(
         df[output] = df[output].apply(lambda v: v / amount_unit_multiplier)
     df.to_csv(out_file, index=False)
 
+def load_parametrisation(model, filename):
+    """Load parameter values from a CSV file into a roadrunner model.
+
+    The CSV is expected to have columns `Parameter` and `Value`.
+    """
+    df = pd.read_csv(filename, skipinitialspace=True)
+    df['Value'] = df['Value'].astype(float)
+    for (_, row) in df.iterrows():
+        model[str(row['Parameter'])] = row['Value']
+
 def plot_scenario_results(
     instances: list[ModelInstance],
     scenario: Scenario,
     out_path: str
 ):
+    """Plot time series results for a scenario across model instances.
+
+    Reads per-instance CSV results from `out_path` and writes PNG files for
+    each configured `Output` in the scenario.
+    """
     # Line and marker styles
     linestyles = ['-', '--', '-.', ':']
     markers = ['x', 'o', 's', '*', '^', 'v', 'p', '.']
@@ -403,7 +261,7 @@ def plot_scenario_results(
     # Iterate over outputs
     for output in scenario.outputs:
         # Create figure
-        fig, ax = plt.subplots(figsize=(7, 5))
+        (_, ax) = plt.subplots(figsize=(7, 5))
 
         # Loop over instance results and plot
         # Cycle through a small set of linestyles so multiple instances are
@@ -470,7 +328,6 @@ def plot_scenario_results(
         plt.savefig(out_file)
         plt.close()
 
-
 def plot_scenario_differences(
     instances: list[ModelInstance],
     scenario: Scenario,
@@ -503,14 +360,20 @@ def plot_scenario_differences(
             continue
 
         # Create figure with two subplots: series and residuals at reference points
-        fig, (ax_series, ax_resid) = plt.subplots(nrows=2, ncols=1, figsize=(8, 8), gridspec_kw={"height_ratios": [3, 1]})
+        (_, (ax_series, ax_resid)) = plt.subplots(
+            nrows = 2,
+            ncols = 1,
+            figsize = (8, 8),
+            gridspec_kw={"height_ratios": [3, 1]}
+        )
 
         # Plot model instance series
         for idx, instance in enumerate(instances):
             out_file = os.path.join(out_path, f"{scenario.id}_{instance.id}.csv")
             output_df = pd.read_csv(out_file, skipinitialspace=True)
             times = output_df['time'].to_numpy(dtype=float)
-            output_id = instance.target_mappings.get(output.id, output.id) if instance.target_mappings is not None else output.id
+            output_id = (instance.target_mappings.get(output.id, output.id)
+                if instance.target_mappings is not None else output.id)
             values = output_df[output_id].to_numpy(dtype=float)
             linestyle = linestyles[idx % len(linestyles)]
             ax_series.plot(times, values, linestyle=linestyle, linewidth=1, label=instance.label)
@@ -520,8 +383,8 @@ def plot_scenario_differences(
         for r_idx, (item, series_list) in enumerate(ref_items):
             reference_df = pd.read_csv(item.file_path, skipinitialspace=True)
 
-            time_unit_multiplier = get_time_unit_alignment_factor(item.time_unit, scenario.time_unit)
             # Align times using same approach as existing plotting
+            time_unit_multiplier = get_time_unit_alignment_factor(item.time_unit, scenario.time_unit)
             ref_times = reference_df['time'].apply(lambda v: v / time_unit_multiplier).to_numpy(dtype=float)
 
             for series in series_list:
@@ -630,6 +493,7 @@ def create_rr_events(
     amount_unit_multiplier: float,
     target_mappings: Dict[str, str] | None
 ) -> List[EventSpec]:
+    """Convert a list of dosing events into EventSpec objects."""
     out: List[EventSpec] = []
     for e in events:
         out.extend(dosing_events_to_eventspecs(
@@ -640,8 +504,156 @@ def create_rr_events(
         ))
     return out
 
-def load_parametrisation(model, filename):
-    df = pd.read_csv(filename, skipinitialspace=True)
-    df['Value'] = df['Value'].astype(float)
-    for index, row in df.iterrows():
-        model[str(row['Parameter'])] = row['Value']
+def events_single_continuous(
+    event: DosingEvent,
+    time_unit_multiplier: float,
+    amount_unit_multiplier: float,
+    target_mappings: Dict[str, str] | None
+) -> List[EventSpec]:
+    """Create event specs for a single continuous dosing event.
+
+    Returns a pair of events that start the infusion and stop it after
+    the event duration. Raises if `duration` is not provided.
+    """
+    if event.duration is None:
+        raise ValueError("duration is required for single continous dosing event")
+    target = target_mappings[event.target] \
+        if target_mappings is not None and event.target in target_mappings.keys() \
+        else event.target
+    time_start = time_unit_multiplier * event.time
+    time_stop = time_unit_multiplier * (event.time + event.duration)
+    amount = amount_unit_multiplier * event.amount
+    return [
+        EventSpec(target, f"(time >= {time_start})", f"{target} + {amount}"),
+        EventSpec(target, f"(time >= {time_stop})", "0")
+    ]
+
+def repeated_continuous(
+    event: DosingEvent,
+    time_unit_multiplier: float,
+    amount_unit_multiplier: float,
+    target_mappings: Dict[str, str] | None
+) -> List[EventSpec]:
+    """Create event specs for a repeated continuous dosing schedule.
+
+    Validates required fields (`duration`, `until`, `interval`) and returns
+    a list of event specs implementing repeated infusion pulses.
+    """
+    if event.duration is None:
+        raise ValueError("duration is required for repeated continous dosing event")
+    if event.interval is None:
+        raise ValueError("interval is required for repeated continous dosing event")
+    target = (target_mappings[event.target]
+        if target_mappings is not None and event.target in target_mappings.keys()
+        else event.target)
+    time_start = time_unit_multiplier * event.time
+    time_stop = time_unit_multiplier * (event.time + event.duration)
+    interval = time_unit_multiplier * event.interval
+    duration = time_unit_multiplier * event.duration
+    until = time_unit_multiplier * event.until if event.until else None
+    amount = amount_unit_multiplier * event.amount
+    return [
+        EventSpec(
+            target = target,
+            trigger = (
+                f"time >= {time_start} && time % {interval} > 0 && time < {until}"
+                if until else f"time >= {time_start} && time % {interval} > 0"
+            ),
+            assignment = f"{target} + {amount}"
+        ),
+        EventSpec(
+            target = target,
+            trigger = (
+                f"time > {time_stop} && time % {interval} > {duration} && time <= {until + duration}"
+                if until else f"time > {time_stop} && time % {interval} > {duration}"
+            ),
+            assignment = "0"
+        )
+    ]
+
+def events_single_bolus(
+    event: DosingEvent,
+    time_unit_multiplier: float,
+    amount_unit_multiplier: float,
+    target_mappings: Dict[str, str] | None
+) -> List[EventSpec]:
+    """Create an event spec for a single bolus dose.
+
+    Produces a single instantaneous event that adds `amount` to the target
+    at the specified `time`.
+    """
+    target = target_mappings[event.target] \
+        if target_mappings is not None and event.target in target_mappings.keys() \
+        else event.target
+    time = time_unit_multiplier * event.time
+    amount = amount_unit_multiplier * event.amount
+    trigger = f"(time >= {time})"
+    assignment = f"{target} + {amount}"
+    return [EventSpec(target, trigger, assignment)]
+
+def events_repeated_bolus(
+    event: DosingEvent,
+    time_unit_multiplier: float,
+    amount_unit_multiplier: float,
+    target_mappings: Dict[str, str] | None
+) -> List[EventSpec]:
+    """Create event specs for repeated bolus dosing.
+
+    Validates `interval` and `until` and returns an event spec that triggers
+    only on the configured repeat times.
+    """
+    if event.interval is None:
+        raise ValueError("interval is required for repeated_bolus")
+    if event.until is None:
+        raise ValueError("until is required for repeated_bolus")
+    target = target_mappings[event.target] \
+        if target_mappings is not None and event.target in target_mappings.keys() \
+        else event.target
+    time = time_unit_multiplier * event.time
+    interval = time_unit_multiplier * event.interval
+    until = time_unit_multiplier * event.until
+    amount = amount_unit_multiplier * event.amount
+    trigger = f"time >= {time} && time % {interval} == 0 && time < {until}"
+    assignment = f"{target} + {amount}"
+    return [EventSpec(target, trigger, assignment)]
+
+def dosing_events_to_eventspecs(
+    event: DosingEvent,
+    time_unit_multiplier: float,
+    amount_unit_multiplier: float,
+    target_mappings: Dict[str, str] | None
+) -> List[EventSpec]:
+    """Dispatch helper: convert a dosing event definition into EventSpec(s).
+
+    Routes by `event.type` to the appropriate generator function.
+    """
+    if event.type == "single_bolus":
+        return events_single_bolus(
+            event,
+            time_unit_multiplier,
+            amount_unit_multiplier,
+            target_mappings
+        )
+    elif event.type == "repeated_bolus":
+        return events_repeated_bolus(
+            event,
+            time_unit_multiplier,
+            amount_unit_multiplier,
+            target_mappings
+        )
+    elif event.type == "single_continuous":
+        return events_single_continuous(
+            event,
+            time_unit_multiplier,
+            amount_unit_multiplier,
+            target_mappings
+        )
+    elif event.type == "repeated_continuous":
+        return repeated_continuous(
+            event,
+            time_unit_multiplier,
+            amount_unit_multiplier,
+            target_mappings
+        )
+    else:
+        raise ValueError(f"Unknown dose_type: {event.type}")
