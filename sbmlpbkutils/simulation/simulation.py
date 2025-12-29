@@ -536,8 +536,7 @@ def repeated_continuous(
 ) -> List[EventSpec]:
     """Create event specs for a repeated continuous dosing schedule.
 
-    Validates required fields (`duration`, `until`, `interval`) and returns
-    a list of event specs implementing repeated infusion pulses.
+    Returns a list of event specs implementing repeated continuous dose pulses.
     """
     if event.duration is None:
         raise ValueError("duration is required for repeated continous dosing event")
@@ -599,21 +598,20 @@ def events_repeated_bolus(
 ) -> List[EventSpec]:
     """Create event specs for repeated bolus dosing.
 
-    Validates `interval` and `until` and returns an event spec that triggers
-    only on the configured repeat times.
+    Returns a repeated bolus event spec that triggers on the configured repeat times.
     """
     if event.interval is None:
         raise ValueError("interval is required for repeated_bolus")
-    if event.until is None:
-        raise ValueError("until is required for repeated_bolus")
-    target = target_mappings[event.target] \
-        if target_mappings is not None and event.target in target_mappings.keys() \
-        else event.target
+    target = (target_mappings[event.target]
+        if target_mappings is not None and event.target in target_mappings.keys()
+        else event.target)
     time = time_unit_multiplier * event.time
     interval = time_unit_multiplier * event.interval
-    until = time_unit_multiplier * event.until
+    until = time_unit_multiplier * event.until if event.until else None
     amount = amount_unit_multiplier * event.amount
-    trigger = f"time >= {time} && time % {interval} == 0 && time < {until}"
+    trigger = (f"time >= {time} && time % {interval} == 0 && time < {until}"
+        if until else f"time >= {time} && time % {interval} == 0"
+    )
     assignment = f"{target} + {amount}"
     return [EventSpec(target, trigger, assignment)]
 
