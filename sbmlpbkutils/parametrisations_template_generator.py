@@ -10,7 +10,7 @@ class ParametrisationsTemplateGenerator:
         model: ls.Model,
         use_defaults: bool = True,
         include_element_name: bool = True,
-        model_instance_ids: list[str] = None
+        model_instance_ids: list[str] | None = None
     ) -> tuple[pd.DataFrame, pd.DataFrame]:
         model_instance_ids = model_instance_ids if model_instance_ids else [f'{model.getId()}_PARAM']
         instances = self.generate_instances_df(
@@ -28,7 +28,7 @@ class ParametrisationsTemplateGenerator:
     def generate_instances_df(
         self,
         model: ls.Model,
-        model_instance_ids: list[str] = None
+        model_instance_ids: list[str] | None = None
     ):
         model_instance_ids = model_instance_ids if model_instance_ids else [f'{model.getId()}_PARAM']
         dt = []
@@ -51,7 +51,7 @@ class ParametrisationsTemplateGenerator:
         model: ls.Model,
         use_defaults: bool = True,
         include_element_name: bool = True,
-        model_instance_ids: list[str] = None
+        model_instance_ids: list[str] | None = None
     ):
         dt = []
         model_instance_ids = model_instance_ids if model_instance_ids else [f'{model.getId()}_PARAM']

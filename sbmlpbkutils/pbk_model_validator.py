@@ -1,6 +1,7 @@
 import os.path
 from enum import Enum
 from logging import Logger
+from typing import cast
 
 import libsbml as ls
 from . import PbkOntologyChecker
@@ -40,7 +41,7 @@ class ValidationRecord(object):
         self,
         level: ValidationStatus,
         code: ErrorCode = ErrorCode.UNDEFINED,
-        message: str = None
+        message: str | None = None
     ):
         self.level = level
         self.message = message
@@ -197,8 +198,9 @@ class PbkModelValidator:
 
         # Collect all compartment elements
         elements = []
-        for i in range(0, doc.model.getNumCompartments()):
-            elements.append(doc.model.getCompartment(i))
+        model = doc.getModel()
+        for i in range(0, model.getNumCompartments()):
+            elements.append(model.getCompartment(i))
 
         # Check individual compartment annotations
         for element in elements:
@@ -230,8 +232,9 @@ class PbkModelValidator:
         """Check species annotations. Each species should have a BQM_IS
         relation referring to a term of the PBPK ontology."""
         result = []
-        for i in range(0, doc.model.getNumSpecies()):
-            c = doc.model.getSpecies(i)
+        model = doc.getModel()
+        for i in range(0, model.getNumSpecies()):
+            c = model.getSpecies(i)
             result.append(self.check_species_annotation(c))
         return result
 
@@ -244,9 +247,10 @@ class PbkModelValidator:
         result = []
 
         # Collect parameter elements
+        model = doc.getModel()
         elements = []
-        for i in range(0, doc.model.getNumParameters()):
-            elements.append(doc.model.getParameter(i))
+        for i in range(0, model.getNumParameters()):
+            elements.append(model.getParameter(i))
 
         # Check individual paramter annotations
         for element in elements:
@@ -296,13 +300,13 @@ class PbkModelValidator:
     def check_element_annotation(
         self,
         element: ls.SBase
-    ) -> ValidationRecord:
+    ) -> ValidationRecord | None:
         if element.getTypeCode() == ls.SBML_COMPARTMENT:
-            return self.check_compartment_annotation(element)
+            return self.check_compartment_annotation(cast(ls.Compartment, element))
         if element.getTypeCode() == ls.SBML_PARAMETER:
-            return self.check_parameter_annotation(element)
+            return self.check_parameter_annotation(cast(ls.Parameter, element))
         if element.getTypeCode() == ls.SBML_SPECIES:
-            return self.check_species_annotation(element)
+            return self.check_species_annotation(cast(ls.Species, element))
         return None
 
     def check_compartment_annotation(

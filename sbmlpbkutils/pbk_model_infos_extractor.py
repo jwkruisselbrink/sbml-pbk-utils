@@ -351,4 +351,3 @@ class SpeciesInfo(ElementInfo):
         ElementInfo.__init__(self, id, 'species', name, unit, cv_terms, pbpko_bqm_is_class)
         self.compartment_id = compartment_id
         self.chebi_bqb_is_class = chebi_bqb_is_class
-

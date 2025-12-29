@@ -225,7 +225,7 @@ def load_ontology(world: World, onto_spec):
 
         # Extract .owl file from .gz file
         if is_gzip:
-            with gzip.open(file_path, 'rb') as f_in, open(owl_path, 'wb') as f_out:
+            with gzip.open(file_path, mode='rb') as f_in, open(owl_path, mode='wb') as f_out:
                 shutil.copyfileobj(f_in, f_out)
 
         # Raise error if .owl file still not exists

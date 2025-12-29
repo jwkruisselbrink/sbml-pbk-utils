@@ -1,7 +1,6 @@
 import os
-from pathlib import Path
+import logging
 from typing import Dict, List, Union
-from logging import Logger
 
 import libsbml as ls
 import yaml
@@ -44,10 +43,12 @@ class PbkModelAnnotator:
     def annotate(
         self,
         document: ls.SBMLDocument,
-        annotations_file: str = None,
-        cff_file: str = None,
-        logger: Logger = None
+        annotations_file: str | None = None,
+        cff_file: str | None = None,
+        logger: logging.Logger | None = None
     ) -> None:
+        if logger is None:
+            logger = logging.getLogger(__name__)
         if annotations_file is not None:
             # Read annotations file
             try:
@@ -55,7 +56,7 @@ class PbkModelAnnotator:
                 df = df.replace(np.nan, None)
             except Exception as error:
                 file_basename = os.path.basename(annotations_file)
-                logger.critical(f'Failed to read annotations file [{file_basename}]: {error}')
+                logger.critical("Failed to read annotations file [%s]: %s", file_basename, error)
                 raise
 
             # Annotate
@@ -66,26 +67,14 @@ class PbkModelAnnotator:
             )
 
         if cff_file is not None:
-            try:
-                # Read CFF file
-                creators = PbkModelAnnotator._read_cff_authors(cff_file)
-            except Exception as error:
-                file_basename = os.path.basename(cff_file)
-                logger.critical(f'Failed to read CFF file [{file_basename}]: {error}')
-
-            try:
-                self.set_model_creators(
-                    document,
-                    creators
-                )
-            except Exception as error:
-                logger.error("Failed to set creators from CFF file")
+            creators = PbkModelAnnotator._read_cff_authors(cff_file)
+            self.set_model_creators(document, creators)
 
     def set_model_annotations(
         self,
         document: ls.SBMLDocument,
         annotations_df: pd.DataFrame,
-        logger: Logger
+        logger: logging.Logger
     ) -> ls.SBMLDocument:
         """Annotate the units of the SBML file using the annotations
         file and write results to the specified out file."""
@@ -108,26 +97,26 @@ class PbkModelAnnotator:
 
         # Check for required columns
         if not any(item in annotations_df.columns for item in ['URI', 'resource']):
-            msg = f"Missing [URI] or [resource] column in annotations table."
+            msg = "Missing [URI] or [resource] column in annotations table."
             logger.critical(msg)
             raise ValueError(msg)
 
         # Check for required columns
         if not 'qualifier' in annotations_df.columns:
-            msg = f"Missing [qualifier] column in annotations table."
+            msg = "Missing [qualifier] column in annotations table."
             logger.critical(msg)
             raise ValueError(msg)
 
         # If the annotations file contains an URI column, then try to add
         # rdf annotations for model elements using SBMLUtils for records
-        if ('URI' in annotations_df.columns):
-            if (not 'pattern' in annotations_df.columns):
+        if 'URI' in annotations_df.columns:
+            if 'pattern' not in annotations_df.columns:
                 # If pattern column is missing, then use element id column
                 annotations_df['pattern'] = annotations_df['element_id']
-            if (not 'annotation_type' in annotations_df.columns):
+            if 'annotation_type' not in annotations_df.columns:
                 # If annotation type column is missing, then add with default value
                 annotations_df['annotation_type'] = 'rdf'
-            if (not 'resource' in annotations_df.columns):
+            if 'resource' not in annotations_df.columns:
                 # If resource column is missing, then use URI column
                 annotations_df['resource'] = annotations_df['URI']
 
@@ -143,16 +132,20 @@ class PbkModelAnnotator:
             # Skip records with empty URI field
             annotation = None
             if resource is not None:
-                if row['annotation_type'] != 'rdf':
-                    msg = f'Unsupported annotation type "{row['annotation_type']}" for {sbml_type} element "{element_id}".'
-                    logger.error(msg)
+                annotation_type = str(row['annotation_type']).strip()
+                if annotation_type != 'rdf':
+                    logger.error(
+                        f'Unsupported annotation type "{annotation_type}" for {sbml_type} element "{element_id}".'
+                    )
                 else:
                     try:
-                        annotation = ExternalAnnotation(row)
+                        annotation = ExternalAnnotation(row.to_dict())
                     except Exception:
-                        msg = f"Invalid annotation [{qualifier}|{resource}] for {sbml_type} [{element_id}]."
-                        logger.error(msg)
+                        logger.error(
+                            f"Invalid annotation [{qualifier}|{resource}] for {sbml_type} [{element_id}]."
+                        )
 
+            elements = []
             if sbml_type == "document":
                 elements = [document]
             elif element_id:
@@ -296,9 +289,9 @@ class PbkModelAnnotator:
         self,
         document: ls.SBMLDocument,
         element_id: str,
-        logger: Logger,
-        element_name: str = None,
-        unit_id: str = None
+        logger: logging.Logger,
+        element_name: str | None = None,
+        unit_id: str | None = None
     ) -> None:
         model = document.getModel()
         element = model.getElementBySId(element_id)
@@ -331,7 +324,7 @@ class PbkModelAnnotator:
         document: ls.SBMLDocument,
         element_id: str,
         unit_id: str,
-        logger: Logger,
+        logger: logging.Logger,
     ) -> None:
         model = document.getModel()
         element = model.getElementBySId(element_id)
@@ -350,7 +343,7 @@ class PbkModelAnnotator:
         document: ls.SBMLDocument,
         qualifier: str,
         iri: str,
-        logger: Logger,
+        logger: logging.Logger,
         overwrite: bool = True
     ) -> None:
         """Annotate model based on the provided qualifier and resource IRI.
@@ -373,7 +366,7 @@ class PbkModelAnnotator:
         element_id: str,
         qualifier: str,
         iri: str,
-        logger: Logger,
+        logger: logging.Logger,
         overwrite: bool = True
     ) -> None:
         """Annotate SBase element based on the provided qualifier and resource IRI.
@@ -395,7 +388,7 @@ class PbkModelAnnotator:
         self,
         document: ls.SBMLDocument,
         qualifier: str,
-        logger: Logger
+        logger: logging.Logger
     ) -> None:
         """Clear SBase element annotation of the provided qualifier.
         """
@@ -407,7 +400,7 @@ class PbkModelAnnotator:
         document: ls.SBMLDocument,
         element_id: str,
         qualifier: str,
-        logger: Logger
+        logger: logging.Logger
     ) -> None:
         """Clear SBase element annotation of the provided qualifier.
         """
@@ -419,33 +412,33 @@ class PbkModelAnnotator:
         self,
         model: ls.Model,
         element: ls.SBase,
-        element_id: str,
+        element_id: str | None,
         unit_id: str,
         units_dict: dict,
-        logger: Logger
+        logger: logging.Logger
     ) -> None:
         """Set element unit of element with specified id and type to the specfied unit."""
         model = model.getModel()
-        if element.getTypeCode() == ls.SBML_DOCUMENT \
-            or element.getTypeCode() == ls.SBML_MODEL:
+        if element.getTypeCode() == ls.SBML_DOCUMENT or element.getTypeCode() == ls.SBML_MODEL:
             unit_definition = self._get_or_add_unit_definition(model, unit_id, units_dict, logger)
-            if element_id == "timeUnits":
-                logger.info(f"Set model time unit [{unit_id}].")
-                model.setTimeUnits(unit_definition.getId())
-            elif element_id == "substanceUnits":
-                logger.info(f"Set model substances unit [{unit_id}].")
-                model.setSubstanceUnits(unit_definition.getId())
-            elif element_id == "extentUnits":
-                logger.info(f"Set model extent unit [{unit_id}].")
-                model.setExtentUnits(unit_definition.getId())
-            elif element_id == "volumeUnits":
-                logger.info(f"Set model volume unit [{unit_id}].")
-                model.setVolumeUnits(unit_definition.getId())
-            else:
-                logger.info(f"Did not set unit [{unit_id}] for root level element [{element_id}]: not a valid document level element identifier.")
+            if unit_definition is not None:
+                if element_id == "timeUnits":
+                    logger.info(f"Set model time unit [{unit_id}].")
+                    model.setTimeUnits(unit_definition.getId())
+                elif element_id == "substanceUnits":
+                    logger.info(f"Set model substances unit [{unit_id}].")
+                    model.setSubstanceUnits(unit_definition.getId())
+                elif element_id == "extentUnits":
+                    logger.info(f"Set model extent unit [{unit_id}].")
+                    model.setExtentUnits(unit_definition.getId())
+                elif element_id == "volumeUnits":
+                    logger.info(f"Set model volume unit [{unit_id}].")
+                    model.setVolumeUnits(unit_definition.getId())
+                else:
+                    logger.info(f"Did not set unit [{unit_id}] for root level element [{element_id}]: not a valid document level element identifier.")
         else:
             unit_definition = self._get_or_add_unit_definition(model, unit_id, units_dict, logger)
-            if (unit_definition):
+            if unit_definition:
                 logger.info(f"Set unit of {element} to [{unit_id}].")
                 element.setUnits(unit_definition.getId())
             elif element.isSetUnits():
@@ -454,24 +447,31 @@ class PbkModelAnnotator:
     def _set_element_rdf_annotation(
         self,
         element: ls.SBase,
-        annotation: Union[ExternalAnnotation|Annotation],
-        logger: Logger,
+        annotation: Union[ExternalAnnotation,Annotation],
+        logger: logging.Logger,
         overwrite: bool = False
     ) -> None:
         """Annotate SBase element based on the provided annotation record.
         """
         try:
-            if type(annotation) is ExternalAnnotation:
+            if isinstance(annotation, ExternalAnnotation):
                 external_annotation = annotation
+                if external_annotation.resource is None:
+                    logger.error('Invalid annotation record: resource cannot be undefined.')
+                    return
+                if external_annotation.qualifier is None:
+                    logger.error('Invalid annotation record: qualifier cannot be undefined.')
+                    return
                 rdf_annotation = Annotation(
-                    qualifier=external_annotation.qualifier,
-                    resource=external_annotation.resource
+                    qualifier = external_annotation.qualifier,
+                    resource = external_annotation.resource
                 )
             else:
                 rdf_annotation = annotation
             qualifier, resource = rdf_annotation.qualifier.value, rdf_annotation.resource_normalized
         except Exception as error:
-            msg = f'Invalid annotation record [{rdf_annotation.qualifier}|{rdf_annotation.resource}]: {error}'
+            msg = f'Invalid annotation record [{rdf_annotation.qualifier}|{rdf_annotation.resource}]: {error}.'
+            logger.error(msg)
             return
 
         # Check qualifier type
@@ -493,7 +493,7 @@ class PbkModelAnnotator:
             element.setMetaId(utils.create_metaid(element))
 
         # Create or get the CV term
-        cv_term: ls.CVTerm = None
+        cv_term: ls.CVTerm | None = None
         if overwrite:
             cv_terms = element.getCVTerms()
             for term in cv_terms:
@@ -545,7 +545,7 @@ class PbkModelAnnotator:
                 logger.error(msg)
                 return
             if element.addCVTerm(cv_term) != ls.LIBSBML_OPERATION_SUCCESS:
-                logger.error(f"Failed to add [{qualifier}] resource [{resource}] to {element}.")
+                msg = f"Failed to add [{qualifier}] resource [{resource}] to {element}."
                 logger.error(msg)
                 return
             else:
@@ -559,7 +559,7 @@ class PbkModelAnnotator:
         self,
         element: ls.SBase,
         qualifier: str,
-        logger: Logger
+        logger: logging.Logger
     ) -> None:
         """Clear SBase element annotation of the provided qualifier.
         """
@@ -628,7 +628,7 @@ class PbkModelAnnotator:
     def _get_elements_by_pattern(
         self,
         model: ls.Model,
-        sbml_type: str,
+        sbml_type: str | None,
         pattern: str
     ) -> List[ls.SBase]:
         """
@@ -657,7 +657,7 @@ class PbkModelAnnotator:
         model: ls.Model
     ) -> dict:
         # Read model units
-        units_dict = dict()
+        units_dict = {}
         for unit_def in model.getListOfUnitDefinitions():
             units_dict[unit_def.getId()] = unit_def
         return units_dict
@@ -667,8 +667,8 @@ class PbkModelAnnotator:
         model: ls.Model,
         unit_id: str,
         units_dict: dict,
-        logger: Logger
-    ) -> ls.UnitDefinition:
+        logger: logging.Logger
+    ) -> ls.UnitDefinition | None:
         """Tries to get the unit definition for the specified unit id from the SBML document.
         The unit definition will be created and added to the document if it does not yet exist.
         """
@@ -676,7 +676,7 @@ class PbkModelAnnotator:
             unit_definition = get_unit_definition(unit_id)
             if unit_definition is None:
                 logger.error(f"Failed to set unit [{unit_id}]: unknown unit definition!")
-                return
+                return None
             sbml_unit_definition = model.getUnitDefinition(unit_definition["id"])
             if not sbml_unit_definition:
                 logger.info(f"Add unit definition [{unit_id}].")
@@ -691,7 +691,7 @@ class PbkModelAnnotator:
     @staticmethod
     def _read_cff_authors(
         cff_file: str
-    ) -> dict:
+    ) -> List[Dict]:
         """Reads in the authors from a cff file with the specified file path. """
         try:
             # Open and load the CFF file
@@ -699,16 +699,16 @@ class PbkModelAnnotator:
                 cff_data = yaml.safe_load(file)
             # Extract the list of creators from the 'authors' field
             creators = cff_data.get('authors', [])
-        except FileNotFoundError:
-            raise Exception("CFF file not found.")
+        except FileNotFoundError as e:
+            raise FileNotFoundError(f"CFF file [{cff_file}] not found.") from e
         except yaml.YAMLError as e:
-            raise Exception(f"Error reading CFF file: {e}")
+            raise yaml.YAMLError(f"Error reading CFF file: {e}.")
         return creators
 
     @staticmethod
     def _read_annotations_df(
-        file_path: Path,
-        logger: Logger,
+        file_path: str,
+        logger: logging.Logger,
         file_format: str = "*"
     ) -> pd.DataFrame:
         """Read annotations from given file into DataFrame.
