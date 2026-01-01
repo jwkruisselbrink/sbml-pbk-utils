@@ -61,12 +61,12 @@ class Output:
 
     Attributes:
         id: unique identifier used in files and plots.
-        label: human-readable label for plots.
         output: model variable id to extract values from.
+        label: optional human-readable label for plots.
     """
     id: str
-    label: str
     output: str
+    label: str | None = None
 
 @dataclass
 class ReferenceData:
