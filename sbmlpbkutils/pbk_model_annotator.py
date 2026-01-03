@@ -108,7 +108,7 @@ class PbkModelAnnotator:
             raise ValueError(msg)
 
         # If the annotations file contains an URI column, then try to add
-        # rdf annotations for model elements using SBMLUtils for records
+        # rdf annotations for model elements using sbmlutils for records
         if 'URI' in annotations_df.columns:
             if 'pattern' not in annotations_df.columns:
                 # If pattern column is missing, then use element id column

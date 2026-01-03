@@ -1,6 +1,6 @@
 # Model annotation
 
-The `PbkModelAnnotator` class can be used to annotate the elements and units of an SBML PBK model implementation using a separate CSV file. Its implementation builds on the [SBMLutils](https://sbmlutils.readthedocs.io/en/latest/notebooks/sbml_annotator.html#Annotate-existing-model) package, but in addition to annotation of the model using RDF triples, it also sets the model units and element names.
+The `PbkModelAnnotator` class can be used to annotate the elements and units of an SBML PBK model implementation using a separate CSV file. Its implementation builds on the [sbmlutils](https://sbmlutils.readthedocs.io/en/latest/notebooks/sbml_annotator.html#Annotate-existing-model) package, but in addition to annotation of the model using RDF triples, it also sets the model units and element names.
 
 The structure of the annotations CSV file is described below. For an example of an annotations file, see the [annotations file](https://github.com/rivm-syso/euromix-to-sbml/blob/main/model/euromix.annotations.csv) of the SBML EuroMix PBK model re-implementation.
 
@@ -21,7 +21,7 @@ writeSBML(doc, 'model.annotated.sbml')
 
 ## Annotations CSV file structure
 
-The CSV file structure is based on the external annotations file format of [SBMLutils](https://sbmlutils.readthedocs.io/en/latest/notebooks/sbml_annotator.html#Annotate-existing-model), but extended to also facilitate specification of units.
+The CSV file structure is based on the external annotations file format of [sbmlutils](https://sbmlutils.readthedocs.io/en/latest/notebooks/sbml_annotator.html#Annotate-existing-model), but extended to also facilitate specification of units.
 
 Annotations CSV files should have have the following fields:
 
