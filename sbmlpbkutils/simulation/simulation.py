@@ -397,7 +397,7 @@ def plot_scenario_differences(
                         ref_times,
                         ref_values,
                         marker=markers[r_idx % len(markers)],
-                        label=f"{item.label} ({series.id})"
+                        label=f"{item.label}"
                     )
                 else:
                     # Plot lines
@@ -407,7 +407,7 @@ def plot_scenario_differences(
                         ref_values,
                         linewidth=1,
                         linestyle=linestyle,
-                        label=f"{item.label} ({series.id})"
+                        label=f"{item.label}"
                     )
 
                 # Compute per-instance statistics at reference points
