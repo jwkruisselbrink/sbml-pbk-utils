@@ -4,8 +4,8 @@ import os
 from pathlib import Path
 
 import libsbml as ls
+from sbmlpbkutils import PbkModelReportGenerator, RenderMode
 from tests.conf import TEST_OUTPUT_PATH, TEST_MODELS_PATH
-from sbmlpbkutils import PbkModelReportGenerator
 
 class ModelReportCreationTests(unittest.TestCase):
 
@@ -24,7 +24,7 @@ class ModelReportCreationTests(unittest.TestCase):
             sbml_basename = os.path.basename(sbml_file)
             report_file = os.path.join(self.out_path, Path(sbml_basename).with_suffix('.report.md'))
             generator = PbkModelReportGenerator(document)
-            generator.create_md_report(report_file)
+            generator.create_md_report(report_file, math_render_mode = RenderMode.TEXT)
 
 if __name__ == '__main__':
     unittest.main()

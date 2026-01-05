@@ -24,13 +24,13 @@ from .pbk_model_validator import (
     ErrorCode,
     ValidationStatus
 )
-from .pbk_model_report_generator import (
-    PbkModelReportGenerator,
-    RenderMode
-)
 from .diagram_creator import (
     DiagramCreator,
     NamesDisplay
+)
+from .pbk_model_report_generator import (
+    PbkModelReportGenerator,
+    RenderMode
 )
 from .annotations_template_generator import AnnotationsTemplateGenerator
 from .parametrisations_template_generator import ParametrisationsTemplateGenerator

@@ -1,31 +1,62 @@
+"""Utilities to generate Markdown reports for SBML PBK models.
+
+This module provides the :class:`PbkModelReportGenerator` class which extracts
+model information and renders a Markdown report including diagrams, tables and
+mathematical expressions. Math can be rendered as plain text or LaTeX.
+"""
+
 from enum import Enum
-import libsbml as ls
 from pathlib import Path
+
+import libsbml as ls
 import pandas as pd
 from sbmlutils.report.mathml import astnode_to_latex
 
-from sbmlpbkutils.diagram_creator import DiagramCreator, NamesDisplay
-
-from . import PbkModelInfosExtractor
-from . import create_unit_string
+from . import NamesDisplay, DiagramCreator, PbkModelInfosExtractor, create_unit_string
 
 class RenderMode(Enum):
+    """Enumeration of math rendering modes used in report generation.
+
+    TEXT -- renders math as plain text.
+    LATEX -- renders math suitable for inclusion in LaTeX documents.
+    """
     TEXT = 1
     LATEX = 2
 
 class PbkModelReportGenerator():
+    """Generate a Markdown report for a SBML PBK model.
+
+    The generator uses :class:`PbkModelInfosExtractor` to extract model
+    annotations and properties and writes an overview, diagrams, tables and
+    equations to a Markdown file.
+    """
 
     def __init__(
         self,
         document: ls.SBMLDocument,
     ):
+        """Initialize the report generator with an SBML document.
+
+        Args:
+            document: A libSBML :class:`SBMLDocument` containing the model.
+        """
         self.document = document
         self.infos_extractor = PbkModelInfosExtractor(self.document)
 
     def create_md_report(
         self,
-        output_file: str
+        output_file: str,
+        math_render_mode: RenderMode = RenderMode.LATEX
     ):
+        """Create a Markdown report for the model and write it to ``output_file``.
+
+        The report includes an overview, a diagram (SVG), compartments, species,
+        transfer equations, ODEs, rules, function definitions, and parameters.
+
+        Args:
+            output_file: Path to the Markdown file to create.
+            math_render_mode: How to render mathematical expressions.
+        """
         model = self.document.getModel()
         name = model.getName() if model.isSetName() else model.getId()
 
@@ -74,7 +105,7 @@ class PbkModelReportGenerator():
 
             # Write Transfer equations
             f.write("## Transfer equations\n\n")
-            transfer_equations = list(self.get_transfer_equations_as_str(RenderMode.LATEX).values())
+            transfer_equations = list(self.get_transfer_equations_as_str(math_render_mode).values())
             table = pd.DataFrame({
                 'id': [ x['id'] for x in transfer_equations ],
                 'from': [ x['reactants'][0] for x in transfer_equations ],
@@ -86,33 +117,33 @@ class PbkModelReportGenerator():
 
             # Write ODEs
             f.write("## ODEs\n\n")
-            odes = self.get_odes_as_str(RenderMode.LATEX)
+            odes = self.get_odes_as_str(math_render_mode)
             for _, equation in odes.items():
                 f.write(f"${equation}$\n\n")
 
             # Write rate rules
-            rate_rules = self.get_rate_rules_as_str(RenderMode.LATEX)
+            rate_rules = self.get_rate_rules_as_str(math_render_mode)
             if len(rate_rules) > 0:
                 f.write("## Rate rules\n\n")
                 for _, equation in rate_rules.items():
                     f.write(f"${equation}$\n\n")
 
             # Write assignment rules
-            assignment_rules = self.get_assignment_rules_as_str(RenderMode.LATEX)
+            assignment_rules = self.get_assignment_rules_as_str(math_render_mode)
             if len(assignment_rules) > 0:
                 f.write("## Assignment rules\n\n")
                 for _, equation in assignment_rules.items():
                     f.write(f"${equation}$\n\n")
 
             # Write assignment rules
-            initial_assignments = self.get_initial_assigments_as_str(RenderMode.LATEX)
+            initial_assignments = self.get_initial_assigments_as_str(math_render_mode)
             if len(initial_assignments) > 0:
                 f.write("## Initial assignments\n\n")
                 for _, equation in initial_assignments.items():
                     f.write(f"${equation}$\n\n")
 
             # Write functions
-            function_defs = self.get_function_as_str(RenderMode.LATEX)
+            function_defs = self.get_function_as_str(math_render_mode)
             if len(function_defs) > 0:
                 f.write("## Function definitions\n\n")
                 for _, equation in function_defs.items():
@@ -136,8 +167,13 @@ class PbkModelReportGenerator():
             else:
                 f.write("*not specified*\n\n")
 
-
     def get_model_creators(self) -> pd.DataFrame | None:
+        """Return a :class:`pandas.DataFrame` of model creators or ``None``.
+
+        The DataFrame contains columns: ``first-name``, ``last-name``,
+        ``affiliation`` and ``email`` when creators are present in the model
+        history.
+        """
         dt = []
         col_names = ["first-name", "last-name", "affiliation", "email"]
         model = self.document.getModel()
@@ -157,6 +193,11 @@ class PbkModelReportGenerator():
         return None
 
     def get_model_overview(self) -> pd.DataFrame:
+        """Return a :class:`pandas.DataFrame` summarizing model metadata.
+
+        The overview contains information such as modelled species, chemicals,
+        units, counts of compartments/species/parameters and input routes.
+        """
         dt = []
         col_names = ["key", "value"]
         model = self.document.getModel()
@@ -177,7 +218,8 @@ class PbkModelReportGenerator():
 
         input_compartments = self.infos_extractor.get_input_compartments()
         input_routes = set(input_compartments.values())
-        input_routes_str = ' (' + str.join(", ", input_compartments.values()) + ')' if len(input_routes) > 0 else ""
+        input_routes_str = (' (' + str.join(", ", input_compartments.values()) + ')'
+            if len(input_routes) > 0 else "")
         if len(input_routes) > 0:
             dt.append(["Input route(s)", f"{len(input_routes)}{input_routes_str}"])
         else:
@@ -219,6 +261,11 @@ class PbkModelReportGenerator():
         return result
 
     def get_compartment_infos(self):
+        """Return a :class:`pandas.DataFrame` with compartment information.
+
+        The table includes compartment id, name, unit and PBK ontology qualifier
+        where available.
+        """
         dt = []
         col_names = ["id", "name", "unit", "model qualifier"]
         model = self.document.getModel()
@@ -240,6 +287,10 @@ class PbkModelReportGenerator():
         return result
 
     def get_species_infos(self):
+        """Return a :class:`pandas.DataFrame` with chemical species information.
+
+        The table includes species id, name, unit and PBK ontology qualifier.
+        """
         dt = []
         col_names = ["id", "name", "unit", "model qualifier"]
         model = self.document.getModel()
@@ -261,6 +312,10 @@ class PbkModelReportGenerator():
         return result
 
     def get_parameter_infos(self):
+        """Return a :class:`pandas.DataFrame` with parameter information.
+
+        The table includes parameter id, name, unit and PBK ontology qualifier.
+        """
         model = self.document.getModel()
         dt = []
         col_names = ["id", "name", "unit", "model qualifier"]
@@ -286,6 +341,11 @@ class PbkModelReportGenerator():
         self,
         render_mode: RenderMode = RenderMode.TEXT
     ):
+        """Return a dict mapping species ids to their ODEs as rendered strings.
+
+        Args:
+            render_mode: RenderMode indicating how to render math (TEXT or LATEX).
+        """
         model = self.document.getModel()
 
         # Get the list of species IDs
@@ -312,10 +372,11 @@ class PbkModelReportGenerator():
                 species_id = reactant.getSpecies()
                 
                 # Add the negative reaction rate to the dictionary
+                eq = PbkModelReportGenerator._ast_node_to_str(rate_formula, render_mode)
                 if species_id in reaction_rates:
-                    reaction_rates[species_id].append(f"- {PbkModelReportGenerator._ast_node_to_str(rate_formula, render_mode)}")
+                    reaction_rates[species_id].append(f"- {eq}")
                 else:
-                    reaction_rates[species_id] = [f"- {PbkModelReportGenerator._ast_node_to_str(rate_formula, render_mode)}"]
+                    reaction_rates[species_id] = [f"- {eq}"]
 
             # Iterate over the products
             for j in range(reaction.getNumProducts()):
@@ -323,10 +384,11 @@ class PbkModelReportGenerator():
                 species_id = product.getSpecies()
 
                 # Add the reaction rate to the dictionary
+                eq = PbkModelReportGenerator._ast_node_to_str(rate_formula, render_mode)
                 if species_id in reaction_rates:
-                    reaction_rates[species_id].append(PbkModelReportGenerator._ast_node_to_str(rate_formula, render_mode))
+                    reaction_rates[species_id].append(eq)
                 else:
-                    reaction_rates[species_id] = [PbkModelReportGenerator._ast_node_to_str(rate_formula, render_mode)]
+                    reaction_rates[species_id] = [eq]
 
         # Construct the differential equations for each species
         differential_equations = {}
@@ -353,6 +415,7 @@ class PbkModelReportGenerator():
         self,
         render_mode: RenderMode = RenderMode.TEXT
     ):
+        """Return transfer equations for each reaction keyed by reaction id."""
         result = {}
         model = self.document.getModel()
         for reaction in model.getListOfReactions():
@@ -377,6 +440,7 @@ class PbkModelReportGenerator():
         self,
         render_mode: RenderMode = RenderMode.TEXT
     ):
+        """Return function definitions rendered as strings keyed by function id."""
         model = self.document.getModel()
         result = {}
         for function in model.getListOfFunctionDefinitions():
@@ -459,6 +523,7 @@ class PbkModelReportGenerator():
         reaction: ls.Reaction,
         render_mode: RenderMode = RenderMode.TEXT
     ):
+        """Render a reaction's kinetic law as a string according to ``render_mode``."""
         kinetic_law = reaction.getKineticLaw()
         rate_formula = kinetic_law.getMath()
         equation = PbkModelReportGenerator._ast_node_to_str(rate_formula, render_mode)
@@ -469,6 +534,10 @@ class PbkModelReportGenerator():
         ast_node: ls.ASTNode,
         render_mode: RenderMode
     ):
+        """Render an :class:`libsbml.ASTNode` to a string according to ``render_mode``.
+
+        TEXT uses libSBML's formulaToString, LATEX uses an AST-to-LaTeX helper.
+        """
         if render_mode == RenderMode.TEXT:
             return ls.formulaToString(ast_node).strip()
         if render_mode == RenderMode.LATEX:
@@ -477,6 +546,7 @@ class PbkModelReportGenerator():
 
     @staticmethod
     def _math_print_element(element_id):
+        """Return a LaTeX-safe representation of an element id for printing in math."""
         return f"\\mathtt{{{element_id.replace('_', '-')}}}"
 
     def _get_unit_string(
