@@ -1,4 +1,4 @@
-from typing import Dict, assert_never, cast
+from typing import Dict, List, assert_never, cast
 
 import libsbml as ls
 
@@ -168,7 +168,7 @@ class PbkModelInfosExtractor:
                             return self.onto_checker.get_chebi_class(iri)
         return None
 
-    def get_model_animal_species(self):
+    def get_model_animal_species(self) -> List:
         result = []
         cv_terms = self.model.getCVTerms()
         if cv_terms is not None:

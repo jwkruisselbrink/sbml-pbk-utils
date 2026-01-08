@@ -27,14 +27,28 @@ chebi = World()
 
 class PbkOntologyChecker():
 
-    pbpko_namespaces = [{
-        "pattern": "obo:",
-        "replacement": "http://purl.obolibrary.org/obo/"
-    }]
+    pbpko_namespaces = [
+        {
+            "pattern": "obo:",
+            "replacement": "http://purl.obolibrary.org/obo/"
+        },
+        {
+            "pattern": "https://purl.obolibrary.org/obo/",
+            "replacement": "http://purl.obolibrary.org/obo/"
+        }
+    ]
 
     ncbitaxon_namespaces = [
         {
+            "pattern": "https://purl.obolibrary.org/obo/NCBITaxon_",
+            "replacement": "http://purl.obolibrary.org/obo/NCBITaxon_"
+        },
+        {
             "pattern": "http://identifiers.org/taxonomy/",
+            "replacement": "http://purl.obolibrary.org/obo/NCBITaxon_"
+        },
+        {
+            "pattern": "https://identifiers.org/taxonomy/",
             "replacement": "http://purl.obolibrary.org/obo/NCBITaxon_"
         },
         {
@@ -49,7 +63,15 @@ class PbkOntologyChecker():
 
     chebi_namespaces = [
         {
+            "pattern": "https://purl.obolibrary.org/obo/CHEBI_",
+            "replacement": "http://purl.obolibrary.org/obo/CHEBI_"
+        },
+        {
             "pattern": "http://identifiers.org/chebi/CHEBI:",
+            "replacement": "http://purl.obolibrary.org/obo/CHEBI_"
+        },
+        {
+            "pattern": "https://identifiers.org/chebi/CHEBI:",
             "replacement": "http://purl.obolibrary.org/obo/CHEBI_"
         },
         {
@@ -57,7 +79,15 @@ class PbkOntologyChecker():
             "replacement": "http://purl.obolibrary.org/obo/CHEBI_"
         },
         {
+            "pattern": "https://identifiers.org/CHEBI:",
+            "replacement": "http://purl.obolibrary.org/obo/CHEBI_"
+        },
+        {
             "pattern": "http://identifiers.org/chebi/",
+            "replacement": "http://purl.obolibrary.org/obo/CHEBI_"
+        },
+        {
+            "pattern": "https://identifiers.org/chebi/",
             "replacement": "http://purl.obolibrary.org/obo/CHEBI_"
         },
         {

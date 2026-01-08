@@ -7,9 +7,11 @@ class PbkOntologyCheckerTests(unittest.TestCase):
 
     @parameterized.expand([
         ("http://purl.obolibrary.org/obo/NCBITaxon_9606", True),
+        ("https://purl.obolibrary.org/obo/NCBITaxon_9606", True),
+        ("http://identifiers.org/taxonomy/40674", True),
+        ("https://identifiers.org/taxonomy/40674", True),
         ("obo:NCBITaxon_9606", True),
         ("urn:miriam:taxonomy:10095", True),
-        ("https://purl.obolibrary.org/obo/NCBITaxon_9606", False),
         ("NCBITaxon_9606", False),
         ("obo/NCBITaxon_9606", False),
         ("obo.NCBITaxon_9606", False),
@@ -22,18 +24,20 @@ class PbkOntologyCheckerTests(unittest.TestCase):
     def test_check_in_pbpko(self):
         checker = PbkOntologyChecker()
         self.assertTrue(checker.check_in_pbpko("http://purl.obolibrary.org/obo/PBPKO_00450"))
+        self.assertTrue(checker.check_in_pbpko("https://purl.obolibrary.org/obo/PBPKO_00450"))
         self.assertTrue(checker.check_in_pbpko("obo:PBPKO_00450"))
-        self.assertFalse(checker.check_in_pbpko("https://purl.obolibrary.org/obo/PBPKO_00450"))
         self.assertFalse(checker.check_in_pbpko("PBPKO_00450"))
         self.assertFalse(checker.check_in_pbpko("obo/PBPKO_00450"))
         self.assertFalse(checker.check_in_pbpko("obo.PBPKO_0x450"))
 
     @parameterized.expand([
         ("http://purl.obolibrary.org/obo/CHEBI_25212", True),
-        ("https://purl.obolibrary.org/obo/CHEBI_25212", False),
+        ("https://purl.obolibrary.org/obo/CHEBI_25212", True),
         ("https://purl.obolibrary.org/obo/PBPKO_00450", False),
         ("http://identifiers.org/chebi/CHEBI:24431", True),
+        ("https://identifiers.org/chebi/CHEBI:24431", True),
         ("http://identifiers.org/CHEBI:24431", True),
+        ("https://identifiers.org/CHEBI:24431", True),
         ("obo:CHEBI_25212", True),
         ("obo/CHEBI_25212", False),
         ("obo.CHEBI_25212", False)
@@ -58,7 +62,9 @@ class PbkOntologyCheckerTests(unittest.TestCase):
         iri_expected = f"http://purl.obolibrary.org/obo/NCBITaxon_{term_id}"
         patterns = [
             "http://purl.obolibrary.org/obo/NCBITaxon_",
+            "https://purl.obolibrary.org/obo/NCBITaxon_",
             "http://identifiers.org/taxonomy/",
+            "https://identifiers.org/taxonomy/",
             "urn:miriam:taxonomy:",
             "obo:NCBITaxon_",
         ]
@@ -79,8 +85,11 @@ class PbkOntologyCheckerTests(unittest.TestCase):
         iri_expected = f"http://purl.obolibrary.org/obo/CHEBI_{term_id}"
         patterns = [
             "http://purl.obolibrary.org/obo/CHEBI_",
+            "https://purl.obolibrary.org/obo/CHEBI_",
             "http://identifiers.org/chebi/CHEBI:",
+            "https://identifiers.org/chebi/CHEBI:",
             "http://identifiers.org/CHEBI:",
+            "https://identifiers.org/CHEBI:",
             "urn:miriam:chebi:",
             "obo:CHEBI_",
         ]
