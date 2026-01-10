@@ -65,7 +65,7 @@ def load_config(path: str) -> SimulationConfig:
                     file_path = r['file_path'],
                     series_type = SeriesType[r['series_type']],
                     time_unit = TimeUnit[r['time_unit']],
-                    outputs = [Output(**c) for c in r['outputs']]
+                    mappings = r['mappings']
                 )
                 reference_data.append(reference_series)
 
@@ -284,18 +284,20 @@ def plot_scenario_results(
         # Plot reference data/series
         if scenario.reference_data:
             for idx, item in enumerate(scenario.reference_data):
-                reference_series = [o for o in item.outputs if o.output == output.id]
                 time_unit_multiplier = get_time_unit_alignment_factor(
                     item.time_unit,
                     scenario.time_unit
                 )
-                for series in reference_series:
+
+                if output.id in item.mappings.keys():
+                    ref_id = item.mappings[output.id]
+
                     # Get instance scenario output file
                     reference_df = pd.read_csv(item.file_path, skipinitialspace=True)
 
                     # Extract time and output variable from output
                     times = reference_df['time'].apply(lambda v: v / time_unit_multiplier)
-                    values = reference_df[series.id].to_numpy(dtype=float)
+                    values = reference_df[ref_id].to_numpy(dtype=float)
 
                     if item.series_type == SeriesType.CHECKPOINTS:
                         # Plot points
@@ -351,9 +353,9 @@ def plot_scenario_differences(
         ref_items = []
         if scenario.reference_data:
             for item in scenario.reference_data:
-                reference_series = [o for o in item.outputs if o.output == output.id]
-                if reference_series:
-                    ref_items.append((item, reference_series))
+                if output.id in item.mappings.keys():
+                    ref_id = item.mappings[output.id]
+                    ref_items.append((item, ref_id))
 
         if not ref_items:
             # No reference data for this output, skip
@@ -380,89 +382,89 @@ def plot_scenario_differences(
 
         # For each reference item, compute stats and plot reference points
         diffs_rows = []
-        for r_idx, (item, series_list) in enumerate(ref_items):
+        for r_idx, (item, series_id) in enumerate(ref_items):
             reference_df = pd.read_csv(item.file_path, skipinitialspace=True)
 
             # Align times using same approach as existing plotting
             time_unit_multiplier = get_time_unit_alignment_factor(item.time_unit, scenario.time_unit)
             ref_times = reference_df['time'].apply(lambda v: v / time_unit_multiplier).to_numpy(dtype=float)
 
-            for series in series_list:
-                ref_values = reference_df[series.id].to_numpy(dtype=float)
+            # Get reference series values
+            ref_values = reference_df[series_id].to_numpy(dtype=float)
 
-                # Plot reference points
+            # Plot reference points
+            if item.series_type == SeriesType.CHECKPOINTS:
+                # Plot points
+                ax_series.scatter(
+                    ref_times,
+                    ref_values,
+                    marker=markers[r_idx % len(markers)],
+                    label=f"{item.label}"
+                )
+            else:
+                # Plot lines
+                linestyle = linestyles[(r_idx + len(scenario.outputs)) % len(linestyles)]
+                ax_series.plot(
+                    ref_times,
+                    ref_values,
+                    linewidth=1,
+                    linestyle=linestyle,
+                    label=f"{item.label}"
+                )
+
+            # Compute per-instance statistics at reference points
+            for idx, instance in enumerate(instances):
+                out_file = os.path.join(out_path, f"{scenario.id}_{instance.id}.csv")
+                output_df = pd.read_csv(out_file, skipinitialspace=True)
+                model_times = output_df['time'].to_numpy(dtype=float)
+                model_values = output_df[instance.target_mappings.get(output.id, output.id) if instance.target_mappings is not None else output.id].to_numpy(dtype=float)
+
+                # interpolate model to reference times
+                interp_vals = np.interp(ref_times, model_times, model_values)
+
+                residuals = interp_vals - ref_values
+
+                # Add residual points to residual subplot
                 if item.series_type == SeriesType.CHECKPOINTS:
-                    # Plot points
-                    ax_series.scatter(
+                    marker = markers[idx % len(markers)]
+                    ax_resid.scatter(
                         ref_times,
-                        ref_values,
-                        marker=markers[r_idx % len(markers)],
-                        label=f"{item.label}"
+                        residuals,
+                        marker=marker,
+                        s=20,
+                        label=f"{instance.label}"
                     )
                 else:
                     # Plot lines
-                    linestyle = linestyles[(r_idx + len(scenario.outputs)) % len(linestyles)]
-                    ax_series.plot(
+                    marker = markers[idx % len(markers)] if len(ref_times) < 15 else None
+                    linestyle = linestyles[(idx + len(scenario.outputs)) % len(linestyles)]
+                    ax_resid.plot(
                         ref_times,
-                        ref_values,
+                        residuals,
                         linewidth=1,
+                        marker=marker,
                         linestyle=linestyle,
-                        label=f"{item.label}"
+                        label=f"{instance.label}"
                     )
 
-                # Compute per-instance statistics at reference points
-                for idx, instance in enumerate(instances):
-                    out_file = os.path.join(out_path, f"{scenario.id}_{instance.id}.csv")
-                    output_df = pd.read_csv(out_file, skipinitialspace=True)
-                    model_times = output_df['time'].to_numpy(dtype=float)
-                    model_values = output_df[instance.target_mappings.get(output.id, output.id) if instance.target_mappings is not None else output.id].to_numpy(dtype=float)
-
-                    # interpolate model to reference times
-                    interp_vals = np.interp(ref_times, model_times, model_values)
-
-                    residuals = interp_vals - ref_values
-
-                    # Add residual points to residual subplot
-                    if item.series_type == SeriesType.CHECKPOINTS:
-                        marker = markers[idx % len(markers)]
-                        ax_resid.scatter(
-                            ref_times,
-                            residuals,
-                            marker=marker,
-                            s=20,
-                            label=f"{instance.label}"
-                        )
-                    else:
-                        # Plot lines
-                        marker = markers[idx % len(markers)] if len(ref_times) < 15 else None
-                        linestyle = linestyles[(idx + len(scenario.outputs)) % len(linestyles)]
-                        ax_resid.plot(
-                            ref_times,
-                            residuals,
-                            linewidth=1,
-                            marker=marker,
-                            linestyle=linestyle,
-                            label=f"{instance.label}"
-                        )
-
-                    # Append detailed diffs for CSV
-                    for t, mval, rval, res in zip(ref_times, interp_vals, ref_values, residuals):
-                        abs_diff = abs(res)
-                        rel_diff = (res / rval) if rval != 0 else float('nan')
-                        diffs_rows.append({
-                            'scenario': scenario.id,
-                            'output': output.id,
-                            'reference_label': item.label,
-                            'reference_series': series.id,
-                            'time': t,
-                            'instance': instance.id,
-                            'instance_label': instance.label,
-                            'model_value': mval,
-                            'ref_value': rval,
-                            'residual': res,
-                            'abs_diff': abs_diff,
-                            'rel_diff': rel_diff
-                        })
+                # Append detailed diffs for CSV
+                for t, mval, rval, res in zip(ref_times, interp_vals, ref_values, residuals):
+                    abs_diff = abs(res)
+                    rel_diff = (res / rval) if rval != 0 else float('nan')
+                    diffs_rows.append({
+                        'scenario': scenario.id,
+                        'output': output.id,
+                        'reference_label': item.label,
+                        'reference_series': series_id,
+                        'time': t,
+                        'instance': instance.id,
+                        'instance_label': instance.label,
+                        'model_value': mval,
+                        'ref_value': rval,
+                        'residual': res,
+                        'abs_diff': abs_diff,
+                        'rel_diff': rel_diff
+                    })
 
         # Layout and labels
         ax_series.set_xlabel(f'Time ({str(scenario.time_unit)})')
