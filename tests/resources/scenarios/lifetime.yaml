@@ -1,0 +1,41 @@
+id: lifetime
+label: lifetime
+model_instances:
+  - id: lifetime
+    label: lifetime
+    model_path: tests/resources/models/simple_lifetime/simple_lifetime.annotated.sbml
+    param_file: tests/resources/models/simple_lifetime/simple_lifetime.params.csv
+    target_mappings:
+      AGut: AGut
+      ABlood: ABlood
+
+scenarios:
+  - id: oral_repeated
+    label: Oral repeated dose
+    time_unit: DAY
+    amount_unit: MICROGRAMS
+    duration: 10000
+    evaluation_resolution: 1
+    parameters:
+        Age: 2
+        AgeRef: 10
+        BWRef: 35
+    dosing_events:
+      - type: repeated_bolus
+        target: AGut
+        amount: 1
+        time: 0
+        interval: 1
+    outputs:
+      - id: Age
+        label: Age
+        output: Age
+      - id: BW
+        label: Bodyweight
+        output: BW
+      - id: ABlood
+        label: Amount in blood
+        output: ABlood
+      - id: ALiver
+        label: Amount in liver
+        output: ALiver

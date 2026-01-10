@@ -15,6 +15,7 @@ class ScenarioSimulationTests(unittest.TestCase):
     @parameterized.expand([
         ("dermal.yaml"),
         ("inhalation.yaml"),
+        ("lifetime.yaml"),
         ("liver.yaml"),
         ("oral.yaml")
     ])
