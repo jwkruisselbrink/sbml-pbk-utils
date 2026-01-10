@@ -78,14 +78,14 @@ class ReferenceData:
         file_path: path to CSV containing the reference series.
         series_type: representation style (timeline or checkpoints).
         time_unit: time unit of the reference data.
-        outputs: list of Output entries describing available series columns.
+        mappings: dictionary mapping scenario outputs to columns in the reference file.
     """
     id: str
     label: str
     file_path: str
     series_type: SeriesType
     time_unit: TimeUnit
-    outputs: List[Output]
+    mappings: Dict[str, str]
 
 @dataclass
 class Scenario:
