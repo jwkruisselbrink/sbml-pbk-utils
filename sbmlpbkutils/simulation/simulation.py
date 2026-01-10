@@ -71,22 +71,23 @@ def load_config(path: str) -> SimulationConfig:
 
         scenarios.append(
             Scenario(
-                id=s["id"],
-                label=s["label"],
-                duration=s["duration"],
-                evaluation_resolution=s["evaluation_resolution"],
+                id=s['id'],
+                label=s['label'],
+                duration=s['duration'],
+                evaluation_resolution=s['evaluation_resolution'],
                 initial_states=initial_states,
+                parameters=s['parameters'] if 'parameters' in s.keys() else None,
                 dosing_events=dosing_events,
                 outputs=outputs,
                 reference_data=reference_data,
-                time_unit=TimeUnit[s["time_unit"]],
-                amount_unit=AmountUnit[s["amount_unit"]],
+                time_unit=TimeUnit[s['time_unit']],
+                amount_unit=AmountUnit[s['amount_unit']],
             )
         )
 
     return SimulationConfig(
-        id=data["id"],
-        label=data["label"],
+        id=data['id'],
+        label=data['label'],
         model_instances=model_instances,
         scenarios=scenarios
     )
@@ -202,13 +203,23 @@ def run_scenario(
     if instance.param_file is not None:
         load_parametrisation(rr_model, instance.param_file)
 
+    # Set/override parameters defined by scenario
+    if scenario.parameters:
+        for param, value in scenario.parameters.items():
+            target = (instance.target_mappings[param]
+                if instance.target_mappings is not None
+                    and param in instance.target_mappings.keys()
+                else param
+            )
+            rr_model[param] = value
+
     # Define the output selections
-    output_selections = set(
+    output_selections = [
         instance.target_mappings.get(output.id, output.id)
             if instance.target_mappings is not None else output.id
         for output in scenario.outputs
-    )
-    selections = ['time'] + list(output_selections)
+    ]
+    selections = ['time'] + output_selections
 
     # Determine duration and steps
     duration = int(scenario.duration * time_unit_multiplier)
@@ -316,7 +327,7 @@ def plot_scenario_results(
 
         # Set plot layout
         ax.set_xlabel(f'Time ({str(scenario.time_unit)})', fontsize=12, fontweight='bold')
-        ax.set_ylabel(f'{output.label} ({str(scenario.amount_unit)})', fontsize=12, fontweight='bold')
+        ax.set_ylabel(f'{output.label}', fontsize=12, fontweight='bold')
         ax.set_title(f'{scenario.label} - {output.label}', fontsize=14)
         ax.grid(True, alpha=0.3, linestyle='--')
         ax.set_xlim(left=0)
@@ -468,7 +479,7 @@ def plot_scenario_differences(
 
         # Layout and labels
         ax_series.set_xlabel(f'Time ({str(scenario.time_unit)})')
-        ax_series.set_ylabel(f'{output.label} ({str(scenario.amount_unit)})')
+        ax_series.set_ylabel(f'{output.label}')
         ax_series.set_title(f'{scenario.label} - {output.label} (model vs reference)')
         ax_series.grid(True, alpha=0.3, linestyle='--')
         ax_series.legend()
