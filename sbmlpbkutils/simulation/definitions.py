@@ -99,6 +99,7 @@ class Scenario:
     duration: int
     evaluation_resolution: int
     initial_states: List[InitialState] | None
+    parameters: Dict[str,float] | None
     dosing_events: List[DosingEvent] | None
     outputs: List[Output]
     reference_data: List[ReferenceData] | None
