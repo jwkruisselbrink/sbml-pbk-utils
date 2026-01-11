@@ -42,7 +42,7 @@ A simulation configuration YAML file follows a simple hierarchical layout. The s
     - **label** *[string | required]*
     - **model_path** *[string | required]* - Path to the SBML model file.
     - **param_file** *[string | optional]* - Path to a CSV with parameter values.
-    - **target_mappings** *[mapping (optional)]* - Map scenario output ids to model variable ids (e.g. `AGut: AGut`). Useful when a scenario output id differs from the actual variable id in the SBML model.
+    - **target_mappings** *[mapping | optional]* - Map scenario output ids to model variable ids (e.g. `AGut: AGut`). Useful when a scenario output id differs from the actual variable id in the SBML model.
 - **scenarios** *[list]*
   - List of scenarios to execute. Each scenario is an object with:
     - **id** *[string | required]*
@@ -52,10 +52,12 @@ A simulation configuration YAML file follows a simple hierarchical layout. The s
     - **duration** *[number | required]* - Duration of the scenario in `time_unit`.
     - **evaluation_resolution** *[number | required]* - Sampling resolution (higher values produce finer time sampling). Controls output resolution; for example, `evaluation_resolution: 24` with `duration: 10` (and `time_unit: DAY`) produces hourly samples over 10 days.
     - **initial_states** *[list | optional]* - List of `{ target, amount }` objects to set initial amounts.
+    - **parameters** *[mapping | optional]* - List of parameter mappings specific for the scenario (overrides model instance parametrisations). For example, the mapping `BW: 75` could be used to set model parameter `BW` to a value of 75 for specific scenarios.
     - **dosing_events** *[list | optional]* - List of dosing event objects. Each dosing event commonly includes:
       - **type** *[enum | required]* - Type of dosing event. Options are `single_bolus`, `repeated_bolus`, `single_continuous`, `repeated_continuous`.
       - **target** *[string | required]* - Model variable to dose.
       - **amount** *[number | required]* - Dose amount, in scenario amount unit.
+      - **adjustment** *[string | optional]* - Multiplicative adjustment of the dosing amount using specified model variable. For example, use `adjustment: BW` to specify bodyweight adjusted doses.
       - **time** *[number | required]* - Start time of dosing event(s) (in scenario time unit).
       - **duration** *[number | optional]* - For continuous dosing, duration of dosing events (in scenario time unit).
       - **interval** *[number | optional]* - For repeated dosing, time interval between dosing events (in scenario time unit).
@@ -67,7 +69,7 @@ A simulation configuration YAML file follows a simple hierarchical layout. The s
       - **file_path** *[string | required]* - Path to CSV file.
       - **series_type** *[enum | required]* - Type of reference data. Options are `CHECKPOINTS` for sparse datapoints, or `TIMELINE` for (high resolution) timeseries. Controls whether data is plotted as scatter plot (for checkpoints) or line plot (for timeline).
       - **time_unit** *[enum | required]* - Time unit of the reference file.
-      - **outputs** *[list]* - List of `{ id, label, output }` describing column mappings of CSV to outputs.
+      - **mappings** *[mapping | optional]* - Map scenario output ids to colums of the reference CSV file. For example, the mapping `ALiver: QLiver` maps the reference column `QLiver` to output `ALiver`.
 
 ## Example YAML simulation configuration
 
@@ -99,10 +101,13 @@ scenarios:
     amount_unit: MICROGRAMS
     duration: 10
     evaluation_resolution: 24
+    parameters:
+        BW: 70
     dosing_events:
       - type: repeated_bolus
         target: AGut
         amount: 1
+        adjustment: BW
         time: 0
         interval: 1
     outputs:
@@ -118,13 +123,9 @@ scenarios:
         file_path: example/reference_data.csv
         series_type: TIMELINE
         time_unit: DAY
-        outputs:
-        - id: ABlood
-          label: Amount in blood
-          output: ABlood
-        - id: ALiver
-          label: Amount in liver
-          output: ALiver
+        mappings:
+          ABlood: QBlood
+          ALiver: QLiver
 ```
 
 ## Parametrisation CSV files
