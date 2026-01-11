@@ -35,6 +35,7 @@ class DosingEvent:
         duration: duration for continuous doses (optional).
         interval: repeat interval for repeated doses (optional).
         until: last time to apply repeated doses (optional).
+        adjustment: multiplicative adjustment using specified model variable (optional).
     """
     type: str
     target: str
@@ -43,6 +44,7 @@ class DosingEvent:
     duration: float | None = None
     interval: float | None = None
     until: float | None = None
+    adjustment: str | None = None
 
 @dataclass
 class InitialState:

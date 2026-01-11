@@ -24,6 +24,7 @@ scenarios:
       - type: repeated_bolus
         target: AGut
         amount: 1
+        adjustment: BW
         time: 0
         interval: 1
     outputs:
