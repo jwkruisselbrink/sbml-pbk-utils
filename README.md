@@ -24,10 +24,10 @@ Detailed usage instructions and examples are provided in the respective document
 
 Given the experimental status of this package, there are currently no plans to publish it on PyPI. The package can be installed directly from GitHub using `pip`.
 
-To install a specific version, use the version tag. For instance, for version `v0.37.0`, use:
+To install a specific version, use the version tag. For instance, for version `v0.38.0`, use:
 
 ````
-pip install git+https://github.com/jwkruisselbrink/sbml-pbk-utils.git@v0.37.0
+pip install git+https://github.com/jwkruisselbrink/sbml-pbk-utils.git@v0.38.0
 ````
 
 To install the latest version available on the main Git branch, type:
