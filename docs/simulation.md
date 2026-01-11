@@ -73,7 +73,7 @@ A simulation configuration YAML file follows a simple hierarchical layout. The s
 
 ## Example YAML simulation configuration
 
-The code below shows an example YAML configuration file. It runs a single scenario `oral_repeated` for two model instances (`model_1` and `model_2`). The scenario is defined for `10` days with an `evaluation_resolution` of `24` (e.g. 24 samples per day, resulting in hourly sampling across the duration). A repeated bolus dose of amount `1` μg is applied to the `AGut` target at time `0` and repeated every `1` day. The simulation records two outputs (`ABlood` and `ALiver`) for each instance and can compare the results to the timeline reference series located at `example/reference_data.csv`.
+The code below shows an example YAML configuration file. It runs a single scenario `oral_repeated` for two model instances (`model_1` and `model_2`). The scenario is defined for `10` days with an `evaluation_resolution` of `24` (e.g. 24 samples per day, resulting in hourly sampling across the duration). A repeated bolus dose of amount `1` μg/kg BW is applied to the `AGut` target at time `0` and repeated every `1` day. The simulation records two outputs (`ABlood` and `ALiver`) for each instance. The results are compared to reference series stored in the file `example/reference_data.csv` (with fields `QBlood` and `QLiver` mapping to outputs `ABlood` and `ALiver`).
 
 ```yaml
 id: oral
