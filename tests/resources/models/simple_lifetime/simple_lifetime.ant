@@ -4,6 +4,11 @@ end
 
 model simple_lifetime()
 
+  model notes ```
+    Simple lifetime PBK model with dynamic BW.
+  ```
+  model description "https://doi.org/10.1016/j.envres.2024.120393"
+
   # Parameters
 
   ## Physiology

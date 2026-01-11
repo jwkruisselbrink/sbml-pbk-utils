@@ -7,6 +7,7 @@ mathematical expressions. Math can be rendered as plain text or LaTeX.
 
 from enum import Enum
 from pathlib import Path
+from typing import List
 
 import libsbml as ls
 import pandas as pd
@@ -65,11 +66,25 @@ class PbkModelReportGenerator():
             # Write the title
             f.write(f"# {name}\n\n")
 
+            # Model notes
+            if model.isSetNotes():
+                f.write("## Notes\n\n")
+                f.write(f"{model.getNotesString()}\n\n")
+
             # Write the model overview table
             f.write("## Overview\n\n")
             table = self.get_model_overview()
             f.write(table.to_markdown(index=False))
             f.write("\n\n")
+
+            # Write the model creators table
+            f.write("## Creators\n\n")
+            table = self.get_model_creators()
+            if table is not None:
+                f.write(table.to_markdown(index=False))
+                f.write("\n\n")
+            else:
+                f.write("*not specified*\n\n")
 
             # Generate and write the diagram
             f.write("## Diagram\n\n")
@@ -87,7 +102,7 @@ class PbkModelReportGenerator():
 
             # Write compartment infos table
             f.write("## Compartments\n\n")
-            if (model.getNumCompartments() > 0):
+            if model.getNumCompartments() > 0:
                 table = self.get_compartment_infos()
                 f.write(table.to_markdown(index=False))
                 f.write("\n\n")
@@ -96,7 +111,7 @@ class PbkModelReportGenerator():
 
             # Write compartment infos table
             f.write("## Species\n\n")
-            if (model.getNumSpecies() > 0):
+            if model.getNumSpecies() > 0:
                 table = self.get_species_infos()
                 f.write(table.to_markdown(index=False))
                 f.write("\n\n")
@@ -110,7 +125,11 @@ class PbkModelReportGenerator():
                 'id': [ x['id'] for x in transfer_equations ],
                 'from': [ x['reactants'][0] for x in transfer_equations ],
                 'to': [ x['products'][0] for x in transfer_equations ],
-                'equation': [ f"${x['equation']}$" for x in transfer_equations ]
+                'equation': ([ (f"${x['equation']}$"
+                    if math_render_mode == RenderMode.LATEX
+                    else f"{x['equation']}")
+                    for x in transfer_equations ]
+                )
             })
             f.write(table.to_markdown(index=False))
             f.write("\n\n")
@@ -119,35 +138,50 @@ class PbkModelReportGenerator():
             f.write("## ODEs\n\n")
             odes = self.get_odes_as_str(math_render_mode)
             for _, equation in odes.items():
-                f.write(f"${equation}$\n\n")
+                if math_render_mode == RenderMode.LATEX:
+                    f.write(f"${equation}$\n\n")
+                else:
+                    f.write(f"{equation}\n\n")
 
             # Write rate rules
             rate_rules = self.get_rate_rules_as_str(math_render_mode)
             if len(rate_rules) > 0:
                 f.write("## Rate rules\n\n")
                 for _, equation in rate_rules.items():
-                    f.write(f"${equation}$\n\n")
+                    if math_render_mode == RenderMode.LATEX:
+                        f.write(f"${equation}$\n\n")
+                    else:
+                        f.write(f"{equation}\n\n")
 
             # Write assignment rules
             assignment_rules = self.get_assignment_rules_as_str(math_render_mode)
             if len(assignment_rules) > 0:
                 f.write("## Assignment rules\n\n")
                 for _, equation in assignment_rules.items():
-                    f.write(f"${equation}$\n\n")
+                    if math_render_mode == RenderMode.LATEX:
+                        f.write(f"${equation}$\n\n")
+                    else:
+                        f.write(f"{equation}\n\n")
 
             # Write assignment rules
             initial_assignments = self.get_initial_assigments_as_str(math_render_mode)
             if len(initial_assignments) > 0:
                 f.write("## Initial assignments\n\n")
                 for _, equation in initial_assignments.items():
-                    f.write(f"${equation}$\n\n")
+                    if math_render_mode == RenderMode.LATEX:
+                        f.write(f"${equation}$\n\n")
+                    else:
+                        f.write(f"{equation}\n\n")
 
             # Write functions
             function_defs = self.get_function_as_str(math_render_mode)
             if len(function_defs) > 0:
                 f.write("## Function definitions\n\n")
                 for _, equation in function_defs.items():
-                    f.write(f"${equation}$\n\n")
+                    if math_render_mode == RenderMode.LATEX:
+                        f.write(f"${equation}$\n\n")
+                    else:
+                        f.write(f"{equation}\n\n")
 
             # Write compartment infos table
             f.write("## Parameters\n\n")
@@ -157,15 +191,6 @@ class PbkModelReportGenerator():
                 f.write("\n\n")
             else:
                 f.write("*no parameters defined in the model*\n\n")
-
-            # Write the model creators table
-            f.write("## Creators\n\n")
-            table = self.get_model_creators()
-            if table is not None:
-                f.write(table.to_markdown())
-                f.write("\n\n")
-            else:
-                f.write("*not specified*\n\n")
 
     def get_model_creators(self) -> pd.DataFrame | None:
         """Return a :class:`pandas.DataFrame` of model creators or ``None``.
