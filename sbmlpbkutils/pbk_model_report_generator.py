@@ -66,6 +66,15 @@ class PbkModelReportGenerator():
             # Write the title
             f.write(f"# {name}\n\n")
 
+            # Write the model creators table
+            f.write("## Creators\n\n")
+            table = self.get_model_creators()
+            if table is not None:
+                f.write(table.to_markdown(index=False))
+                f.write("\n\n")
+            else:
+                f.write("*not specified*\n\n")
+
             # Model notes
             if model.isSetNotes():
                 f.write("## Notes\n\n")
@@ -76,15 +85,6 @@ class PbkModelReportGenerator():
             table = self.get_model_overview()
             f.write(table.to_markdown(index=False))
             f.write("\n\n")
-
-            # Write the model creators table
-            f.write("## Creators\n\n")
-            table = self.get_model_creators()
-            if table is not None:
-                f.write(table.to_markdown(index=False))
-                f.write("\n\n")
-            else:
-                f.write("*not specified*\n\n")
 
             # Generate and write the diagram
             f.write("## Diagram\n\n")
