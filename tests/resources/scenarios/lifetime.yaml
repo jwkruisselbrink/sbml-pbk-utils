@@ -19,7 +19,7 @@ scenarios:
     parameters:
         Age: 2
         AgeRef: 10
-        BWRef: 35
+        BWRef: 50
     dosing_events:
       - type: repeated_bolus
         target: AGut
