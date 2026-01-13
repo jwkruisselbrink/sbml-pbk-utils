@@ -39,8 +39,17 @@ class ScenarioSimulationTests(unittest.TestCase):
             logger = logger
         )
 
-        # Run simulations
+        # Plot results
         plot_simulation_results(
             config = config,
             out_path = out_path
+        )
+
+        # Plot results with combined outputs
+        plot_simulation_results(
+            config = config,
+            out_path = out_path,
+            plot_reference_comparison = False,
+            combine_outputs = True,
+            ncols_combined = 2
         )

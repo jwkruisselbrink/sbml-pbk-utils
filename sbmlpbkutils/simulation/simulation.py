@@ -118,7 +118,10 @@ def run_config(
 
 def plot_simulation_results(
     config: SimulationConfig,
-    out_path: str
+    out_path: str,
+    plot_reference_comparison: bool = True,
+    combine_outputs: bool = False,
+    ncols_combined: int = 4
 ):
     """Generate plots for all scenarios in a configuration.
 
@@ -129,10 +132,12 @@ def plot_simulation_results(
         plot_scenario_results(
             config.model_instances,
             scenario,
-            out_path
+            out_path,
+            combine_outputs,
+            ncols_combined
         )
 
-        if scenario.reference_data:
+        if plot_reference_comparison and scenario.reference_data:
             plot_scenario_differences(
                 config.model_instances,
                 scenario,
@@ -258,8 +263,10 @@ def load_parametrisation(model, filename):
 def plot_scenario_results(
     instances: list[ModelInstance],
     scenario: Scenario,
-    out_path: str
-):
+    out_path: str,
+    combine_outputs: bool = False,
+    ncols_combined: int = 4
+) -> None:
     """Plot time series results for a scenario across model instances.
 
     Reads per-instance CSV results from `out_path` and writes PNG files for
@@ -269,10 +276,35 @@ def plot_scenario_results(
     linestyles = ['-', '--', '-.', ':']
     markers = ['x', 'o', 's', '*', '^', 'v', 'p', '.']
 
+    outputs = scenario.outputs
+    n_outputs = len(outputs)
+    scenario_label = scenario.label if scenario.label else scenario.id
+
+    # Figure setup for combined mode
+    if combine_outputs:
+        nrows = int(np.ceil(n_outputs / ncols_combined))
+        fig, axes = plt.subplots(
+            nrows=nrows,
+            ncols=ncols_combined,
+            figsize=(4 * ncols_combined, 3 * nrows),
+            squeeze=False
+        )
+    else:
+        fig = None
+        axes = None
+        nrows = 0
+
     # Iterate over outputs
-    for output in scenario.outputs:
-        # Create figure
-        (_, ax) = plt.subplots(figsize=(7, 5))
+    for out_idx, output in enumerate(outputs):
+
+        if combine_outputs and axes is not None:
+            # Create subplot
+            row = out_idx // ncols_combined
+            col = out_idx % ncols_combined
+            ax = axes[row][col]
+        else:
+            # Create figure
+            _, ax = plt.subplots(figsize=(7, 5))
 
         # Loop over instance results and plot
         # Cycle through a small set of linestyles so multiple instances are
@@ -326,26 +358,39 @@ def plot_scenario_results(
                         )
 
         # Set plot layout
+        output_label = output.label if output.label else output.id
         ax.set_xlabel(f'Time ({str(scenario.time_unit)})', fontsize=12, fontweight='bold')
-        ax.set_ylabel(f'{output.label}', fontsize=12, fontweight='bold')
-        ax.set_title(f'{scenario.label} - {output.label}', fontsize=14)
+        ax.set_ylabel(output_label, fontsize=12, fontweight='bold')
         ax.grid(True, alpha=0.3, linestyle='--')
         ax.set_xlim(left=0)
         ax.set_ylim(bottom=0)
         ax.ticklabel_format(style='sci', axis='y', scilimits=(0, 0))
 
-        # Set output file
-        out_file = os.path.join(out_path, f"{scenario.id}_{output.id}.png")
-        plt.tight_layout()
-        plt.legend()
-        plt.savefig(out_file)
-        plt.close()
+        if not combine_outputs:
+            ax.set_title(f'{scenario_label} - {output_label}', fontsize=14)
+            out_file = os.path.join(out_path, f"{scenario.id}_{output.id}.png")
+            ax.legend()
+            plt.tight_layout()
+            plt.savefig(out_file)
+            plt.close()
+        else:
+            ax.set_title(f'{output_label}', fontsize=14)
+
+    # Clean up empty axes and save combined figure
+    if combine_outputs and fig is not None and axes is not None:
+        for idx in range(n_outputs, nrows * ncols_combined):
+            fig.delaxes(axes[idx // ncols_combined][idx % ncols_combined])
+
+        fig.suptitle(scenario_label, fontsize=14)
+        fig.tight_layout(rect=(0, 0, 1, 0.96))
+        fig.savefig(os.path.join(out_path, f"{scenario.id}_combined_results.png"))
+        plt.close(fig)
 
 def plot_scenario_differences(
     instances: list[ModelInstance],
     scenario: Scenario,
     out_path: str
-):
+) -> None:
     """Compare instance results with reference data and plot differences.
 
     For each output that has reference data, this function:
