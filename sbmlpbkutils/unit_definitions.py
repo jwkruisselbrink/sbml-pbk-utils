@@ -1093,6 +1093,21 @@ unit_definitions = [
         ]
     },
     {
+        "id" : "MicroGM_PER_DAY_PER_L",
+        "qudt" : "",
+        "UCUM" : "ug/d/L",
+        "synonyms" : [
+            "ug/d/L",
+            "ug/(d.L)",
+            "ug.L-1.L-1"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -6 },
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
+            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": 0 },
+        ]
+    },
+    {
         "id" : "MicroGM_PER_DAY_PER_MilliL",
         "qudt" : "",
         "UCUM" : "ug/d/mL",
