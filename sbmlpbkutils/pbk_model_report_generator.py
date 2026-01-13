@@ -7,7 +7,6 @@ mathematical expressions. Math can be rendered as plain text or LaTeX.
 
 from enum import Enum
 from pathlib import Path
-from typing import List
 
 import libsbml as ls
 import pandas as pd
@@ -137,51 +136,76 @@ class PbkModelReportGenerator():
             # Write ODEs
             f.write("## ODEs\n\n")
             odes = self.get_odes_as_str(math_render_mode)
-            for _, equation in odes.items():
-                if math_render_mode == RenderMode.LATEX:
+            if math_render_mode == RenderMode.LATEX:
+                for _, equation in odes.items():
                     f.write(f"${equation}$\n\n")
-                else:
-                    f.write(f"{equation}\n\n")
+            else:
+                table = pd.DataFrame({
+                    'species': [ key for key, _ in odes.items() ],
+                    'equation': [ equation.replace("\n", "") for _, equation in odes.items() ]
+                })
+                f.write(table.to_markdown(index=False))
+                f.write("\n\n")
 
             # Write rate rules
             rate_rules = self.get_rate_rules_as_str(math_render_mode)
             if len(rate_rules) > 0:
                 f.write("## Rate rules\n\n")
-                for _, equation in rate_rules.items():
-                    if math_render_mode == RenderMode.LATEX:
+                if math_render_mode == RenderMode.LATEX:
+                    for _, equation in rate_rules.items():
                         f.write(f"${equation}$\n\n")
-                    else:
-                        f.write(f"{equation}\n\n")
+                else:
+                    table = pd.DataFrame({
+                        'variable': [ key for key, _ in rate_rules.items() ],
+                        'rule': [ equation for _, equation in rate_rules.items() ]
+                    })
+                    f.write(table.to_markdown(index=False))
+                    f.write("\n\n")
 
             # Write assignment rules
             assignment_rules = self.get_assignment_rules_as_str(math_render_mode)
             if len(assignment_rules) > 0:
                 f.write("## Assignment rules\n\n")
-                for _, equation in assignment_rules.items():
-                    if math_render_mode == RenderMode.LATEX:
-                        f.write(f"${equation}$\n\n")
-                    else:
-                        f.write(f"{equation}\n\n")
+                if math_render_mode == RenderMode.LATEX:
+                    for variable, equation in assignment_rules.items():
+                        f.write(f"${variable} = {equation}$\n\n")
+                else:
+                    table = pd.DataFrame({
+                        'variable': [ key for key, _ in assignment_rules.items() ],
+                        'assignment': [ equation for _, equation in assignment_rules.items() ]
+                    })
+                    f.write(table.to_markdown(index=False))
+                    f.write("\n\n")
 
             # Write assignment rules
             initial_assignments = self.get_initial_assigments_as_str(math_render_mode)
             if len(initial_assignments) > 0:
                 f.write("## Initial assignments\n\n")
-                for _, equation in initial_assignments.items():
-                    if math_render_mode == RenderMode.LATEX:
-                        f.write(f"${equation}$\n\n")
-                    else:
-                        f.write(f"{equation}\n\n")
+                if math_render_mode == RenderMode.LATEX:
+                    for variable, equation in initial_assignments.items():
+                        f.write(f"${variable} ={equation}$\n\n")
+                else:
+                    table = pd.DataFrame({
+                        'variable': [ key for key, _ in initial_assignments.items() ],
+                        'assignment': [ equation for _, equation in initial_assignments.items() ]
+                    })
+                    f.write(table.to_markdown(index=False))
+                    f.write("\n\n")
 
             # Write functions
             function_defs = self.get_function_as_str(math_render_mode)
             if len(function_defs) > 0:
                 f.write("## Function definitions\n\n")
-                for _, equation in function_defs.items():
-                    if math_render_mode == RenderMode.LATEX:
+                if math_render_mode == RenderMode.LATEX:
+                    for _, equation in function_defs.items():
                         f.write(f"${equation}$\n\n")
-                    else:
-                        f.write(f"{equation}\n\n")
+                else:
+                    table = pd.DataFrame({
+                        'function': [ key for key, _ in function_defs.items() ],
+                        'definition': [ equation for _, equation in function_defs.items() ]
+                    })
+                    f.write(table.to_markdown(index=False))
+                    f.write("\n\n")
 
             # Write compartment infos table
             f.write("## Parameters\n\n")
@@ -490,7 +514,7 @@ class PbkModelReportGenerator():
             variable = initial_assignment.getId()
             math = initial_assignment.getMath()
             equation = PbkModelReportGenerator._ast_node_to_str(math, render_mode)
-            result[variable] = f'{variable} = {equation}'
+            result[variable] = equation
 
         return result
 
@@ -513,7 +537,7 @@ class PbkModelReportGenerator():
             variable = rule.getVariable()
             math = rule.getMath()
             equation = PbkModelReportGenerator._ast_node_to_str(math, render_mode)
-            result[variable] = f'{variable} = {equation}'
+            result[variable] = equation
 
         return result
 
