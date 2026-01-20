@@ -67,9 +67,9 @@ class ModelAnnotationTests(unittest.TestCase):
             validator = PbkModelValidator()
             validator.validate(sbml_file, logger)
 
-    def test_generate(self):
+    def test_export_annotations_csv(self):
         generator = AnnotationsTemplateGenerator()
-        models = glob.glob(f'{TEST_MODELS_PATH}/**/*[!annotated].sbml', recursive=True)
+        models = glob.glob(f'{TEST_MODELS_PATH}/**/*.sbml', recursive=True)
         for sbml_file in models:
             document = ls.readSBML(sbml_file)
             model = document.getModel()

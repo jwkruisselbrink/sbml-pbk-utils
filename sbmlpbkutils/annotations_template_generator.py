@@ -116,7 +116,9 @@ class AnnotationsTemplateGenerator:
         """Generates an annotations data table 
         file and write results to the specified out file."""
         dt = []
-        dt_model = self._get_document_level_terms(model)
+        dt_doc = self._get_document_level_terms(model)
+        dt.extend(dt_doc)
+        dt_model = self._get_model_level_terms(model)
         dt.extend(dt_model)
         dt_compartments = self._get_compartment_terms(model)
         dt.extend(dt_compartments)
@@ -185,6 +187,21 @@ class AnnotationsTemplateGenerator:
             "",
             ""
         ])
+        return dt
+
+    def _get_model_level_terms(
+        self,
+        model: ls.Model
+    ):
+        element_type="model"
+        dt = []
+        required_qualifiers = ['BQB_HAS_PROPERTY', 'BQB_HAS_TAXON']
+        element_terms = self._get_element_terms(
+            model,
+            element_type,
+            required_qualifiers
+        )
+        dt.extend(element_terms)
         return dt
 
     def _get_compartment_terms(
@@ -262,12 +279,16 @@ class AnnotationsTemplateGenerator:
             if (len(uris) == 0 and qualifier_id in required_qualifiers):
                 uris = ['']
 
+            unit_str = (get_ucum_unit_string(element.getUnits())
+                if isinstance(element, (ls.Compartment, ls.Species, ls.Parameter))
+                else ''
+            )
             for uri in uris:
                 dt.append([
                     element.getId(),
                     element_type,
                     (name if rows == 0 else ''),
-                    (get_ucum_unit_string(element.getUnits()) if rows == 0 else ''),
+                    (unit_str if rows == 0 else ''),
                     "rdf",
                     qualifier_id,
                     uri,
