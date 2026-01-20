@@ -172,15 +172,22 @@ class PbkOntologyCheckerTests(unittest.TestCase):
         # Skin compartment (should be false)
         self.assertFalse(checker.check_is_inhalation_input_compartment("http://purl.obolibrary.org/obo/PBPKO_00470"))
 
-    def test_is_parameter(self):
+    @parameterized.expand([
+        ("http://purl.obolibrary.org/obo/PBPKO_00477", False), # gut compartment
+        ("http://purl.obolibrary.org/obo/PBPKO_00029", True),
+        ("http://purl.obolibrary.org/obo/PBPKO_00078", True),
+        ("http://purl.obolibrary.org/obo/PBPKO_00650", True),
+        ("http://purl.obolibrary.org/obo/PBPKO_00", False),
+        ("http://purl.obolibrary.org/obo/PBPKO_00446", False)
+    ])
+    def test_is_parameter(self, uri, expected):
         checker = PbkOntologyChecker()
-        self.assertFalse(checker.check_is_parameter("http://purl.obolibrary.org/obo/PBPKO_00477"))
-        self.assertTrue(checker.check_is_parameter("http://purl.obolibrary.org/obo/PBPKO_00029"))
-        self.assertTrue(checker.check_is_parameter("http://purl.obolibrary.org/obo/PBPKO_00078"))
-        self.assertFalse(checker.check_is_parameter("XXXX"))
+        self.assertEqual(checker.check_is_parameter(uri), expected)
+
+    def test_is_parameter_all(self):
+        checker = PbkOntologyChecker()
         result = checker.get_parameter_classes()
         for item in result:
-            #print(f'[{item.iri}] - {item.label}')
             self.assertTrue(checker.check_is_parameter(item.iri))
 
     def test_is_biochemical_parameter(self):
