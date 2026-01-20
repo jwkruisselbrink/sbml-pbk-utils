@@ -2,7 +2,6 @@ import pandas as pd
 import libsbml as ls
 
 from . import PbkModelAnnotator
-from . import term_definitions
 from . import get_ucum_unit_string
 
 _qualifier_definitions = [
@@ -112,19 +111,18 @@ class AnnotationsTemplateGenerator:
 
     def generate(
         self,
-        model: ls.Model,
-        try_fill: bool = True
+        model: ls.Model
     ):
         """Generates an annotations data table 
         file and write results to the specified out file."""
         dt = []
         dt_model = self._get_document_level_terms(model)
         dt.extend(dt_model)
-        dt_compartments = self._get_compartment_terms(model, try_fill)
+        dt_compartments = self._get_compartment_terms(model)
         dt.extend(dt_compartments)
-        dt_species = self._get_species_terms(model, try_fill)
+        dt_species = self._get_species_terms(model)
         dt.extend(dt_species)
-        dt_parameters = self._get_parameter_terms(model, try_fill)
+        dt_parameters = self._get_parameter_terms(model)
         dt.extend(dt_parameters)
         terms = pd.DataFrame(
             dt,
@@ -191,8 +189,7 @@ class AnnotationsTemplateGenerator:
 
     def _get_compartment_terms(
         self,
-        model: ls.Model,
-        try_fill: bool
+        model: ls.Model
     ) -> list[str]:
         element_type="compartment"
         required_qualifiers = ['BQM_IS']
@@ -202,16 +199,14 @@ class AnnotationsTemplateGenerator:
             element_terms = self._get_element_terms(
                 element,
                 element_type,
-                required_qualifiers,
-                try_fill
+                required_qualifiers
             )
             dt.extend(element_terms)
         return dt
 
     def _get_species_terms(
         self,
-        model: ls.Model,
-        try_fill: bool
+        model: ls.Model
     ) -> list[str]:
         element_type="species"
         required_qualifiers = ['BQM_IS', 'BQB_IS']
@@ -221,16 +216,14 @@ class AnnotationsTemplateGenerator:
             element_terms = self._get_element_terms(
                 element,
                 element_type,
-                required_qualifiers,
-                try_fill
+                required_qualifiers
             )
             dt.extend(element_terms)
         return dt
 
     def _get_parameter_terms(
         self,
-        model: ls.Model,
-        try_fill: bool
+        model: ls.Model
     ) -> list[str]:
         element_type="parameter"
         required_qualifiers = ['BQM_IS', 'BQB_IS']
@@ -240,8 +233,7 @@ class AnnotationsTemplateGenerator:
             element_terms = self._get_element_terms(
                 element,
                 element_type,
-                required_qualifiers,
-                try_fill
+                required_qualifiers
             )
             dt.extend(element_terms)
         return dt
@@ -250,23 +242,12 @@ class AnnotationsTemplateGenerator:
         self,
         element: ls.SBase,
         element_type: str,
-        required_qualifiers: list[str],
-        try_fill: bool
+        required_qualifiers: list[str]
     ) -> list[str]:
         dt = []
         name = element.getName()
 
-        # Try to find matching term definition for element
-        matched_term = self.find_term_definition(element, element_type)
-        matched_term_resources = None
-        if matched_term is not None:
-            if try_fill and 'name' in matched_term.keys():
-                name = matched_term['name']
-            if 'resources' in matched_term.keys() and len(matched_term['resources']) > 0:
-                matched_term_resources = matched_term['resources']
-
         rows = 0
-
         for qualifier_def in _qualifier_definitions:
             qualifier = qualifier_def['qualifier']
             qualifier_type = qualifier_def['type']
@@ -275,14 +256,6 @@ class AnnotationsTemplateGenerator:
             # Get current URIs defined in the model for this qualifier
             resources = PbkModelAnnotator.get_cv_terms(element, qualifier_type, qualifier)
             uris = [resource['uri'] for resource in resources]
-
-            # Add URIs from matched term-definition
-            if (try_fill and matched_term_resources is not None):
-                for resource in matched_term_resources:
-                    if resource['qualifier'] == qualifier_id:
-                        uri = resource['URI']
-                        if uri not in uris:
-                            uris.append(uri)
 
             # If no resource URIs were found for this qualifier, but it is a required
             # qualifier, then add an empty record
@@ -303,20 +276,3 @@ class AnnotationsTemplateGenerator:
                 rows += 1
 
         return dt
-
-    def find_term_definition(
-        self,
-        element: ls.SBase,
-        element_type: str
-    ):
-        """Tries to find a resource definition for the specified element."""
-        element_id = element.getId()
-        for _, value in enumerate(term_definitions):
-            if value['element_type'] == element_type:
-                if 'recommended_id' in value.keys() \
-                    and element_id.lower() == value['recommended_id'].lower():
-                    return value
-                if 'common_identifiers' in value.keys() \
-                    and any(element_id.lower() == val.lower() for val in value['common_identifiers']):
-                    return value
-        return None

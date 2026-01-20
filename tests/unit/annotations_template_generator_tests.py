@@ -15,7 +15,7 @@ class AnnotationsTemplateGeneratorTests(unittest.TestCase):
 
         # Generate template
         generator = AnnotationsTemplateGenerator()
-        df = generator.generate(model, False)
+        df = generator.generate(model)
 
         # Check if template contains record for extent unit
         self.assertEqual(len(df.loc[df['element_id'] == 'extentUnits']), 1)

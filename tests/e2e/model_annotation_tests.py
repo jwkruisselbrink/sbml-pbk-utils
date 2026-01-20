@@ -67,30 +67,17 @@ class ModelAnnotationTests(unittest.TestCase):
             validator = PbkModelValidator()
             validator.validate(sbml_file, logger)
 
-    def test_generate_no_fill(self):
+    def test_generate(self):
         generator = AnnotationsTemplateGenerator()
         models = glob.glob(f'{TEST_MODELS_PATH}/**/*[!annotated].sbml', recursive=True)
         for sbml_file in models:
             document = ls.readSBML(sbml_file)
             model = document.getModel()
-            df = generator.generate(model, False)
+            df = generator.generate(model)
             self.assertEqual(df.ndim, 2)
             sbml_basename = os.path.basename(sbml_file)
             stem = Path(sbml_basename).stem
-            csv_file = os.path.join(self.out_path, f'{stem}_no_fill.csv')
-            df.to_csv(csv_file, index=False)
-
-    def test_generate_try_fill(self):
-        generator = AnnotationsTemplateGenerator()
-        models = glob.glob(f'{TEST_MODELS_PATH}/**/*[!annotated].sbml', recursive=True)
-        for sbml_file in models:
-            document = ls.readSBML(sbml_file)
-            model = document.getModel()
-            df = generator.generate(model, True)
-            self.assertEqual(df.ndim, 2)
-            sbml_basename = os.path.basename(sbml_file)
-            stem = Path(sbml_basename).stem
-            csv_file = os.path.join(self.out_path, f'{stem}_try_fill.csv')
+            csv_file = os.path.join(self.out_path, f'{stem}.csv')
             df.to_csv(csv_file, index=False)
 
 if __name__ == '__main__':

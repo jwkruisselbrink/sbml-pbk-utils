@@ -13,9 +13,6 @@ from .unit_definitions import (
     get_ucum_unit_string,
     create_unit_string
 )
-from .term_definitions import (
-    term_definitions
-)
 from .pbk_ontology_checker import PbkOntologyChecker
 from .pbk_model_infos_extractor import PbkModelInfosExtractor
 from .pbk_model_annotator import PbkModelAnnotator
