@@ -53,7 +53,6 @@ class PbkModelAnnotator:
             # Read annotations file
             try:
                 df = PbkModelAnnotator._read_annotations_df(annotations_file, logger)
-                df = df.replace(np.nan, None)
             except Exception as error:
                 file_basename = os.path.basename(annotations_file)
                 logger.critical("Failed to read annotations file [%s]: %s", file_basename, error)
@@ -733,9 +732,25 @@ class PbkModelAnnotator:
             )
 
         if file_format == "tsv":
-            df = pd.read_csv(file_path, sep="\t", comment="#", skip_blank_lines=True)
+            df = pd.read_csv(
+                file_path,
+                sep="\t",
+                comment="#",
+                skip_blank_lines=True,
+                keep_default_na=False,
+                na_filter=False,
+                dtype=str
+            )
         elif file_format == "csv":
-            df = pd.read_csv(file_path, sep=",", comment="#", skip_blank_lines=True)
+            df = pd.read_csv(
+                file_path,
+                sep=",",
+                comment="#",
+                skip_blank_lines=True,
+                keep_default_na=False,
+                na_filter=False,
+                dtype=str
+            )
         elif file_format == "json":
             df = pd.read_json(file_path)
         elif file_format == "xlsx":
