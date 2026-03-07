@@ -8,7 +8,7 @@ from owlready2 import World, onto_path
 
 ONTOLOGY_CACHE_DIR = "./.cache"
 PBPKO = {
-    "url": "https://raw.githubusercontent.com/InSilicoVida-Research-Lab/pbpko/refs/heads/develop/Robot/ontologies/pbpko.owl",
+    "url": "http://purl.obolibrary.org/obo/pbpko.owl",
     "filename": "pbpko.owl"
 }
 CHEBI = {
