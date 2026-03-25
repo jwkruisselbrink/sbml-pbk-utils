@@ -15,6 +15,7 @@ class TimeUnit(str, Enum):
     MINUTE = "minutes"
     HOUR = "hours"
     DAY = "days"
+    YEAR = "years"
 
     def __str__(self) -> str:
         return self.value
@@ -22,12 +23,16 @@ class TimeUnit(str, Enum):
 class AmountUnit(str, Enum):
     """Enumeration of amount units for specifying simulation scenarios.
     """
-    MICROGRAMS = "ug"
-    MILLIGRAMS = "mg"
     GRAMS = "g"
-    MICROMOLES = "umol"
-    MILLIMOLES = "mmol"
+    MILLIGRAMS = "mg"
+    MICROGRAMS = "ug"
+    NANOGRAMS = "ng"
+    PICOGRAMS = "pg"
     MOLES = "mol"
+    MILLIMOLES = "mmol"
+    MICROMOLES = "umol"
+    NANOMOLES = "nmol"
+    PICOMOLES = "pmol"
 
     def __str__(self) -> str:
         return self.value
@@ -81,6 +86,7 @@ def get_model_time_unit(model: ls.Model) -> TimeUnit:
     # Minute:   60 seconds
     # Hour:     3600 seconds
     # Day:      86400 seconds
+    # Year:      31557600 seconds
 
     # Use tolerance for float rounding
     eps = 1e-10
@@ -93,6 +99,8 @@ def get_model_time_unit(model: ls.Model) -> TimeUnit:
         return TimeUnit.HOUR
     elif abs(base_seconds - 86400) < eps:
         return TimeUnit.DAY
+    elif abs(base_seconds - 31557600) < eps:
+        return TimeUnit.YEAR
     else:
         raise Exception(
             f"Time unit [{unit_def_id}] in model [{model.getId()}] "
@@ -147,12 +155,16 @@ def get_model_amount_unit(model: ls.Model) -> AmountUnit:
         eps = 1e-12
 
         # Map to enum
-        if abs(base_grams - 1e-6) < eps:
-            return AmountUnit.MICROGRAMS
+        if abs(base_grams - 1) < eps:
+            return AmountUnit.GRAMS
         elif abs(base_grams - 1e-3) < eps:
             return AmountUnit.MILLIGRAMS
-        elif abs(base_grams - 1) < eps:
-            return AmountUnit.GRAMS
+        elif abs(base_grams - 1e-6) < eps:
+            return AmountUnit.MICROGRAMS
+        elif abs(base_grams - 1e-9) < eps:
+            return AmountUnit.NANOGRAMS
+        elif abs(base_grams - 1e-12) < eps:
+            return AmountUnit.PICOGRAMS
         else:
             raise Exception(
                 f"Amount unit [{unit_def_id}] in model [{model.getId()}] "
@@ -174,12 +186,16 @@ def get_model_amount_unit(model: ls.Model) -> AmountUnit:
 
         eps = 1e-12
 
-        if abs(base_moles - 1e-6) < eps:
-            return AmountUnit.MICROMOLES
+        if abs(base_moles - 1) < eps:
+            return AmountUnit.MOLES
         elif abs(base_moles - 1e-3) < eps:
             return AmountUnit.MILLIMOLES
-        elif abs(base_moles - 1) < eps:
-            return AmountUnit.MOLES
+        elif abs(base_moles - 1e-6) < eps:
+            return AmountUnit.MICROMOLES
+        elif abs(base_moles - 1e-9) < eps:
+            return AmountUnit.NANOMOLES
+        elif abs(base_moles - 1e-12) < eps:
+            return AmountUnit.PICOMOLES
 
         raise Exception(
             f"Amount unit [{unit_def_id}] in model [{model.getId()}] "
@@ -269,11 +285,15 @@ def get_amount_unit_alignment_factor(
         AmountUnit.GRAMS: 1.0,
         AmountUnit.MILLIGRAMS: 1e-3,
         AmountUnit.MICROGRAMS: 1e-6,
+        AmountUnit.NANOGRAMS: 1e-9,
+        AmountUnit.PICOGRAMS: 1e-12,
     }
     mole_map = {
         AmountUnit.MOLES: 1.0,
         AmountUnit.MILLIMOLES: 1e-3,
         AmountUnit.MICROMOLES: 1e-6,
+        AmountUnit.NANOMOLES: 1e-9,
+        AmountUnit.PICOMOLES: 1e-12,
     }
 
     # Same family: mass -> mass
