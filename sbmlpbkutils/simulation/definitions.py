@@ -107,6 +107,8 @@ class Scenario:
     reference_data: List[ReferenceData] | None
     time_unit: TimeUnit
     amount_unit: AmountUnit
+    molar_mass: float | None = None
+
 
 @dataclass
 class ModelInstance:

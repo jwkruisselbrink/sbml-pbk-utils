@@ -82,6 +82,7 @@ def load_config(path: str) -> SimulationConfig:
                 reference_data=reference_data,
                 time_unit=TimeUnit[s['time_unit']],
                 amount_unit=AmountUnit[s['amount_unit']],
+                molar_mass=s['molar_mass'] if 'molar_mass' in s.keys() else None
             )
         )
 
@@ -170,7 +171,7 @@ def run_scenario(
 
     # Simulation time and amount unit alignment
     time_unit_multiplier = get_model_time_unit_alignment_factor(ls_model, scenario.time_unit)
-    amount_unit_multiplier = get_amount_unit_alignment_factor(ls_model, scenario.amount_unit)
+    amount_unit_multiplier = get_amount_unit_alignment_factor(ls_model, scenario.amount_unit, scenario.molar_mass)
 
     # Set initial amounts according to scenario
     if scenario.initial_states is not None:
