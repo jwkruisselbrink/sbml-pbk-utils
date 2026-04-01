@@ -23,7 +23,7 @@ from sbmlpbkutils import (
 
 class UnitDefinitionsTests(unittest.TestCase):
 
-    def test_unit_definition(self):
+    def test_unit_definition_unit_string_in_synonyms(self):
         for definition in unit_definitions:
             unit_definition = ls.UnitDefinition(3, 2)
             set_unit_definition(unit_definition, definition)
@@ -32,6 +32,12 @@ class UnitDefinitionsTests(unittest.TestCase):
             msg = f"Generated unit string '{unit_string}' not in synonyms of unit '{definition["id"]}' [{aliases}]"
             self.assertEqual(unit_definition.getId(), definition['id'])
             self.assertIn(unit_string, definition['synonyms'], msg)
+
+    def test_unit_definition_qudt(self):
+        for definition in unit_definitions:
+            if definition['qudt']:
+                # If QUDT specified, then it should match id (except replacement of '_' with '-')
+                self.assertEqual(definition['qudt'], definition['id'].replace('_', '-'))
 
     def test_unit_definition_ucum(self):
         for definition in unit_definitions:
