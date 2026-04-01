@@ -1,7 +1,15 @@
+"""SBML unit definitions and utilities.
+
+This module defines common SBML unit definitions, utility functions for
+locating and classifying unit definitions, and helpers for converting
+libSBML unit objects to string representations.
+"""
+
 import enum
 import libsbml as ls
 
 class UnitType(enum.Enum):
+    """Categories of units used for unit classification."""
     DIMENSIONLESS = 1           # Unitless/dimensionless
     MASS_UNIT = 2               # Grams or moles
     VOLUME_UNIT = 3             # Liters
@@ -1439,6 +1447,11 @@ unit_definitions = [
 ]
 
 def get_volume_unit_definitions() -> list[dict]:
+    """Return single-part volume unit definitions.
+
+    Returns:
+    list[dict]: A list of unit definition dictionaries representing volume units.
+    """
     res = []
     for _, unit_def in enumerate(unit_definitions):
         if len(unit_def['units']) == 1 \
@@ -1446,7 +1459,13 @@ def get_volume_unit_definitions() -> list[dict]:
             res.append(unit_def)
     return res
 
+
 def get_mass_unit_definitions() -> list[dict]:
+    """Return single-part mass unit definitions.
+
+    Returns:
+    list[dict]: A list of unit definition dictionaries representing mass units.
+    """
     res = []
     for _, unit_def in enumerate(unit_definitions):
         if len(unit_def['units']) == 1 \
@@ -1454,7 +1473,13 @@ def get_mass_unit_definitions() -> list[dict]:
             res.append(unit_def)
     return res
 
+
 def get_time_unit_definitions() -> list[dict]:
+    """Return single-part time unit definitions.
+
+    Returns:
+    list[dict]: A list of unit definition dictionaries representing time units.
+    """
     res = []
     for _, unit_def in enumerate(unit_definitions):
         if len(unit_def['units']) == 1 \
@@ -1462,7 +1487,13 @@ def get_time_unit_definitions() -> list[dict]:
             res.append(unit_def)
     return res
 
+
 def get_temperature_unit_definitions() -> list[dict]:
+    """Return single-part temperature unit definitions.
+
+    Returns:
+    list[dict]: A list of unit definition dictionaries representing temperature units.
+    """
     res = []
     for _, unit_def in enumerate(unit_definitions):
         if len(unit_def['units']) == 1 \
@@ -1472,10 +1503,15 @@ def get_temperature_unit_definitions() -> list[dict]:
 
 def get_unit_definition(
     unit_str: str
-) -> dict:
+) -> dict | None:
     """
     Find unit definition that corresponds with the provided string.
-    Returns none if no matching unit definition was found.
+
+    Parameters:
+    unit_str (str): A unit identifier or synonym to search for.
+
+    Returns:
+    dict | None: The matching unit definition dictionary, or None if not found.
     """
     res = None
     for _, value in enumerate(unit_definitions):
@@ -1488,7 +1524,14 @@ def get_unit_definition(
 def get_ucum_unit_string(
     unit_str: str
 ) -> str:
-    """Tries to get the (UCUM formated) unit string of the specified element."""
+    """Return the UCUM representation for a unit identifier.
+
+    Parameters:
+    unit_str (str): A unit identifier or synonym to search for.
+
+    Returns:
+    str: The UCUM formatted unit string if found, otherwise an empty string.
+    """
     if unit_str:
         for _, value in enumerate(unit_definitions):
             if unit_str.lower() == value['id'].lower() \
@@ -1496,11 +1539,17 @@ def get_ucum_unit_string(
                 return value['UCUM'] if value['UCUM'] else value['id']
     return ""
 
+
 def set_unit_definition(
     sbml_unit_definition: ls.UnitDefinition,
     definition
 ):
-    """ Sets the libSBML unit definition according to the unit definition."""
+    """Populate a libSBML UnitDefinition from a unit definition dictionary.
+
+    Parameters:
+    sbml_unit_definition (libsbml.UnitDefinition): The libSBML UnitDefinition object to populate.
+    definition (dict): The source unit definition dictionary.
+    """
     definition_id = definition["id"]
     sbml_unit_definition.setId(definition_id)
     for unit_part in definition["units"]:
@@ -1514,6 +1563,15 @@ def create_unit_string(
     unit: ls.UnitDefinition,
     ext: bool = False
 ) -> str:
+    """Build a textual string representation of an SBML UnitDefinition.
+
+    Parameters:
+    unit (libsbml.UnitDefinition): The SBML unit definition to convert.
+    ext (bool, optional):  If True, use extended unit names (e.g. 'liter' instead of 'L').
+
+    Returns:
+    str: A combined unit string, or 'dimensionless' when no unit parts exist.
+    """
     unit_string_parts = []
     for i in range(unit.getNumUnits()):
         unit_part = unit.getUnit(i)
@@ -1523,11 +1581,22 @@ def create_unit_string(
     result = ''.join(unit_string_parts) if unit_string_parts else 'dimensionless'
     return result
 
+
 def _create_unit_part_string(
     u: ls.Unit,
     ext: bool = False,
     is_first: bool = False,
 ) -> str:
+    """Format a single SBML Unit part into a string.
+
+    Parameters:
+    u (libsbml.Unit): The SBML unit part to format.
+    ext (bool, optional): If True, return extended unit names.
+    is_first (bool, optional): If True, omit the leading operator for the first unit part.
+
+    Returns:
+    str: The formatted unit part string.
+    """
     kind = u.getKind()
     scale = u.getScale()
     exponent = u.getExponentAsDouble()
@@ -1558,6 +1627,14 @@ def _create_unit_part_string(
     return ucum_unit
 
 def get_unit_type(unit_def: dict) -> UnitType:
+    """Classify a unit definition into a UnitType category.
+
+    Parameters:
+    unit_def (dict): A unit definition dictionary from :data:`unit_definitions`.
+
+    Returns:
+    UnitType: The inferred category for the unit definition.
+    """
     if len(unit_def['units']) == 1:
         unit = unit_def['units'][0]
         if unit['kind'] == ls.UNIT_KIND_DIMENSIONLESS:
@@ -1579,29 +1656,35 @@ def get_unit_type(unit_def: dict) -> UnitType:
     return UnitType.OTHER
 
 def _is_mass_unit_part(unit_part: dict):
+    """Return True when the unit part is a mass unit with exponent 1."""
     return (unit_part['kind'] == ls.UNIT_KIND_GRAM \
         or unit_part['kind'] == ls.UNIT_KIND_MOLE) \
         and unit_part['exponent'] == 1
 
 def _is_per_mass_unit_part(unit_part: dict):
+    """Return True when the unit part is a per-mass unit with exponent -1."""
     return (unit_part['kind'] == ls.UNIT_KIND_GRAM \
         or unit_part['kind'] == ls.UNIT_KIND_MOLE) \
         and unit_part['exponent'] == -1
 
 def _is_volume_unit_part(unit_part: dict):
+    """Return True when the unit part is a volume unit with exponent 1."""
     return (unit_part['kind'] == ls.UNIT_KIND_LITRE \
         or unit_part['kind'] == ls.UNIT_KIND_LITER) \
         and unit_part['exponent'] == 1
 
 def _is_per_volume_unit_part(unit_part: dict):
+    """Return True when the unit part is a per-volume unit with exponent -1."""
     return (unit_part['kind'] == ls.UNIT_KIND_LITRE \
         or unit_part['kind'] == ls.UNIT_KIND_LITER) \
         and unit_part['exponent'] == -1
 
 def _is_time_unit_part(unit_part: dict):
+    """Return True when the unit part is a time unit with exponent 1."""
     return unit_part['kind'] == ls.UNIT_KIND_SECOND \
         and unit_part['exponent'] == 1
 
 def _is_temperature_unit_part(unit_part: dict):
+    """Return True when the unit part is a temperature unit with exponent 1."""
     return unit_part['kind'] == ls.UNIT_KIND_KELVIN \
         and unit_part['exponent'] == 1
