@@ -1025,21 +1025,6 @@ unit_definitions = [
         ]
     },
     {
-        "id" : "L_PER_DAY_PER_KiloGM0P75",
-        "qudt" : "",
-        "UCUM" : "L/(d.kg^0.75)",
-        "synonyms" : [
-            "L/d/kg^0.75",
-            "L/(d.kg^0.75)",
-            "L.d-1.kg-0.75"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": 0 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
-        ]
-    },
-    {
         "id" : "MilliL_PER_DAY_PER_GM",
         "qudt" : "",
         "UCUM" : "mL/d/g",
@@ -1054,20 +1039,81 @@ unit_definitions = [
             { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 0 },
         ]
     },
+    # Allometrically scaled rate constant units scaled by body weight using allometric scaling
     {
-        "id" : "L_PER_HR_PER_KiloGM0P75",
+        "id" : "PER_HR_KiloGM0P25",
         "qudt" : "",
-        "UCUM" : "L/(h.kg^0.75)",
+        "UCUM" : "1/h.kg^0.25",
         "synonyms" : [
-            "L_PER_HR_PER_KiloGM3DIV4",
-            "L/h/kg^0.75",
-            "L/(h.kg^0.75)",
-            "L.h-1.kg-0.75"
+            "1/h.kg^0.25",
+            "/h.kg^0.25",
+            "1/h/kg^-0.25",
+            "/h/kg^-0.25",
+            "1/(h.kg^-0.25)",
+            "/(h.kg^-0.25)",
+            "h-1.kg0.25"
         ],
         "units": [
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": 0 },
             { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": 0.25, "multiplier": 1, "scale": 3 },
+        ]
+    },
+    {
+        "id" : "PER_DAY_KiloGM0P25",
+        "qudt" : "",
+        "UCUM" : "1/d.kg^0.25",
+        "synonyms" : [
+            "1/d.kg^0.25",
+            "/d.kg^0.25",
+            "1/d/kg^-0.25",
+            "/d/kg^-0.25",
+            "1/(d.kg^-0.25)",
+            "/(d.kg^-0.25)",
+            "d-1.kg0.25"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": 0.25, "multiplier": 1, "scale": 3 },
+        ]
+    },
+    {
+        "id" : "PER_HR_PER_KiloGM0P25",
+        "qudt" : "",
+        "UCUM" : "1/h/kg^0.25",
+        "synonyms" : [
+            "1/h/kg^0.25",
+            "/h/kg^0.25",
+            "1/h/kg^0.25",
+            "/h/kg^0.25",
+            "1/(h.kg^0.25)",
+            "/(h.kg^0.25)",
+            "1/h.kg^-0.25",
+            "/h.kg^-0.25",
+            "h-1.kg-0.25"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.25, "multiplier": 1, "scale": 3 },
+        ]
+    },
+    {
+        "id" : "PER_DAY_PER_KiloGM0P25",
+        "qudt" : "",
+        "UCUM" : "1/d/kg^0.25",
+        "synonyms" : [
+            "1/d/kg^0.25",
+            "/d/kg^0.25",
+            "1/d/kg^0.25",
+            "/d/kg^0.25",
+            "1/(d.kg^0.25)",
+            "/(d.kg^0.25)",
+            "1/d.kg^-0.25",
+            "/d.kg^-0.25",
+            "d-1.kg-0.25"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.25, "multiplier": 1, "scale": 3 },
         ]
     },
     {
@@ -1075,7 +1121,6 @@ unit_definitions = [
         "qudt" : "",
         "UCUM" : "1/(d.kg^0.25)",
         "synonyms" : [
-            "PER_DAY_PER_KiloGM0P25",
             "1/d/kg^0.25",
             "/d/kg^0.25",
             "1/(d.kg^0.25)",
@@ -1088,36 +1133,184 @@ unit_definitions = [
         ]
     },
     {
-        "id" : "PER_HR_KiloGM0P25",
-        "qudt" : "",
-        "UCUM" : "1/(h.kg^-0.25)",
-        "synonyms" : [
-            "PER_HR_KiloGM0P25",
-            "1/h/kg^-0.25",
-            "/h/kg^-0.25",
-            "/h.kg^0.25",
-            "1/(h.kg^-0.25)",
-            "/(h.kg^-0.25)",
-            "h-1.kg^0.25"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 0.25, "multiplier": 1, "scale": 3 },
-        ]
-    },
-    {
         "id" : "PER_HR_PER_KiloGM0P75",
         "qudt" : "",
         "UCUM" : "1/(h.kg^0.75)",
         "synonyms" : [
-            "PER_HR_PER_KiloGM0P75",
             "1/h/kg^0.75",
             "/h/kg^0.75",
             "1/(h.kg^0.75)",
             "/(h.kg^0.75)",
-            "h-1.kg^-0.75"
+            "h-1.kg-0.75"
         ],
         "units": [
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
+        ]
+    },
+    {
+        "id" : "PER_DAY_PER_KiloGM0P75",
+        "qudt" : "",
+        "UCUM" : "1/(d.kg^0.75)",
+        "synonyms" : [
+            "1/d/kg^0.75",
+            "/d/kg^0.75",
+            "1/(d.kg^0.75)",
+            "/(d.kg^0.75)",
+            "d-1.kg-0.75"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
+        ]
+    },
+    # Units for clearance rate constants scaled by body weight using allometric scaling
+    {
+        "id" : "MOL_PER_HR_PER_KiloGM0P75",
+        "qudt" : "",
+        "UCUM" : "mol/(h.kg^0.75)",
+        "synonyms" : [
+            "mol/h/kg^0.75",
+            "mol/(h.kg^0.75)",
+            "mol.h-1.kg-0.75"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": 0 },
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
+        ]
+    },
+    {
+        "id" : "MilliMOL_PER_HR_PER_KiloGM0P75",
+        "qudt" : "",
+        "UCUM" : "mmol/(h.kg^0.75)",
+        "synonyms" : [
+            "mmol/h/kg^0.75",
+            "mmol/(h.kg^0.75)",
+            "mmol.h-1.kg-0.75"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -3 },
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
+        ]
+    },
+    {
+        "id" : "MicroMOL_PER_HR_PER_KiloGM0P75",
+        "qudt" : "",
+        "UCUM" : "umol/(h.kg^0.75)",
+        "synonyms" : [
+            "umol/h/kg^0.75",
+            "umol/(h.kg^0.75)",
+            "umol.h-1.kg-0.75"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -6 },
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
+        ]
+    },
+    {
+        "id" : "NanoMOL_PER_HR_PER_KiloGM0P75",
+        "qudt" : "",
+        "UCUM" : "nmol/(h.kg^0.75)",
+        "synonyms" : [
+            "nmol/h/kg^0.75",
+            "nmol/(h.kg^0.75)",
+            "nmol.h-1.kg-0.75"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -9 },
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
+        ]
+    },
+    {
+        "id" : "MOL_PER_DAY_PER_KiloGM0P75",
+        "qudt" : "",
+        "UCUM" : "mol/(d.kg^0.75)",
+        "synonyms" : [
+            "mol/d/kg^0.75",
+            "mol/(d.kg^0.75)",
+            "mol.d-1.kg-0.75"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": 0 },
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
+        ]
+    },
+    {
+        "id" : "MilliMOL_PER_DAY_PER_KiloGM0P75",
+        "qudt" : "",
+        "UCUM" : "mmol/(d.kg^0.75)",
+        "synonyms" : [
+            "mmol/d/kg^0.75",
+            "mmol/(d.kg^0.75)",
+            "mmol.d-1.kg-0.75"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -3 },
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
+        ]
+    },
+    {
+        "id" : "MicroMOL_PER_DAY_PER_KiloGM0P75",
+        "qudt" : "",
+        "UCUM" : "umol/(d.kg^0.75)",
+        "synonyms" : [
+            "umol/d/kg^0.75",
+            "umol/(d.kg^0.75)",
+            "umol.d-1.kg-0.75"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -6 },
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
+        ]
+    },
+    {
+        "id" : "NanoMOL_PER_DAY_PER_KiloGM0P75",
+        "qudt" : "",
+        "UCUM" : "nmol/(d.kg^0.75)",
+        "synonyms" : [
+            "nmol/d/kg^0.75",
+            "nmol/(d.kg^0.75)",
+            "nmol.d-1.kg-0.75"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -9 },
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
+        ]
+    },
+    {
+        "id" : "GM_PER_HR_PER_KiloGM0P75",
+        "qudt" : "",
+        "UCUM" : "g/(h.kg^0.75)",
+        "synonyms" : [
+            "g/h/kg^0.75",
+            "g/(h.kg^0.75)",
+            "g.h-1.kg-0.75"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": 0 },
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
+        ]
+    },
+    {
+        "id" : "MilliGM_PER_HR_PER_KiloGM0P75",
+        "qudt" : "",
+        "UCUM" : "mg/(h.kg^0.75)",
+        "synonyms" : [
+            "mg/h/kg^0.75",
+            "mg/(h.kg^0.75)",
+            "mg.h-1.kg-0.75"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -3 },
             { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 },
             { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
         ]
@@ -1138,11 +1331,55 @@ unit_definitions = [
         ]
     },
     {
+        "id" : "NanoGM_PER_HR_PER_KiloGM0P75",
+        "qudt" : "",
+        "UCUM" : "ng/(h.kg^0.75)",
+        "synonyms" : [
+            "ng/h/kg^0.75",
+            "ng/(h.kg^0.75)",
+            "ng.h-1.kg-0.75"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -9 },
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
+        ]
+    },
+    {
+        "id" : "GM_PER_DAY_PER_KiloGM0P75",
+        "qudt" : "",
+        "UCUM" : "g/(d.kg^0.75)",
+        "synonyms" : [
+            "g/d/kg^0.75",
+            "g/(d.kg^0.75)",
+            "g.d-1.kg-0.75"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": 0 },
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
+        ]
+    },
+    {
+        "id" : "MilliGM_PER_DAY_PER_KiloGM0P75",
+        "qudt" : "",
+        "UCUM" : "mg/(d.kg^0.75)",
+        "synonyms" : [
+            "mg/d/kg^0.75",
+            "mg/(d.kg^0.75)",
+            "mg.d-1.kg-0.75"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -3 },
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
+        ]
+    },
+    {
         "id" : "MicroGM_PER_DAY_PER_KiloGM0P75",
         "qudt" : "",
         "UCUM" : "ug/(d.kg^0.75)",
         "synonyms" : [
-            "MicroGM_PER_DAY_PER_KiloGM3DIV4",
             "ug/d/kg^0.75",
             "ug/(d.kg^0.75)",
             "ug.d-1.kg-0.75"
@@ -1150,6 +1387,53 @@ unit_definitions = [
         "units": [
             { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -6 },
             { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
+        ]
+    },
+    {
+        "id" : "NanoGM_PER_DAY_PER_KiloGM0P75",
+        "qudt" : "",
+        "UCUM" : "ng/(d.kg^0.75)",
+        "synonyms" : [
+            "ng/d/kg^0.75",
+            "ng/(d.kg^0.75)",
+            "ng.d-1.kg-0.75"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -9 },
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
+        ]
+    },
+    # Other units including allometric scaling
+    {
+        "id" : "L_PER_DAY_PER_KiloGM0P75",
+        "qudt" : "",
+        "UCUM" : "L/(d.kg^0.75)",
+        "synonyms" : [
+            "L/d/kg^0.75",
+            "L/(d.kg^0.75)",
+            "L.d-1.kg-0.75"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": 0 },
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
+            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
+        ]
+    },
+    {
+        "id" : "L_PER_HR_PER_KiloGM0P75",
+        "qudt" : "",
+        "UCUM" : "L/(h.kg^0.75)",
+        "synonyms" : [
+            "L_PER_HR_PER_KiloGM3DIV4",
+            "L/h/kg^0.75",
+            "L/(h.kg^0.75)",
+            "L.h-1.kg-0.75"
+        ],
+        "units": [
+            { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": 0 },
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 },
             { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
         ]
     },
@@ -1459,7 +1743,6 @@ def get_volume_unit_definitions() -> list[dict]:
             res.append(unit_def)
     return res
 
-
 def get_mass_unit_definitions() -> list[dict]:
     """Return single-part mass unit definitions.
 
@@ -1473,7 +1756,6 @@ def get_mass_unit_definitions() -> list[dict]:
             res.append(unit_def)
     return res
 
-
 def get_time_unit_definitions() -> list[dict]:
     """Return single-part time unit definitions.
 
@@ -1486,7 +1768,6 @@ def get_time_unit_definitions() -> list[dict]:
             and _is_time_unit_part(unit_def['units'][0]):
             res.append(unit_def)
     return res
-
 
 def get_temperature_unit_definitions() -> list[dict]:
     """Return single-part temperature unit definitions.
@@ -1524,10 +1805,10 @@ def get_unit_definition(
 def get_ucum_unit_string(
     unit_str: str
 ) -> str:
-    """Return the UCUM representation for a unit identifier.
+    """Return the UCUM representation for a unit string.
 
     Parameters:
-    unit_str (str): A unit identifier or synonym to search for.
+    unit_str (str): A unit string to search for.
 
     Returns:
     str: The UCUM formatted unit string if found, otherwise an empty string.
@@ -1538,7 +1819,6 @@ def get_ucum_unit_string(
                 or any(val.lower() == unit_str.lower() for val in value['synonyms']):
                 return value['UCUM'] if value['UCUM'] else value['id']
     return ""
-
 
 def set_unit_definition(
     sbml_unit_definition: ls.UnitDefinition,
@@ -1580,7 +1860,6 @@ def create_unit_string(
             unit_string_parts.append(unit_part_string)
     result = ''.join(unit_string_parts) if unit_string_parts else 'dimensionless'
     return result
-
 
 def _create_unit_part_string(
     u: ls.Unit,

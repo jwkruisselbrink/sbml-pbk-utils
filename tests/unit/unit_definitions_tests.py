@@ -168,5 +168,71 @@ class UnitDefinitionsTests(unittest.TestCase):
         formatted_unit_string = create_unit_string(sbml_unit_definition)
         self.assertEqual(formatted_unit_string, "d")
 
+    def test_allometric_scaled_clearance_units(self):
+        """ Units for rates scaled by body weight using allometric scaling
+        """
+        mass_units = ['g', 'mol']
+        time_units = ['h', 'd']
+        mass_prefixes = ['', 'm', 'u', 'n']
+        for mass_unit in mass_units:
+            for mass_prefix in mass_prefixes:
+                for time_unit in time_units:
+                    # Create unit definition and check if there is a unit definition
+                    unit_str = f'{mass_prefix}{mass_unit}/{time_unit}/kg^0.75'
+                    unit_definition = get_unit_definition(unit_str)
+                    self.assertIsNotNone(unit_definition)
+                    self.assertIn(
+                        f'{mass_prefix}{mass_unit}/({time_unit}.kg^0.75)',
+                        unit_definition['synonyms']
+                    )
+
+                    # Create unit definition and fetch ucum string; check if it matches expected
+                    sbml_unit_definition = ls.UnitDefinition(3, 2)
+                    set_unit_definition(sbml_unit_definition, unit_definition)
+                    ucum_str = create_unit_string(sbml_unit_definition)
+                    self.assertEqual(ucum_str, unit_str)
+
+                    # Check synonyms
+                    synonyms = [
+                        f'{mass_prefix}{mass_unit}/{time_unit}/kg^0.75',
+                        f'{mass_prefix}{mass_unit}/({time_unit}.kg^0.75)',
+                        f'{mass_prefix}{mass_unit}.{time_unit}-1.kg-0.75',
+                    ]
+                    for synonym in synonyms:
+                        self.assertIn(synonym, unit_definition['synonyms'])
+
+    def test_allometric_scaled_rate_units(self):
+        """ Units for rates scaled by body weight using allometric scaling
+        """
+        time_units = ['h', 'd']
+        signs = ['', '-']
+        for time_unit in time_units:
+            for sign in signs:
+                sign_inv = '' if sign == '-' else '-'
+
+                # Create unit definition and check if there is a unit definition
+                unit_str = f'{time_unit}-1.kg{sign}0.25'
+                unit_definition = get_unit_definition(unit_str)
+                self.assertIsNotNone(unit_definition)
+
+                # Create unit definition and fetch ucum string; check if it matches expected
+                sbml_unit_definition = ls.UnitDefinition(3, 2)
+                set_unit_definition(sbml_unit_definition, unit_definition)
+                ucum_str = create_unit_string(sbml_unit_definition)
+                self.assertEqual(ucum_str, f'/{time_unit}/kg^0.25' if sign == '-' else f'/{time_unit}.kg^0.25')
+
+                # Check synonyms
+                synonyms = [
+                    f'/{time_unit}/kg^{sign_inv}0.25',
+                    f'1/{time_unit}/kg^{sign_inv}0.25',
+                    f'/({time_unit}.kg^{sign_inv}0.25)',
+                    f'1/({time_unit}.kg^{sign_inv}0.25)',
+                    f'/{time_unit}.kg^{sign}0.25',
+                    f'1/{time_unit}.kg^{sign}0.25',
+                    f'{time_unit}-1.kg{sign}0.25',
+                ]
+                for synonym in synonyms:
+                    self.assertIn(synonym, unit_definition['synonyms'])
+
 if __name__ == '__main__':
     unittest.main()
