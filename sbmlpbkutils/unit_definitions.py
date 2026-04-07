@@ -44,6 +44,25 @@ _si_prefix_strings_ext = {
     -12: 'pico',
 }
 
+_id_prefix_lookup = {
+    3: 'Kilo',
+    0: '',
+    -1: 'Deci',
+    -2: 'Centi',
+    -3: 'Milli',
+    -6: 'Micro',
+    -9: 'Nano',
+    -12: 'Pico',
+}
+
+_time_unit_id_lookup = {
+    's': 'SEC',
+    'min': 'MIN',
+    'h': 'HR',
+    'd': 'DAY',
+    'y': 'YR'
+}
+
 _time_unit_multipliers = {
     1: 's',
     60: 'min',
@@ -76,202 +95,570 @@ _base_unit_strings_ext = {
     ls.UNIT_KIND_KELVIN: 'Kelvin'
 }
 
-# Unit definitions, translating a unit string to the elementary unit
-# compositions following the SBML structure.
-# Unit IDs should match up with vocabulary of QUDT (https://qudt.org/2.1/vocab/unit) 
-# except that the '-' character is replaced by '_' due to restrictions of SBML.
-unit_definitions = [
-    {
-        "id" : "UNITLESS",
-        "qudt" : "UNITLESS",
-        "UCUM" : "",
-        "synonyms" : [
-            "unitless",
-            "dimensionless"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_DIMENSIONLESS, "exponent": 1, "multiplier": 1, "scale": 0 }
+def create_area_units() -> None:
+    numerator_exponents = [0, -1, -2, -3]
+    for numerator_exponent in numerator_exponents:
+        # Construct unit ID
+        numerator_prefix_id = _id_prefix_lookup[numerator_exponent]
+        unit_id = f'{numerator_prefix_id}M2'
+
+        # Construct unit string
+        numerator_prefix_si = _si_prefix_string[numerator_exponent]
+        unit_str = f'{numerator_prefix_si}m2'
+
+        # Construct synonyms
+        synonyms = [
+            unit_str,
+            f'{numerator_prefix_si}m2',
+            f'{numerator_prefix_si}m^2'
         ]
-    },
-    # Amount/volume units
-    {
-        "id" : "MOL",
-        "qudt" : "MOL",
-        "UCUM" : "mol",
-        "synonyms" : [
-            "mol"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": 0 }
+
+        # Create and add definitions
+        definition = {
+            "id" : unit_id,
+            "qudt" : "",
+            "UCUM" : unit_str,
+            "synonyms" : synonyms,
+            "units": [
+                { "kind": ls.UNIT_KIND_METRE, "exponent": 2, "multiplier": 1, "scale": numerator_exponent }
+            ]
+        }
+        unit_definitions.append(definition)
+
+def create_gram_units() -> None:
+    mass_exponents = [3, 0, -3, -6, -9, -12]
+    for exponent in mass_exponents:
+        # Construct unit ID
+        id_prefix = _id_prefix_lookup[exponent]
+        unit_id = f'{id_prefix}GM'
+
+        # Construct unit string
+        si_prefix = _si_prefix_string[exponent]
+        unit_str = f'{si_prefix}g'
+
+        # Create and add definitions
+        definition = {
+            "id" : unit_id,
+            "qudt" : "",
+            "UCUM" : unit_str,
+            "synonyms" : [unit_str],
+            "units": [
+                { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": exponent }
+            ]
+        }
+        unit_definitions.append(definition)
+
+def create_gram_per_gram_units() -> None:
+    numerator_mass_exponents = [0, -3, -6, -9, -12]
+    denominator_mass_exponents = [3, 0, -3, -6]
+    for numerator_exponent in numerator_mass_exponents:
+        for denominator_exponent in denominator_mass_exponents:
+            # Construct unit ID
+            numerator_prefix_id = _id_prefix_lookup[numerator_exponent]
+            denominator_prefix_id = _id_prefix_lookup[denominator_exponent]
+            unit_id = f'{numerator_prefix_id}GM_PER_{denominator_prefix_id}GM'
+
+            # Construct unit string
+            numerator_prefix_si = _si_prefix_string[numerator_exponent]
+            denominator_prefix_si = _si_prefix_string[denominator_exponent]
+            unit_str = f'{numerator_prefix_si}g/{denominator_prefix_si}g'
+
+            # Construct synonyms
+            synonyms = [
+                unit_str,
+                f'{numerator_prefix_si}g.{denominator_prefix_si}g-1'
+            ]
+
+            # Create and add definitions
+            definition = {
+                "id" : unit_id,
+                "qudt" : "",
+                "UCUM" : unit_str,
+                "synonyms" : synonyms,
+                "units": [
+                    { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": numerator_exponent },
+                    { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": denominator_exponent }
+                ]
+            }
+            unit_definitions.append(definition)
+
+def create_gram_per_liter_units() -> None:
+    numerator_exponents = [3, 0, -3, -6, -9, -12]
+    denominator_exponents = [0, -3, -6]
+    for numerator_exponent in numerator_exponents:
+        for denominator_exponent in denominator_exponents:
+            # Construct unit ID
+            numerator_prefix_id = _id_prefix_lookup[numerator_exponent]
+            denominator_prefix_id = _id_prefix_lookup[denominator_exponent]
+            unit_id = f'{numerator_prefix_id}GM_PER_{denominator_prefix_id}L'
+
+            # Construct unit string
+            numerator_prefix_si = _si_prefix_string[numerator_exponent]
+            denominator_prefix_si = _si_prefix_string[denominator_exponent]
+            unit_str = f'{numerator_prefix_si}g/{denominator_prefix_si}L'
+
+            # Construct synonyms
+            synonyms = [
+                unit_str,
+                f'{numerator_prefix_si}g.{denominator_prefix_si}L-1'
+            ]
+
+            # Create and add definitions
+            definition = {
+                "id" : unit_id,
+                "qudt" : "",
+                "UCUM" : unit_str,
+                "synonyms" : synonyms,
+                "units": [
+                    { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": numerator_exponent },
+                    { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": denominator_exponent }
+                ]
+            }
+            unit_definitions.append(definition)
+
+def create_gram_per_time_units() -> None:
+    inv_map = {v: k for k, v in _time_unit_multipliers.items()}
+    mass_exponents = [0, -3, -6, -9, -12]
+    time_units = ['s', 'min', 'h', 'd']
+    for mol_unit_exponent in mass_exponents:
+        for time_unit in time_units:
+            # Construct unit ID
+            mass_unit_prefix_id = _id_prefix_lookup[mol_unit_exponent]
+            unit_id = f'{mass_unit_prefix_id}GM_PER_{_time_unit_id_lookup[time_unit]}'
+
+            # Construct unit string
+            mass_unit_prefix_si = _si_prefix_string[mol_unit_exponent]
+            unit_str = f'{mass_unit_prefix_si}g/{time_unit}'
+
+            # Construct synonyms
+            synonyms = [
+                unit_str,
+                f'{mass_unit_prefix_si}g.{time_unit}-1'
+            ]
+            time_unit_multiplier = inv_map[time_unit]
+
+            # Create and add definitions
+            definition = {
+                "id" : unit_id,
+                "qudt" : "",
+                "UCUM" : unit_str,
+                "synonyms" : synonyms,
+                "units": [
+                    { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": mol_unit_exponent },
+                    { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": time_unit_multiplier, "scale": 0 }
+                ]
+            }
+            unit_definitions.append(definition)
+
+def create_gram_per_time_per_allometric_mass_units() -> None:
+    time_units = ['h', 'd', 'min', 's']
+    numerator_exponents = [0, -3, -6, -9, -12]
+    denominator_exponents = [3]
+    inv_map = {v: k for k, v in _time_unit_multipliers.items()}
+    for numerator_exponent in numerator_exponents:
+        for denominator_exponent in denominator_exponents:
+            for time_unit in time_units:
+                # Construct unit ID
+                numerator_prefix_id = _id_prefix_lookup[numerator_exponent]
+                denominator_prefix_id = _id_prefix_lookup[denominator_exponent]
+                unit_id = f'{numerator_prefix_id}GM_PER_{_time_unit_id_lookup[time_unit]}_PER_{denominator_prefix_id}GM0P75'
+
+                # Construct unit string
+                numerator_prefix_si = _si_prefix_string[numerator_exponent]
+                denominator_prefix_si = _si_prefix_string[denominator_exponent]
+                unit_str = f'{numerator_prefix_si}g/{time_unit}/{denominator_prefix_si}g^0.75'
+
+                # Construct synonyms
+                synonyms = [
+                    unit_str,
+                    f'{numerator_prefix_si}g/{time_unit}/{denominator_prefix_si}g0.75',
+                    f'{numerator_prefix_si}g/{time_unit}/{denominator_prefix_si}g^0.75',
+                    f'{numerator_prefix_si}g/({time_unit}.{denominator_prefix_si}g0.75)',
+                    f'{numerator_prefix_si}g.{time_unit}-1.{denominator_prefix_si}g-0.75',
+                    f'{numerator_prefix_si}g/({time_unit}.{denominator_prefix_si}g^0.75)',
+                    f'{numerator_prefix_si}g.{time_unit}^-1.{denominator_prefix_si}g^-0.75'
+                ]
+                time_unit_multiplier = inv_map[time_unit]
+
+                # Create and add definitions
+                definition = {
+                    "id" : unit_id,
+                    "qudt" : "",
+                    "UCUM" : unit_str,
+                    "synonyms" : synonyms,
+                    "units": [
+                        { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": numerator_exponent },
+                        { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": time_unit_multiplier, "scale": 0 },
+                        { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
+                    ]
+                }
+                unit_definitions.append(definition)
+
+def create_gram_per_time_per_gram_units() -> None:
+    time_units = ['h', 'd']
+    numerator_exponents = [0, -3, -6, -9, -12]
+    denominator_exponents = [3, 0, -3, -6]
+    inv_map = {v: k for k, v in _time_unit_multipliers.items()}
+    for numerator_exponent in numerator_exponents:
+        for denominator_exponent in denominator_exponents:
+            for time_unit in time_units:
+                # Construct unit ID
+                numerator_prefix_id = _id_prefix_lookup[numerator_exponent]
+                denominator_prefix_id = _id_prefix_lookup[denominator_exponent]
+                unit_id = f'{numerator_prefix_id}GM_PER_{_time_unit_id_lookup[time_unit]}_PER_{denominator_prefix_id}GM'
+
+                # Construct unit string
+                numerator_prefix_si = _si_prefix_string[numerator_exponent]
+                denominator_prefix_si = _si_prefix_string[denominator_exponent]
+                unit_str = f'{numerator_prefix_si}g/{time_unit}/{denominator_prefix_si}g'
+
+                # Construct synonyms
+                synonyms = [
+                    unit_str,
+                    f'{numerator_prefix_si}g/({time_unit}.{denominator_prefix_si}g)',
+                    f'{numerator_prefix_si}g.{time_unit}-1.{denominator_prefix_si}g-1'
+                ]
+                time_unit_multiplier = inv_map[time_unit]
+
+                # Create and add definitions
+                definition = {
+                    "id" : unit_id,
+                    "qudt" : "",
+                    "UCUM" : unit_str,
+                    "synonyms" : synonyms,
+                    "units": [
+                        { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": numerator_exponent },
+                        { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": time_unit_multiplier, "scale": 0 },
+                        { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": denominator_exponent }
+                    ]
+                }
+                unit_definitions.append(definition)
+
+def create_gram_per_time_per_volume_units() -> None:
+    time_units = ['h', 'd', 'min', 's']
+    numerator_exponents = [0, -3, -6, -9, -12]
+    denominator_exponents = [3, 0, -3, -6]
+    inv_map = {v: k for k, v in _time_unit_multipliers.items()}
+    for numerator_exponent in numerator_exponents:
+        for denominator_exponent in denominator_exponents:
+            for time_unit in time_units:
+                # Construct unit ID
+                numerator_prefix_id = _id_prefix_lookup[numerator_exponent]
+                denominator_prefix_id = _id_prefix_lookup[denominator_exponent]
+                unit_id = f'{numerator_prefix_id}GM_PER_{_time_unit_id_lookup[time_unit]}_PER_{denominator_prefix_id}L'
+
+                # Construct unit string
+                numerator_prefix_si = _si_prefix_string[numerator_exponent]
+                denominator_prefix_si = _si_prefix_string[denominator_exponent]
+                unit_str = f'{numerator_prefix_si}g/{time_unit}/{denominator_prefix_si}L'
+
+                # Construct synonyms
+                synonyms = [
+                    unit_str,
+                    f'{numerator_prefix_si}g/{time_unit}/{denominator_prefix_si}L',
+                    f'{numerator_prefix_si}g/({time_unit}.{denominator_prefix_si}L)',
+                    f'{numerator_prefix_si}g.{time_unit}-1.{denominator_prefix_si}L-1'
+                ]
+                time_unit_multiplier = inv_map[time_unit]
+
+                # Create and add definitions
+                definition = {
+                    "id" : unit_id,
+                    "qudt" : "",
+                    "UCUM" : unit_str,
+                    "synonyms" : synonyms,
+                    "units": [
+                        { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": numerator_exponent },
+                        { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": time_unit_multiplier, "scale": 0 },
+                        { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": denominator_exponent }
+                    ]
+                }
+                unit_definitions.append(definition)
+
+def create_length_units() -> None:
+    numerator_exponents = [0, -1, -2, -3]
+    for numerator_exponent in numerator_exponents:
+        # Construct unit ID
+        numerator_prefix_id = _id_prefix_lookup[numerator_exponent]
+        unit_id = f'{numerator_prefix_id}M'
+
+        # Construct unit string
+        numerator_prefix_si = _si_prefix_string[numerator_exponent]
+        unit_str = f'{numerator_prefix_si}m'
+
+        # Construct synonyms
+        synonyms = [
+            unit_str,
+            f'{numerator_prefix_si}m'
         ]
-    },
-    {
-        "id" : "MilliMOL",
-        "qudt" : "MilliMOL",
-        "UCUM" : "mmol",
-        "synonyms" : [
-            "mmol"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -3 }
-        ]
-    },
-    {
-        "id" : "MicroMOL",
-        "qudt" : "MicroMOL",
-        "UCUM" : "umol",
-        "synonyms" : [
-            "umol"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -6 }
-        ]
-    },
-    {
-        "id" : "NanoMOL",
-        "qudt" : "NanoMOL",
-        "UCUM" : "nmol",
-        "synonyms" : [
-            "nmol"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -9 }
-        ]
-    },
-    {
-        "id" : "PicoMOL",
-        "qudt" : "PicoMOL",
-        "UCUM" : "pmol",
-        "synonyms" : [
-            "pmol"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -12 }
-        ]
-    },
-    {
-        "id" : "KiloGM",
-        "qudt" : "KiloGM",
-        "UCUM" : "kg",
-        "synonyms" : [
-            "kg"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": 3 }
-        ]
-    },
-    {
-        "id" : "GM",
-        "qudt" : "GM",
-        "UCUM" : "g",
-        "synonyms" : [
-            "g"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "MilliGM",
-        "qudt" : "MilliGM",
-        "UCUM" : "mg",
-        "synonyms" : [
-            "mg"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -3 }
-        ]
-    },
-    {
-        "id" : "MicroGM",
-        "qudt" : "MicroGM",
-        "UCUM" : "ug",
-        "synonyms" : [
-            "ug"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -6 }
-        ]
-    },
-    {
-        "id" : "NanoGM",
-        "qudt" : "NanoGM",
-        "UCUM" : "ng",
-        "synonyms" : [
-            "ng"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -9 }
-        ]
-    },
-    {
-        "id" : "PicoGM",
-        "qudt" : "PicoGM",
-        "UCUM" : "pg",
-        "synonyms" : [
-            "pg"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -12 }
-        ]
-    },
-    {
-        "id" : "L",
-        "qudt" : "L",
-        "UCUM" : "L",
-        "synonyms" : [
-            "L"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "MilliL",
-        "qudt" : "MilliL",
-        "UCUM" : "mL",
-        "synonyms" : [
-            "mL"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": -3 }
-        ]
-    },
-    {
-        "id" : "CentiL",
-        "qudt" : "CentiL",
-        "UCUM" : "cL",
-        "synonyms" : [
-            "cL"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": -2 }
-        ]
-    },
-    {
-        "id" : "DeciL",
-        "qudt" : "DeciL",
-        "UCUM" : "dL",
-        "synonyms" : [
-            "dL"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": -1 }
-        ]
-    },
-    {
-        "id" : "MicroL",
-        "qudt" : "MicroL",
-        "UCUM" : "uL",
-        "synonyms" : [
-            "uL"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": -6 }
-        ]
-    },
-    # Molas mass
-    {
+
+        # Create and add definitions
+        definition = {
+            "id" : unit_id,
+            "qudt" : "",
+            "UCUM" : unit_str,
+            "synonyms" : synonyms,
+            "units": [
+                { "kind": ls.UNIT_KIND_METRE, "exponent": 1, "multiplier": 1, "scale": numerator_exponent }
+            ]
+        }
+        unit_definitions.append(definition)
+
+def create_length_per_time_units() -> None:
+    time_units = ['h', 'd', 'min', 's']
+    numerator_exponents = [0, -1, -2, -3]
+    inv_map = {v: k for k, v in _time_unit_multipliers.items()}
+    for numerator_exponent in numerator_exponents:
+        for time_unit in time_units:
+            # Construct unit ID
+            numerator_prefix_id = _id_prefix_lookup[numerator_exponent]
+            unit_id = f'{numerator_prefix_id}M_PER_{_time_unit_id_lookup[time_unit]}'
+
+            # Construct unit string
+            numerator_prefix_si = _si_prefix_string[numerator_exponent]
+            unit_str = f'{numerator_prefix_si}m/{time_unit}'
+
+            # Construct synonyms
+            synonyms = [
+                unit_str,
+                f'{numerator_prefix_si}m/{time_unit}',
+                f'{numerator_prefix_si}m.{time_unit}-1'
+            ]
+            time_unit_multiplier = inv_map[time_unit]
+
+            # Create and add definitions
+            definition = {
+                "id" : unit_id,
+                "qudt" : "",
+                "UCUM" : unit_str,
+                "synonyms" : synonyms,
+                "units": [
+                    { "kind": ls.UNIT_KIND_METRE, "exponent": 1, "multiplier": 1, "scale": numerator_exponent },
+                    { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": time_unit_multiplier, "scale": 0 },
+                ]
+            }
+            unit_definitions.append(definition)
+
+def create_liter_per_gram_per_time_units() -> None:
+    inv_map = {v: k for k, v in _time_unit_multipliers.items()}
+    time_units = ['s', 'min', 'h', 'd']
+    numerator_unit_exponents = [0, -3, -6, -9, -12]
+    denominator_unit_exponents = [3, 0, -3, -6, -9, -12]
+    for numerator_unit_exponent in numerator_unit_exponents:
+        for denominator_unit_exponent in denominator_unit_exponents:
+            for time_unit in time_units:
+                # Construct unit ID
+                id_prefix_numerator = _id_prefix_lookup[numerator_unit_exponent]
+                id_prefix_denominator = _id_prefix_lookup[denominator_unit_exponent]
+                unit_id = f'{id_prefix_numerator}L_PER_{id_prefix_denominator}GM_PER_{_time_unit_id_lookup[time_unit]}'
+
+                # Construct unit string
+                si_prefix_numerator = _si_prefix_string[numerator_unit_exponent]
+                si_prefix_denominator = _si_prefix_string[denominator_unit_exponent]
+                unit_str = f'{si_prefix_numerator}L/{si_prefix_denominator}g/{time_unit}'
+
+                # Construct synonyms
+                synonyms = [
+                    unit_str,
+                    f'{si_prefix_numerator}L/{si_prefix_denominator}g/{time_unit}',
+                    f'{si_prefix_numerator}L/({si_prefix_denominator}g.{time_unit})',
+                    f'{si_prefix_numerator}L.{si_prefix_denominator}g-1.{time_unit}-1'
+                ]
+                time_unit_multiplier = inv_map[time_unit]
+
+                # Create and add definitions
+                definition = {
+                    "id" : unit_id,
+                    "qudt" : "",
+                    "UCUM" : unit_str,
+                    "synonyms" : synonyms,
+                    "units": [
+                        { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": numerator_unit_exponent },
+                        { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": denominator_unit_exponent },
+                        { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": time_unit_multiplier, "scale": 0 }
+                    ]
+                }
+                unit_definitions.append(definition)
+
+def create_liter_per_gram_units() -> None:
+    numerator_exponents = [0, -3, -6, -9, -12]
+    denominator_exponents = [3, 0, -3, -6]
+    for numerator_exponent in numerator_exponents:
+        for denominator_exponent in denominator_exponents:
+            # Construct unit ID
+            numerator_prefix_id = _id_prefix_lookup[numerator_exponent]
+            denominator_prefix_id = _id_prefix_lookup[denominator_exponent]
+            unit_id = f'{numerator_prefix_id}L_PER_{denominator_prefix_id}GM'
+
+            # Construct unit string
+            numerator_prefix_si = _si_prefix_string[numerator_exponent]
+            denominator_prefix_si = _si_prefix_string[denominator_exponent]
+            unit_str = f'{numerator_prefix_si}L/{denominator_prefix_si}g'
+
+            # Construct synonyms
+            synonyms = [
+                unit_str,
+                f'{numerator_prefix_si}L/{denominator_prefix_si}g',
+                f'{numerator_prefix_si}L.{denominator_prefix_si}g-1'
+            ]
+
+            # Create and add definitions
+            definition = {
+                "id" : unit_id,
+                "qudt" : "",
+                "UCUM" : unit_str,
+                "synonyms" : synonyms,
+                "units": [
+                    { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": numerator_exponent },
+                    { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": denominator_exponent }
+                ]
+            }
+            unit_definitions.append(definition)
+
+def create_liter_per_time_per_gram_units() -> None:
+    inv_map = {v: k for k, v in _time_unit_multipliers.items()}
+    time_units = ['s', 'min', 'h', 'd']
+    mol_unit_exponents = [0, -3, -6, -9, -12]
+    gram_unit_exponents = [3, 0, -3, -6, -9, -12]
+    for mol_unit_exponent in mol_unit_exponents:
+        for gram_unit_exponent in gram_unit_exponents:
+            for time_unit in time_units:
+                # Construct unit ID
+                mol_unit_prefix_id = _id_prefix_lookup[mol_unit_exponent]
+                gram_unit_prefix_id = _id_prefix_lookup[gram_unit_exponent]
+                unit_id = f'{mol_unit_prefix_id}L_PER_{_time_unit_id_lookup[time_unit]}_PER_{gram_unit_prefix_id}GM'
+
+                # Construct unit string
+                mol_unit_prefix_si = _si_prefix_string[mol_unit_exponent]
+                gram_unit_prefix_si = _si_prefix_string[gram_unit_exponent]
+                unit_str = f'{mol_unit_prefix_si}L/{time_unit}/{gram_unit_prefix_si}g'
+
+                # Construct synonyms
+                synonyms = [
+                    unit_str,
+                    f'{mol_unit_prefix_si}L/{time_unit}/{gram_unit_prefix_si}g',
+                    f'{mol_unit_prefix_si}L/({time_unit}.{gram_unit_prefix_si}g)',
+                    f'{mol_unit_prefix_si}L.{time_unit}-1.{gram_unit_prefix_si}g-1'
+                ]
+                time_unit_multiplier = inv_map[time_unit]
+
+                # Create and add definitions
+                definition = {
+                    "id" : unit_id,
+                    "qudt" : "",
+                    "UCUM" : unit_str,
+                    "synonyms" : synonyms,
+                    "units": [
+                        { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": mol_unit_exponent },
+                        { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": time_unit_multiplier, "scale": 0 },
+                        { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": gram_unit_exponent }
+                    ]
+                }
+                unit_definitions.append(definition)
+
+def create_liter_per_time_per_allometric_mass_units() -> None:
+    inv_map = {v: k for k, v in _time_unit_multipliers.items()}
+    time_units = ['s', 'min', 'h', 'd']
+    mol_unit_exponents = [0, -3, -6, -9, -12]
+    gram_unit_exponents = [3]
+    for mol_unit_exponent in mol_unit_exponents:
+        for gram_unit_exponent in gram_unit_exponents:
+            for time_unit in time_units:
+                # Construct unit ID
+                mol_unit_prefix_id = _id_prefix_lookup[mol_unit_exponent]
+                gram_unit_prefix_id = _id_prefix_lookup[gram_unit_exponent]
+                unit_id = f'{mol_unit_prefix_id}L_PER_{_time_unit_id_lookup[time_unit]}_PER_{gram_unit_prefix_id}GM0P75'
+
+                # Construct unit string
+                mol_unit_prefix_si = _si_prefix_string[mol_unit_exponent]
+                gram_unit_prefix_si = _si_prefix_string[gram_unit_exponent]
+                unit_str = f'{mol_unit_prefix_si}L/{time_unit}/{gram_unit_prefix_si}g^0.75'
+
+                # Construct synonyms
+                synonyms = [
+                    unit_str,
+                    f'{mol_unit_prefix_si}L/{time_unit}/{gram_unit_prefix_si}g^0.75',
+                    f'{mol_unit_prefix_si}L/{time_unit}/{gram_unit_prefix_si}g0.75',
+                    f'{mol_unit_prefix_si}L/({time_unit}.{gram_unit_prefix_si}g^0.75)',
+                    f'{mol_unit_prefix_si}L/({time_unit}.{gram_unit_prefix_si}g0.75)',
+                    f'{mol_unit_prefix_si}L.{time_unit}-1.{gram_unit_prefix_si}g^-0.75',
+                    f'{mol_unit_prefix_si}L.{time_unit}-1.{gram_unit_prefix_si}g-0.75'
+                ]
+                time_unit_multiplier = inv_map[time_unit]
+
+                # Create and add definitions
+                definition = {
+                    "id" : unit_id,
+                    "qudt" : "",
+                    "UCUM" : unit_str,
+                    "synonyms" : synonyms,
+                    "units": [
+                        { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": mol_unit_exponent },
+                        { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": time_unit_multiplier, "scale": 0 },
+                        { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": gram_unit_exponent }
+                    ]
+                }
+                unit_definitions.append(definition)
+
+def create_liter_per_time_units() -> None:
+    inv_map = {v: k for k, v in _time_unit_multipliers.items()}
+    volume_exponents = [0, -3, -6, -9, -12]
+    time_units = ['s', 'min', 'h', 'd']
+    for mol_unit_exponent in volume_exponents:
+        for time_unit in time_units:
+            # Construct unit ID
+            mass_unit_prefix_id = _id_prefix_lookup[mol_unit_exponent]
+            unit_id = f'{mass_unit_prefix_id}L_PER_{_time_unit_id_lookup[time_unit]}'
+
+            # Construct unit string
+            mass_unit_prefix_si = _si_prefix_string[mol_unit_exponent]
+            unit_str = f'{mass_unit_prefix_si}L/{time_unit}'
+
+            # Construct synonyms
+            synonyms = [
+                unit_str,
+                f'{mass_unit_prefix_si}L.{time_unit}-1'
+            ]
+            time_unit_multiplier = inv_map[time_unit]
+
+            # Create and add definitions
+            definition = {
+                "id" : unit_id,
+                "qudt" : "",
+                "UCUM" : unit_str,
+                "synonyms" : synonyms,
+                "units": [
+                    { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": mol_unit_exponent },
+                    { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": time_unit_multiplier, "scale": 0 }
+                ]
+            }
+            unit_definitions.append(definition)
+
+def create_liter_units() -> None:
+    exponents = [0, -1, -2, -3, -6]
+    for exponent in exponents:
+        # Construct unit ID
+        id_prefix = _id_prefix_lookup[exponent]
+        unit_id = f'{id_prefix}L'
+
+        # Construct unit string
+        si_prefix = _si_prefix_string[exponent]
+        unit_str = f'{si_prefix}L'
+
+        # Create and add definitions
+        definition = {
+            "id" : unit_id,
+            "qudt" : "",
+            "UCUM" : unit_str,
+            "synonyms" : [unit_str],
+            "units": [
+                { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": exponent }
+            ]
+        }
+        unit_definitions.append(definition)
+
+def create_molar_mass_unit() -> None:
+    unit_definitions.append({
         "id" : "GM_PER_MOL",
         "qudt" : "GM-PER-MOL",
         "UCUM" : "g/mol",
@@ -284,762 +671,434 @@ unit_definitions = [
             { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": 0 },
             { "kind": ls.UNIT_KIND_MOLE, "exponent": -1, "multiplier": 1, "scale": 0 }
         ]
-    },
-    # Per mass concentrations units
-    {
-        "id" : "MicroGM_PER_KiloGM",
-        "qudt" : "MicroGM-PER-KiloGM",
-        "UCUM" : "ug/kg",
-        "synonyms" : [
-            "ug/kg",
-            "ug_per_kg"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -6 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 3 }
+    })
+
+def create_mol_per_time_per_allometric_mass_units() -> None:
+    time_units = ['h', 'd', 'min', 's']
+    numerator_exponents = [0, -3, -6, -9, -12]
+    denominator_exponents = [3]
+    inv_map = {v: k for k, v in _time_unit_multipliers.items()}
+    for numerator_exponent in numerator_exponents:
+        for denominator_exponent in denominator_exponents:
+            for time_unit in time_units:
+                # Construct unit ID
+                numerator_prefix_id = _id_prefix_lookup[numerator_exponent]
+                denominator_prefix_id = _id_prefix_lookup[denominator_exponent]
+                unit_id = f'{numerator_prefix_id}MOL_PER_{_time_unit_id_lookup[time_unit]}_PER_{denominator_prefix_id}GM0P75'
+
+                # Construct unit string
+                numerator_prefix_si = _si_prefix_string[numerator_exponent]
+                denominator_prefix_si = _si_prefix_string[denominator_exponent]
+                unit_str = f'{numerator_prefix_si}mol/{time_unit}/{denominator_prefix_si}g^0.75'
+
+                # Construct synonyms
+                synonyms = [
+                    unit_str,
+                    f'{numerator_prefix_si}mol/{time_unit}/{denominator_prefix_si}g0.75',
+                    f'{numerator_prefix_si}mol/{time_unit}/{denominator_prefix_si}g^0.75',
+                    f'{numerator_prefix_si}mol/({time_unit}.{denominator_prefix_si}g0.75)',
+                    f'{numerator_prefix_si}mol.{time_unit}-1.{denominator_prefix_si}g-0.75',
+                    f'{numerator_prefix_si}mol/({time_unit}.{denominator_prefix_si}g^0.75)',
+                    f'{numerator_prefix_si}mol.{time_unit}^-1.{denominator_prefix_si}g^-0.75'
+                ]
+                time_unit_multiplier = inv_map[time_unit]
+
+                # Create and add definitions
+                definition = {
+                    "id" : unit_id,
+                    "qudt" : "",
+                    "UCUM" : unit_str,
+                    "synonyms" : synonyms,
+                    "units": [
+                        { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": numerator_exponent },
+                        { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": time_unit_multiplier, "scale": 0 },
+                        { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
+                    ]
+                }
+                unit_definitions.append(definition)
+
+def create_mol_per_time_per_mol_units() -> None:
+    time_units = ['h', 'd', 'min', 's']
+    numerator_exponents = [0, -3, -6, -9, -12]
+    denominator_exponents = [3, 0, -3, -6, -9, -12]
+    inv_map = {v: k for k, v in _time_unit_multipliers.items()}
+    for numerator_exponent in numerator_exponents:
+        for denominator_exponent in denominator_exponents:
+            for time_unit in time_units:
+                # Construct unit ID
+                numerator_prefix_id = _id_prefix_lookup[numerator_exponent]
+                denominator_prefix_id = _id_prefix_lookup[denominator_exponent]
+                unit_id = f'{numerator_prefix_id}MOL_PER_{_time_unit_id_lookup[time_unit]}_PER_{denominator_prefix_id}MOL'
+
+                # Construct unit string
+                numerator_prefix_si = _si_prefix_string[numerator_exponent]
+                denominator_prefix_si = _si_prefix_string[denominator_exponent]
+                unit_str = f'{numerator_prefix_si}mol/{time_unit}/{denominator_prefix_si}mol'
+
+                # Construct synonyms
+                synonyms = [
+                    unit_str,
+                    f'{numerator_prefix_si}mol/{time_unit}/{denominator_prefix_si}mol',
+                    f'{numerator_prefix_si}mol/({time_unit}.{denominator_prefix_si}mol)',
+                    f'{numerator_prefix_si}mol.{time_unit}-1.{denominator_prefix_si}mol-1'
+                ]
+                time_unit_multiplier = inv_map[time_unit]
+
+                # Create and add definitions
+                definition = {
+                    "id" : unit_id,
+                    "qudt" : "",
+                    "UCUM" : unit_str,
+                    "synonyms" : synonyms,
+                    "units": [
+                        { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": numerator_exponent },
+                        { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": time_unit_multiplier, "scale": 0 },
+                        { "kind": ls.UNIT_KIND_MOLE, "exponent": -1, "multiplier": 1, "scale": denominator_exponent }
+                    ]
+                }
+                unit_definitions.append(definition)
+
+def create_mol_per_time_per_volume_units() -> None:
+    time_units = ['h', 'd', 'min', 's']
+    numerator_exponents = [0, -3, -6, -9, -12]
+    denominator_exponents = [3, 0, -3, -6]
+    inv_map = {v: k for k, v in _time_unit_multipliers.items()}
+    for numerator_exponent in numerator_exponents:
+        for denominator_exponent in denominator_exponents:
+            for time_unit in time_units:
+                # Construct unit ID
+                numerator_prefix_id = _id_prefix_lookup[numerator_exponent]
+                denominator_prefix_id = _id_prefix_lookup[denominator_exponent]
+                unit_id = f'{numerator_prefix_id}MOL_PER_{_time_unit_id_lookup[time_unit]}_PER_{denominator_prefix_id}L'
+
+                # Construct unit string
+                numerator_prefix_si = _si_prefix_string[numerator_exponent]
+                denominator_prefix_si = _si_prefix_string[denominator_exponent]
+                unit_str = f'{numerator_prefix_si}mol/{time_unit}/{denominator_prefix_si}L'
+
+                # Construct synonyms
+                synonyms = [
+                    unit_str,
+                    f'{numerator_prefix_si}mol/{time_unit}/{denominator_prefix_si}L',
+                    f'{numerator_prefix_si}mol/({time_unit}.{denominator_prefix_si}L)',
+                    f'{numerator_prefix_si}mol.{time_unit}-1.{denominator_prefix_si}L-1'
+                ]
+                time_unit_multiplier = inv_map[time_unit]
+
+                # Create and add definitions
+                definition = {
+                    "id" : unit_id,
+                    "qudt" : "",
+                    "UCUM" : unit_str,
+                    "synonyms" : synonyms,
+                    "units": [
+                        { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": numerator_exponent },
+                        { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": time_unit_multiplier, "scale": 0 },
+                        { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": denominator_exponent }
+                    ]
+                }
+                unit_definitions.append(definition)
+
+def create_mol_per_gram_units() -> None:
+    numerator_mass_exponents = [0, -3, -6, -9, -12]
+    denominator_mass_exponents = [3, 0, -3, -6, -9]
+    for numerator_exponent in numerator_mass_exponents:
+        for denominator_exponent in denominator_mass_exponents:
+            # Construct unit ID
+            numerator_prefix_id = _id_prefix_lookup[numerator_exponent]
+            denominator_prefix_id = _id_prefix_lookup[denominator_exponent]
+            unit_id = f'{numerator_prefix_id}MOL_PER_{denominator_prefix_id}GM'
+
+            # Construct unit string
+            numerator_prefix_si = _si_prefix_string[numerator_exponent]
+            denominator_prefix_si = _si_prefix_string[denominator_exponent]
+            unit_str = f'{numerator_prefix_si}mol/{denominator_prefix_si}g'
+
+            # Construct synonyms
+            synonyms = [
+                unit_str,
+                f'{numerator_prefix_si}mol.{denominator_prefix_si}g-1'
+            ]
+
+            # Create and add definitions
+            definition = {
+                "id" : unit_id,
+                "qudt" : "",
+                "UCUM" : unit_str,
+                "synonyms" : synonyms,
+                "units": [
+                    { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": numerator_exponent },
+                    { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": denominator_exponent }
+                ]
+            }
+            unit_definitions.append(definition)
+
+def create_mol_per_liter_per_time_units() -> None:
+    time_units = ['h', 'd', 'min', 's']
+    numerator_exponents = [0, -3, -6, -9, -12]
+    denominator_exponents = [3, 0, -3, -6]
+    inv_map = {v: k for k, v in _time_unit_multipliers.items()}
+    for numerator_exponent in numerator_exponents:
+        for denominator_exponent in denominator_exponents:
+            for time_unit in time_units:
+                # Construct unit ID
+                numerator_prefix_id = _id_prefix_lookup[numerator_exponent]
+                denominator_prefix_id = _id_prefix_lookup[denominator_exponent]
+                unit_id = f'{numerator_prefix_id}MOL_PER_{denominator_prefix_id}L_PER_{_time_unit_id_lookup[time_unit]}'
+
+                # Construct unit string
+                numerator_prefix_si = _si_prefix_string[numerator_exponent]
+                denominator_prefix_si = _si_prefix_string[denominator_exponent]
+                unit_str = f'{numerator_prefix_si}mol/{denominator_prefix_si}L/{time_unit}'
+
+                # Construct synonyms
+                synonyms = [
+                    unit_str,
+                    f'{numerator_prefix_si}mol/{denominator_prefix_si}L/{time_unit}',
+                    f'{numerator_prefix_si}mol/({denominator_prefix_si}L.{time_unit})',
+                    f'{numerator_prefix_si}mol.{denominator_prefix_si}L-1.{time_unit}-1'
+                ]
+                time_unit_multiplier = inv_map[time_unit]
+
+                # Create and add definitions
+                definition = {
+                    "id" : unit_id,
+                    "qudt" : "",
+                    "UCUM" : unit_str,
+                    "synonyms" : synonyms,
+                    "units": [
+                        { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": numerator_exponent },
+                        { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": denominator_exponent },
+                        { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": time_unit_multiplier, "scale": 0 }
+                    ]
+                }
+                unit_definitions.append(definition)
+
+def create_mol_per_liter_units() -> None:
+    numerator_mass_exponents = [3, 0, -3, -6, -9, -12]
+    denominator_mass_exponents = [0, -3, -6]
+    for numerator_exponent in numerator_mass_exponents:
+        for denominator_exponent in denominator_mass_exponents:
+            # Construct unit ID
+            numerator_prefix_id = _id_prefix_lookup[numerator_exponent]
+            denominator_prefix_id = _id_prefix_lookup[denominator_exponent]
+            unit_id = f'{numerator_prefix_id}MOL_PER_{denominator_prefix_id}L'
+
+            # Construct unit string
+            numerator_prefix_si = _si_prefix_string[numerator_exponent]
+            denominator_prefix_si = _si_prefix_string[denominator_exponent]
+            unit_str = f'{numerator_prefix_si}mol/{denominator_prefix_si}L'
+
+            # Construct synonyms
+            synonyms = [
+                unit_str,
+                f'{numerator_prefix_si}mol.{denominator_prefix_si}L-1'
+            ]
+
+            # Create and add definitions
+            definition = {
+                "id" : unit_id,
+                "qudt" : "",
+                "UCUM" : unit_str,
+                "synonyms" : synonyms,
+                "units": [
+                    { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": numerator_exponent },
+                    { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": denominator_exponent }
+                ]
+            }
+            unit_definitions.append(definition)
+
+def create_mol_per_time_per_gram_units() -> None:
+    inv_map = {v: k for k, v in _time_unit_multipliers.items()}
+    time_units = ['s', 'min', 'h', 'd']
+    mol_unit_exponents = [0, -3, -6, -9, -12]
+    gram_unit_exponents = [3, 0, -3, -6, -9, -12]
+    for mol_unit_exponent in mol_unit_exponents:
+        for gram_unit_exponent in gram_unit_exponents:
+            for time_unit in time_units:
+                # Construct unit ID
+                mol_unit_prefix_id = _id_prefix_lookup[mol_unit_exponent]
+                gram_unit_prefix_id = _id_prefix_lookup[gram_unit_exponent]
+                unit_id = f'{mol_unit_prefix_id}MOL_PER_{_time_unit_id_lookup[time_unit]}_PER_{gram_unit_prefix_id}GM'
+
+                # Construct unit string
+                mol_unit_prefix_si = _si_prefix_string[mol_unit_exponent]
+                gram_unit_prefix_si = _si_prefix_string[gram_unit_exponent]
+                unit_str = f'{mol_unit_prefix_si}mol/{time_unit}/{gram_unit_prefix_si}g'
+
+                # Construct synonyms
+                synonyms = [
+                    unit_str,
+                    f'{mol_unit_prefix_si}mol/({time_unit}.{gram_unit_prefix_si}g)',
+                    f'{mol_unit_prefix_si}mol.{time_unit}-1.{gram_unit_prefix_si}g-1'
+                ]
+                time_unit_multiplier = inv_map[time_unit]
+
+                # Create and add definitions
+                definition = {
+                    "id" : unit_id,
+                    "qudt" : "",
+                    "UCUM" : unit_str,
+                    "synonyms" : synonyms,
+                    "units": [
+                        { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": mol_unit_exponent },
+                        { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": time_unit_multiplier, "scale": 0 },
+                        { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": gram_unit_exponent }
+                    ]
+                }
+                unit_definitions.append(definition)
+
+def create_mol_per_time_units() -> None:
+    inv_map = {v: k for k, v in _time_unit_multipliers.items()}
+    mass_exponents = [0, -3, -6, -9, -12]
+    time_units = ['s', 'min', 'h', 'd']
+    for mol_unit_exponent in mass_exponents:
+        for time_unit in time_units:
+            # Construct unit ID
+            mol_unit_prefix_id = _id_prefix_lookup[mol_unit_exponent]
+            unit_id = f'{mol_unit_prefix_id}MOL_PER_{_time_unit_id_lookup[time_unit]}'
+
+            # Construct unit string
+            mol_unit_prefix_si = _si_prefix_string[mol_unit_exponent]
+            unit_str = f'{mol_unit_prefix_si}mol/{time_unit}'
+
+            # Construct synonyms
+            synonyms = [
+                unit_str,
+                f'{mol_unit_prefix_si}mol.{time_unit}-1'
+            ]
+            time_unit_multiplier = inv_map[time_unit]
+
+            # Create and add definitions
+            definition = {
+                "id" : unit_id,
+                "qudt" : "",
+                "UCUM" : unit_str,
+                "synonyms" : synonyms,
+                "units": [
+                    { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": mol_unit_exponent },
+                    { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": time_unit_multiplier, "scale": 0 }
+                ]
+            }
+            unit_definitions.append(definition)
+
+def create_mol_units() -> None:
+    exponents = [0, -3, -6, -9, -12]
+    for exponent in exponents:
+        # Construct unit ID
+        id_prefix = _id_prefix_lookup[exponent]
+        unit_id = f'{id_prefix}MOL'
+
+        # Construct unit string
+        si_prefix = _si_prefix_string[exponent]
+        unit_str = f'{si_prefix}mol'
+
+        # Create and add definitions
+        definition = {
+            "id" : unit_id,
+            "qudt" : "",
+            "UCUM" : unit_str,
+            "synonyms" : [unit_str],
+            "units": [
+                { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": exponent }
+            ]
+        }
+        unit_definitions.append(definition)
+
+def create_per_time_units() -> None:
+    inv_map = {v: k for k, v in _time_unit_multipliers.items()}
+    time_units = ['s', 'min', 'h', 'd', 'y']
+    for time_unit in time_units:
+        # Construct unit ID
+        unit_id = f'PER_{_time_unit_id_lookup[time_unit]}'
+
+        # Construct unit string
+        unit_str = f'/{time_unit}'
+
+        # Construct synonyms
+        synonyms = [
+            unit_str,
+            f'1/{time_unit}',
+            f'{time_unit}-1'
         ]
-    },
-    {
-        "id" : "MilliGM_PER_KiloGM",
-        "qudt" : "MilliGM-PER-KiloGM",
-        "UCUM" : "mg/kg",
-        "synonyms" : [
-            "mg/kg",
-            "mg_per_kg"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -3 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 3 }
+        time_unit_multiplier = inv_map[time_unit]
+
+        # Create and add definitions
+        definition = {
+            "id" : unit_id,
+            "qudt" : "",
+            "UCUM" : unit_str,
+            "synonyms" : synonyms,
+            "units": [
+                { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": time_unit_multiplier, "scale": 0 }
+            ]
+        }
+        unit_definitions.append(definition)
+
+def create_time_units() -> None:
+    inv_map = {v: k for k, v in _time_unit_multipliers.items()}
+    time_units = ['s', 'min', 'h', 'd', 'y']
+    for time_unit in time_units:
+        # Construct unit ID
+        unit_id = f'{_time_unit_id_lookup[time_unit]}'
+
+        # Construct unit string
+        unit_str = f'{time_unit}'
+
+        # Construct synonyms
+        synonyms = [
+            unit_str
         ]
-    },
-    {
-        "id" : "GM_PER_KiloGM",
-        "qudt" : "GM-PER-KiloGM",
-        "UCUM" : "g/kg",
+        time_unit_multiplier = inv_map[time_unit]
+
+        # Create and add definitions
+        definition = {
+            "id" : unit_id,
+            "qudt" : "",
+            "UCUM" : unit_str,
+            "synonyms" : synonyms,
+            "units": [
+                { "kind": ls.UNIT_KIND_SECOND, "exponent": 1, "multiplier": time_unit_multiplier, "scale": 0 },
+            ]
+        }
+        unit_definitions.append(definition)
+
+def create_pressure_units() -> None:
+    unit_definitions.append({
+        "id" : "PA",
+        "qudt" : "PA",
+        "UCUM" : "Pa",
         "synonyms" : [
-            "g/kg",
-            "g_per_kg"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 3 }
-        ]
-    },
-    {
-        "id" : "MicroGM_PER_GM",
-        "qudt" : "MicroGM-PER-GM",
-        "UCUM" : "ug/g",
-        "synonyms" : [
-            "ug/g",
-            "ug_per_g"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -6 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "MilliGM_PER_GM",
-        "qudt" : "MilliGM-PER-GM",
-        "UCUM" : "mg/g",
-        "synonyms" : [
-            "mg/g",
-            "mg_per_g"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -3 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "GM_PER_GM",
-        "qudt" : "GM-PER-GM",
-        "UCUM" : "g/g",
-        "synonyms" : [
-            "g/g",
-            "g_per_g"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "MOL_PER_KiloGM",
-        "qudt" : "MOL-PER-KiloGM",
-        "UCUM" : "mol/kg",
-        "synonyms" : [
-            "mol/kg",
-            "mol_per_kg"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 3 }
-        ]
-    },
-    {
-        "id" : "MilliMOL_PER_KiloGM",
-        "qudt" : "MilliMOL-PER-KiloGM",
-        "UCUM" : "mmol/kg",
-        "synonyms" : [
-            "mmol/kg",
-            "mmol_per_kg"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -3 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 3 }
-        ]
-    },
-    {
-        "id" : "MicroMOL_PER_KiloGM",
-        "qudt" : "MicroMOL-PER-KiloGM",
-        "UCUM" : "umol/kg",
-        "synonyms" : [
-            "umol/kg",
-            "umol_per_kg"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -6 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 3 }
-        ]
-    },
-    {
-        "id" : "NanoMOL_PER_KiloGM",
-        "qudt" : "NanoMOL-PER-KiloGM",
-        "UCUM" : "nmol/kg",
-        "synonyms" : [
-            "nmol/kg",
-            "nmol_per_kg"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -9 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 3 }
-        ]
-    },
-    {
-        "id" : "PicoMOL_PER_KiloGM",
-        "qudt" : "PicoMOL-PER-KiloGM",
-        "UCUM" : "pmol/kg",
-        "synonyms" : [
-            "pmol/kg",
-            "pmol_per_kg"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -12 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 3 }
-        ]
-    },
-    {
-        "id" : "MOL_PER_GM",
-        "qudt" : "MOL-PER-GM",
-        "UCUM" : "mol/g",
-        "synonyms" : [
-            "mol/g",
-            "mol_per_g"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "MilliMOL_PER_GM",
-        "qudt" : "MilliMOL-PER-GM",
-        "UCUM" : "mmol/g",
-        "synonyms" : [
-            "mmol/g",
-            "mmol_per_g"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -3 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "MicroMOL_PER_GM",
-        "qudt" : "MicroMOL-PER-GM",
-        "UCUM" : "umol/g",
-        "synonyms" : [
-            "umol/g",
-            "umol_per_g"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -6 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "NanoMOL_PER_GM",
-        "qudt" : "NanoMOL-PER-GM",
-        "UCUM" : "nmol/g",
-        "synonyms" : [
-            "nmol/g",
-            "nmol_per_g"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -9 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "MicroMOL_PER_MilliGM",
-        "qudt" : "MicroMOL-PER-MilliGM",
-        "UCUM" : "umol/mg",
-        "synonyms" : [
-            "umol/mg",
-            "umol_per_mg"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -6 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": -3 }
-        ]
-    },
-    {
-        "id" : "PicoMOL_PER_MilliGM",
-        "qudt" : "PicoMOL-PER-MilliGM",
-        "UCUM" : "pmol/mg",
-        "synonyms" : [
-            "pmol/mg",
-            "pmol_per_mg"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -12 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": -3 }
-        ]
-    },
-    {
-        "id" : "L_PER_KiloGM",
-        "qudt" : "L-PER-KiloGM",
-        "UCUM" : "L/kg",
-        "synonyms" : [
-            "L/kg",
-            "L_per_kg"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 3 }
-        ]
-    },
-    # Per volume concentrations units
-    {
-        "id" : "KiloGM_PER_L",
-        "qudt" : "KiloGM-PER-L",
-        "UCUM" : "kg/L",
-        "synonyms" : [
-            "kg_per_L",
-            "kg/L",
-            "kg.L-1"
+            "Pa",
+            "N/m^2",
+            "kg/m/s^2",
+            "kg/(m.s^2)",
+            "kg.m-1.s-2"
         ],
         "units": [
             { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": 3 },
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": 0 }
+            { "kind": ls.UNIT_KIND_METRE, "exponent": -1, "multiplier": 1, "scale": 0 },
+            { "kind": ls.UNIT_KIND_SECOND, "exponent": -2, "multiplier": 1, "scale": 0 }
         ]
-    },
-    {
-        "id" : "GM_PER_L",
-        "qudt" : "GM-PER-L",
-        "UCUM" : "g/L",
+    })
+
+def create_temperature_units() -> None:
+    unit_definitions.append({
+        "id" : "K",
+        "qudt" : "K",
+        "UCUM" : "K",
         "synonyms" : [
-            "g_per_L",
-            "g/L",
-            "g.L-1"
+            "K",
+            "Kelvin"
         ],
         "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": 0 },
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": 0 }
+            { "kind": ls.UNIT_KIND_KELVIN, "exponent": 1, "multiplier": 1, "scale": 0 }
         ]
-    },
-    {
-        "id" : "MilliGM_PER_L",
-        "qudt" : "MilliGM-PER-L",
-        "UCUM" : "mg/L",
-        "synonyms" : [
-            "mg_per_L",
-            "mg/L",
-            "mg.L-1"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -3 },
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "MicroGM_PER_L",
-        "qudt" : "MicroGM-PER-L",
-        "UCUM" : "ug/L",
-        "synonyms" : [
-            "ug_per_L",
-            "ug/L",
-            "ug.L-1"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -6 },
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "NanoGM_PER_L",
-        "qudt" : "NanoGM-PER-L",
-        "UCUM" : "ng/L",
-        "synonyms" : [
-            "ng_per_L",
-            "ng/L",
-            "ng.L-1"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -9 },
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "MicroGM_PER_MilliL",
-        "qudt" : "MicroGM-PER-MilliL",
-        "UCUM" : "ug/mL",
-        "synonyms" : [
-            "ug_per_mL",
-            "ug/mL",
-            "ug.mL-1"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -6 },
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": -3 }
-        ]
-    },
-    {
-        "id" : "MilliGM_PER_MilliL",
-        "qudt" : "MilliGM-PER-MilliL",
-        "UCUM" : "mg/mL",
-        "synonyms" : [
-            "mg_per_mL",
-            "mg/mL",
-            "mg.mL-1"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -3 },
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": -3 }
-        ]
-    },
-    {
-        "id" : "MOL_PER_L",
-        "qudt" : "MOL-PER-L",
-        "UCUM" : "mol/L",
-        "synonyms" : [
-            "mol_per_L",
-            "mol/L"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": 0 },
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "MilliMOL_PER_L",
-        "qudt" : "MilliMOL-PER-L",
-        "UCUM" : "mmol/L",
-        "synonyms" : [
-            "mmol_per_L",
-            "mmol/L"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -3 },
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "MicroMOL_PER_L",
-        "qudt" : "MicroMOL-PER-L",
-        "UCUM" : "umol/L",
-        "synonyms" : [
-            "umol_per_L",
-            "umol/L"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -6 },
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "NanoMOL_PER_L",
-        "qudt" : "NanoMOL-PER-L",
-        "UCUM" : "nmol/L",
-        "synonyms" : [
-            "nmol_per_L",
-            "nmol/L"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -9 },
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": 0 }
-        ]
-    },
-    # Time units
-    {
-        "id" : "SEC",
-        "qudt" : "SEC",
-        "UCUM" : "s",
-        "synonyms" : [
-            "seconds",
-            "s"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": 1, "multiplier": 1, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "MIN",
-        "qudt" : "MIN",
-        "UCUM" : "min",
-        "synonyms" : [
-            "minutes",
-            "minute",
-            "min"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": 1, "multiplier": 60, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "HR",
-        "qudt" : "HR",
-        "UCUM" : "h",
-        "synonyms" : [
-            "hours",
-            "h"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": 1, "multiplier": 3600, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "DAY",
-        "qudt" : "DAY",
-        "UCUM" : "d",
-        "synonyms" : [
-            "days",
-            "d"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": 1, "multiplier": 24 * 3600, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "YR",
-        "qudt" : "YR",
-        "UCUM" : "y",
-        "synonyms" : [
-            "years",
-            "year",
-            "yr",
-            "y"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": 1, "multiplier": 365.25 * 24 * 3600, "scale": 0 }
-        ]
-    },
-    # Rate units
-    {
-        "id" : "PER_SEC",
-        "qudt" : "PER-SEC",
-        "UCUM" : "/s",
-        "synonyms" : [
-            "per_second",
-            "1/sec",
-            "1/s",
-            "/s",
-            "s-1"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 1, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "PER_H",
-        "qudt" : "PER-H",
-        "UCUM" : "/h",
-        "synonyms" : [
-            "per_hour",
-            "1/h",
-            "/h",
-            "h-1"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "PER_DAY",
-        "qudt" : "PER-DAY",
-        "UCUM" : "/d",
-        "synonyms" : [
-            "per_day",
-            "1/day",
-            "1/d",
-            "/d",
-            "d-1"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 24 * 3600, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "MOL_PER_HR",
-        "qudt" : "MOL-PER-HR",
-        "UCUM" : "mol/h",
-        "synonyms" : [
-            "mol/h",
-            "mol_per_hour"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": 0 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "MilliMOL_PER_HR",
-        "qudt" : "MilliMOL-PER-HR",
-        "UCUM" : "mmol/h",
-        "synonyms" : [
-            "mmol_per_hour",
-            "mmol/h"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -3 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "MicroMOL_PER_HR",
-        "qudt" : "MicroMOL-PER-HR",
-        "UCUM" : "umol/h",
-        "synonyms" : [
-            "umol_per_hour",
-            "umol/h"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -6 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "NanoMOL_PER_HR",
-        "qudt" : "NanoMOL-PER-HR",
-        "UCUM" : "nmol/h",
-        "synonyms" : [
-            "nmol_per_hour",
-            "nmol/h"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -9 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "PicoMOL_PER_HR",
-        "qudt" : "PicoMOL-PER-HR",
-        "UCUM" : "pmol/h",
-        "synonyms" : [
-            "pmol_per_hour",
-            "pmol/h"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -12 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "MilliGM_PER_HR",
-        "qudt" : "MilliGM-PER-HR",
-        "UCUM" : "mg/h",
-        "synonyms" : [
-            "mg_per_h",
-            "mg/h",
-            "mg.h-1"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -3 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "MicroGM_PER_HR",
-        "qudt" : "",
-        "UCUM" : "ug/h",
-        "synonyms" : [
-            "ug_per_h",
-            "ug/h",
-            "ug.h-1"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -6 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "MilliGM_PER_DAY",
-        "qudt" : "",
-        "UCUM" : "mg/d",
-        "synonyms" : [
-            "mg_per_day",
-            "mg/d",
-            "mg/day",
-            "mg.d-1"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -3 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "MicroGM_PER_DAY",
-        "qudt" : "",
-        "UCUM" : "ug/d",
-        "synonyms" : [
-            "ug_per_day",
-            "ug/d",
-            "ug/day",
-            "ug.d-1"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -6 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "L_PER_HR",
-        "qudt" : "L-PER-HR",
-        "UCUM" : "L/h",
-        "synonyms" : [
-            "L_per_h",
-            "L/h",
-            "L.h-1"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": 0 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "L_PER_DAY",
-        "qudt" : "L-PER-DAY",
-        "UCUM" : "L/d",
-        "synonyms" : [
-            "L_PER_DAY",
-            "L/d",
-            "L/day",
-            "L.d-1"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": 0 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "MilliL_PER_DAY",
-        "qudt" : "MilliL-PER-DAY",
-        "UCUM" : "mL/d",
-        "synonyms" : [
-            "MilliL_PER_DAY",
-            "mL/d",
-            "mL/day",
-            "mL.d-1"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": -3 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 }
-        ]
-    },
-    # Permeability units
-    {
-        "id" : "CentiM_PER_SEC",
-        "qudt" : "CentiM-PER-SEC",
-        "UCUM" : "cm/s",
-        "synonyms" : [
-            "cm_per_second",
-            "cm_per_sec",
-            "cm/s",
-            "cm.s-1"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_METRE, "exponent": 1, "multiplier": 1, "scale": -2 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 1, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "CentiM_PER_HR",
-        "qudt" : "CentiM-PER-HR",
-        "UCUM" : "cm/h",
-        "synonyms" : [
-            "cm_per_hour",
-            "cm/h",
-            "cm.h-1"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_METRE, "exponent": 1, "multiplier": 1, "scale": -2 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 }
-        ]
-    },
-    {
-        "id" : "DeciM_PER_HR",
-        "qudt" : "DeciM-PER-HR",
-        "UCUM" : "dm/h",
-        "synonyms" : [
-            "dm_per_hour",
-            "dm/h",
-            "dm.h-1"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_METRE, "exponent": 1, "multiplier": 1, "scale": -1 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 }
-        ]
-    },
-    # Rate per mass units
-    {
-        "id" : "L_PER_KiloGM_HR",
-        "qudt" : "L-PER-KiloGM-HR",
-        "UCUM" : "L/(kg.h)",
-        "synonyms" : [
-            "L_per_kg_h",
-            "L/(kg.h)",
-            "L/kg/h",
-            "L.kg-1.h-1"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 3 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 },
-        ]
-    },
-    {
-        "id" : "MilliMOL_PER_L_HR",
-        "qudt" : "MilliMOL-PER-L-HR",
-        "UCUM" : "mmol/(L.h)",
-        "synonyms" : [
-            "mmol/(L.h)",
-            "mmol/L/h",
-            "mM_per_L_h",
-            "mM.L-1.h-1"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -3 },
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": 0 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 },
-        ]
-    },
-    {
-        "id" : "MilliL_PER_DAY_PER_GM",
-        "qudt" : "",
-        "UCUM" : "mL/d/g",
-        "synonyms" : [
-            "mL/d/g",
-            "mL/(d.g)",
-            "mL.d-1.g-1"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": -3 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 0 },
-        ]
-    },
+    })
+
+def create_per_time_per_allometric_mass_units():
     # Allometrically scaled rate constant units scaled by body weight using allometric scaling
+    per_time_per_allometric_mass_units = [
     {
         "id" : "PER_HR_KiloGM0P25",
         "qudt" : "",
@@ -1117,22 +1176,6 @@ unit_definitions = [
         ]
     },
     {
-        "id" : "PER_DAY_PER_KiloGM0P25",
-        "qudt" : "",
-        "UCUM" : "1/(d.kg^0.25)",
-        "synonyms" : [
-            "1/d/kg^0.25",
-            "/d/kg^0.25",
-            "1/(d.kg^0.25)",
-            "/(d.kg^0.25)",
-            "d-1.kg-0.25"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.25, "multiplier": 1, "scale": 3 },
-        ]
-    },
-    {
         "id" : "PER_HR_PER_KiloGM0P75",
         "qudt" : "",
         "UCUM" : "1/(h.kg^0.75)",
@@ -1163,569 +1206,25 @@ unit_definitions = [
             { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
             { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
         ]
-    },
-    # Units for clearance rate constants scaled by body weight using allometric scaling
+    }
+    ]
+    unit_definitions.extend(per_time_per_allometric_mass_units)
+
+# Unit definitions, translating a unit string to the elementary unit
+# compositions following the SBML structure.
+# Unit IDs should match up with vocabulary of QUDT (https://qudt.org/2.1/vocab/unit)
+# except that the '-' character is replaced by '_' due to restrictions of SBML.
+unit_definitions = [
     {
-        "id" : "MOL_PER_HR_PER_KiloGM0P75",
-        "qudt" : "",
-        "UCUM" : "mol/(h.kg^0.75)",
+        "id" : "UNITLESS",
+        "qudt" : "UNITLESS",
+        "UCUM" : "",
         "synonyms" : [
-            "mol/h/kg^0.75",
-            "mol/(h.kg^0.75)",
-            "mol.h-1.kg-0.75"
+            "unitless",
+            "dimensionless"
         ],
         "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": 0 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
-        ]
-    },
-    {
-        "id" : "MilliMOL_PER_HR_PER_KiloGM0P75",
-        "qudt" : "",
-        "UCUM" : "mmol/(h.kg^0.75)",
-        "synonyms" : [
-            "mmol/h/kg^0.75",
-            "mmol/(h.kg^0.75)",
-            "mmol.h-1.kg-0.75"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -3 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
-        ]
-    },
-    {
-        "id" : "MicroMOL_PER_HR_PER_KiloGM0P75",
-        "qudt" : "",
-        "UCUM" : "umol/(h.kg^0.75)",
-        "synonyms" : [
-            "umol/h/kg^0.75",
-            "umol/(h.kg^0.75)",
-            "umol.h-1.kg-0.75"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -6 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
-        ]
-    },
-    {
-        "id" : "NanoMOL_PER_HR_PER_KiloGM0P75",
-        "qudt" : "",
-        "UCUM" : "nmol/(h.kg^0.75)",
-        "synonyms" : [
-            "nmol/h/kg^0.75",
-            "nmol/(h.kg^0.75)",
-            "nmol.h-1.kg-0.75"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -9 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
-        ]
-    },
-    {
-        "id" : "MOL_PER_DAY_PER_KiloGM0P75",
-        "qudt" : "",
-        "UCUM" : "mol/(d.kg^0.75)",
-        "synonyms" : [
-            "mol/d/kg^0.75",
-            "mol/(d.kg^0.75)",
-            "mol.d-1.kg-0.75"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": 0 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
-        ]
-    },
-    {
-        "id" : "MilliMOL_PER_DAY_PER_KiloGM0P75",
-        "qudt" : "",
-        "UCUM" : "mmol/(d.kg^0.75)",
-        "synonyms" : [
-            "mmol/d/kg^0.75",
-            "mmol/(d.kg^0.75)",
-            "mmol.d-1.kg-0.75"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -3 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
-        ]
-    },
-    {
-        "id" : "MicroMOL_PER_DAY_PER_KiloGM0P75",
-        "qudt" : "",
-        "UCUM" : "umol/(d.kg^0.75)",
-        "synonyms" : [
-            "umol/d/kg^0.75",
-            "umol/(d.kg^0.75)",
-            "umol.d-1.kg-0.75"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -6 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
-        ]
-    },
-    {
-        "id" : "NanoMOL_PER_DAY_PER_KiloGM0P75",
-        "qudt" : "",
-        "UCUM" : "nmol/(d.kg^0.75)",
-        "synonyms" : [
-            "nmol/d/kg^0.75",
-            "nmol/(d.kg^0.75)",
-            "nmol.d-1.kg-0.75"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -9 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
-        ]
-    },
-    {
-        "id" : "GM_PER_HR_PER_KiloGM0P75",
-        "qudt" : "",
-        "UCUM" : "g/(h.kg^0.75)",
-        "synonyms" : [
-            "g/h/kg^0.75",
-            "g/(h.kg^0.75)",
-            "g.h-1.kg-0.75"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": 0 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
-        ]
-    },
-    {
-        "id" : "MilliGM_PER_HR_PER_KiloGM0P75",
-        "qudt" : "",
-        "UCUM" : "mg/(h.kg^0.75)",
-        "synonyms" : [
-            "mg/h/kg^0.75",
-            "mg/(h.kg^0.75)",
-            "mg.h-1.kg-0.75"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -3 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
-        ]
-    },
-    {
-        "id" : "MicroGM_PER_HR_PER_KiloGM0P75",
-        "qudt" : "",
-        "UCUM" : "ug/(h.kg^0.75)",
-        "synonyms" : [
-            "ug/h/kg^0.75",
-            "ug/(h.kg^0.75)",
-            "ug.h-1.kg-0.75"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -6 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
-        ]
-    },
-    {
-        "id" : "NanoGM_PER_HR_PER_KiloGM0P75",
-        "qudt" : "",
-        "UCUM" : "ng/(h.kg^0.75)",
-        "synonyms" : [
-            "ng/h/kg^0.75",
-            "ng/(h.kg^0.75)",
-            "ng.h-1.kg-0.75"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -9 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
-        ]
-    },
-    {
-        "id" : "GM_PER_DAY_PER_KiloGM0P75",
-        "qudt" : "",
-        "UCUM" : "g/(d.kg^0.75)",
-        "synonyms" : [
-            "g/d/kg^0.75",
-            "g/(d.kg^0.75)",
-            "g.d-1.kg-0.75"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": 0 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
-        ]
-    },
-    {
-        "id" : "MilliGM_PER_DAY_PER_KiloGM0P75",
-        "qudt" : "",
-        "UCUM" : "mg/(d.kg^0.75)",
-        "synonyms" : [
-            "mg/d/kg^0.75",
-            "mg/(d.kg^0.75)",
-            "mg.d-1.kg-0.75"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -3 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
-        ]
-    },
-    {
-        "id" : "MicroGM_PER_DAY_PER_KiloGM0P75",
-        "qudt" : "",
-        "UCUM" : "ug/(d.kg^0.75)",
-        "synonyms" : [
-            "ug/d/kg^0.75",
-            "ug/(d.kg^0.75)",
-            "ug.d-1.kg-0.75"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -6 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
-        ]
-    },
-    {
-        "id" : "NanoGM_PER_DAY_PER_KiloGM0P75",
-        "qudt" : "",
-        "UCUM" : "ng/(d.kg^0.75)",
-        "synonyms" : [
-            "ng/d/kg^0.75",
-            "ng/(d.kg^0.75)",
-            "ng.d-1.kg-0.75"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -9 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
-        ]
-    },
-    # Other units including allometric scaling
-    {
-        "id" : "L_PER_DAY_PER_KiloGM0P75",
-        "qudt" : "",
-        "UCUM" : "L/(d.kg^0.75)",
-        "synonyms" : [
-            "L/d/kg^0.75",
-            "L/(d.kg^0.75)",
-            "L.d-1.kg-0.75"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": 0 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
-        ]
-    },
-    {
-        "id" : "L_PER_HR_PER_KiloGM0P75",
-        "qudt" : "",
-        "UCUM" : "L/(h.kg^0.75)",
-        "synonyms" : [
-            "L_PER_HR_PER_KiloGM3DIV4",
-            "L/h/kg^0.75",
-            "L/(h.kg^0.75)",
-            "L.h-1.kg-0.75"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": 0 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -0.75, "multiplier": 1, "scale": 3 },
-        ]
-    },
-    {
-        "id" : "MilliGM_PER_DAY_PER_GM",
-        "qudt" : "",
-        "UCUM" : "mg/d/g",
-        "synonyms" : [
-            "mg/d/g",
-            "mg/(d.g)",
-            "mg.d-1.g-1"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -3 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 0 },
-        ]
-    },
-    {
-        "id" : "MilliL_PER_MIN_PER_GM",
-        "qudt" : "",
-        "UCUM" : "mL/min/g",
-        "synonyms" : [
-            "mL/min/g",
-            "mL/(min.g)",
-            "mL.min-1.g-1"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": -3 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 60, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 0 },
-        ]
-    },
-    {
-        "id" : "PicoMOL_PER_MIN_PER_PicoMOL",
-        "qudt" : "",
-        "UCUM" : "pmol/min/pmol",
-        "synonyms" : [
-            "pmol/min/pmol",
-            "pmol/(min.pmol)"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -12 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 60, "scale": 0 },
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": -1, "multiplier": 1, "scale": -12 },
-        ]
-    },
-    {
-        "id" : "MicroMOL_PER_MIN_PER_MilliGM",
-        "qudt" : "",
-        "UCUM" : "umol/min/mg",
-        "synonyms" : [
-            "umol/min/mg",
-            "umol/(min.mg)"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -6 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 60, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": -3 },
-        ]
-    },
-    {
-        "id" : "NanoMOL_PER_MIN_PER_MilliGM",
-        "qudt" : "",
-        "UCUM" : "nmol/min/mg",
-        "synonyms" : [
-            "nmol/min/mg",
-            "nmol/(min.mg)"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -9 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 60, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": -3 },
-        ]
-    },
-    {
-        "id" : "PicoMOL_PER_MIN_PER_MilliGM",
-        "qudt" : "",
-        "UCUM" : "pmol/min/mg",
-        "synonyms" : [
-            "pmol/min/mg",
-            "pmol/(min.mg)"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -12 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 60, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": -3 },
-        ]
-    },
-    {
-        "id" : "MicroMOL_PER_HR_PER_KiloGM",
-        "qudt" : "",
-        "UCUM" : "umol/hr/kg",
-        "synonyms" : [
-            "umol/hr/kg",
-            "umol/h/kg",
-            "umol/(hr.kg)",
-            "umol/(h.kg)"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -6 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 3 },
-        ]
-    },
-    {
-        "id" : "NanoMOL_PER_HR_PER_KiloGM",
-        "qudt" : "",
-        "UCUM" : "nmol/hr/kg",
-        "synonyms" : [
-            "nmol/hr/kg",
-            "nmol/h/kg",
-            "nmol/(hr.kg)",
-            "nmol/(h.kg)"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -9 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 3 },
-        ]
-    },
-    {
-        "id" : "NanoMOL_PER_MIN_PER_GM",
-        "qudt" : "",
-        "UCUM" : "nmol/min/g",
-        "synonyms" : [
-            "nmol/min/g",
-            "nmol/(min.g)",
-            "nmol.min-1.g-1"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -9 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 60, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 0 },
-        ]
-    },
-    {
-        "id" : "NanoMOL_PER_MIN_PER_MilliGM",
-        "qudt" : "",
-        "UCUM" : "nmol/min/mg",
-        "synonyms" : [
-            "nmol/min/mg",
-            "nmol/(min.mg)",
-            "nmol.min-1.mg-1"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -9 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 60, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": -3 },
-        ]
-    },
-    {
-        "id" : "PicoMOL_PER_HR_PER_GM",
-        "qudt" : "",
-        "UCUM" : "pmol/hr/g",
-        "synonyms" : [
-            "pmol/hr/g",
-            "pmol/h/g",
-            "pmol/(hr.g)",
-            "pmol/(h.g)",
-            "pmol.h-1.g-1"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -12 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 3600, "scale": 0 },
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": -1, "multiplier": 1, "scale": 0 },
-        ]
-    },
-    {
-        "id" : "NanoMOL_PER_MIN_PER_MilliL",
-        "qudt" : "",
-        "UCUM" : "nmol/min/mL",
-        "synonyms" : [
-            "nmol/min/mL",
-            "nmol/(min.mL)"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": -9 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 60, "scale": 0 },
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": -3 },
-        ]
-    },
-    {
-        "id" : "MicroGM_PER_DAY_PER_L",
-        "qudt" : "",
-        "UCUM" : "ug/d/L",
-        "synonyms" : [
-            "ug/d/L",
-            "ug/(d.L)",
-            "ug.L-1.L-1"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -6 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": 0 },
-        ]
-    },
-    {
-        "id" : "MicroGM_PER_DAY_PER_MilliL",
-        "qudt" : "",
-        "UCUM" : "ug/d/mL",
-        "synonyms" : [
-            "ug/d/mL",
-            "ug/(d.mL)"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": -6 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -1, "multiplier": 86400, "scale": 0 },
-            { "kind": ls.UNIT_KIND_LITRE, "exponent": -1, "multiplier": 1, "scale": -3 },
-        ]
-    },
-    # Area units
-    {
-        "id" : "CentiM2",
-        "qudt" : "CentiM2",
-        "UCUM" : "cm2",
-        "synonyms" : [
-            "cm_square",
-            "cm^2",
-            "cm2"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_METRE, "exponent": 2, "multiplier": 1, "scale": -2 },
-        ]
-    },
-    {
-        "id" : "DeciM2",
-        "qudt" : "DeciM2",
-        "UCUM" : "dm2",
-        "synonyms" : [
-            "dm_square",
-            "dm^2",
-            "dm2"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_METRE, "exponent": 2, "multiplier": 1, "scale": -1 },
-        ]
-    },
-    # Length units
-    {
-        "id" : "CentiM",
-        "qudt" : "CentiM",
-        "UCUM" : "cm",
-        "synonyms" : [
-            "cm"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_METRE, "exponent": 1, "multiplier": 1, "scale": -2 },
-        ]
-    },
-    {
-        "id" : "DeciM",
-        "qudt" : "DeciM",
-        "UCUM" : "dm",
-        "synonyms" : [
-            "dm"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_METRE, "exponent": 1, "multiplier": 1, "scale": -1 },
-        ]
-    },
-    # Pressure units
-    {
-        "id" : "PA",
-        "qudt" : "PA",
-        "UCUM" : "Pa",
-        "synonyms" : [
-            "KiloGM-PER-M-SEC2",
-            "N-PER-M2",
-            "Pa",
-            "N/m^2",
-            "kg/m/s^2",
-            "kg/(m.s^2)",
-            "kg.m-1.s-2"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": 3 },
-            { "kind": ls.UNIT_KIND_METRE, "exponent": -1, "multiplier": 1, "scale": 0 },
-            { "kind": ls.UNIT_KIND_SECOND, "exponent": -2, "multiplier": 1, "scale": 0 }
-        ]
-    },
-    # Temperature units
-    {
-        "id" : "K",
-        "qudt" : "K",
-        "UCUM" : "K",
-        "synonyms" : [
-            "K",
-            "Kelvin"
-        ],
-        "units": [
-            { "kind": ls.UNIT_KIND_KELVIN, "exponent": 1, "multiplier": 1, "scale": 0 }
+            { "kind": ls.UNIT_KIND_DIMENSIONLESS, "exponent": 1, "multiplier": 1, "scale": 0 }
         ]
     }
 ]
@@ -1967,3 +1466,36 @@ def _is_temperature_unit_part(unit_part: dict):
     """Return True when the unit part is a temperature unit with exponent 1."""
     return unit_part['kind'] == ls.UNIT_KIND_KELVIN \
         and unit_part['exponent'] == 1
+
+
+create_area_units()
+create_gram_units()
+create_gram_per_gram_units()
+create_gram_per_liter_units()
+create_gram_per_time_units()
+create_gram_per_time_per_allometric_mass_units()
+create_gram_per_time_per_gram_units()
+create_gram_per_time_per_volume_units()
+create_length_per_time_units()
+create_length_units()
+create_liter_per_gram_units()
+create_liter_per_gram_per_time_units()
+create_liter_per_time_per_allometric_mass_units()
+create_liter_per_time_per_gram_units()
+create_liter_per_time_units()
+create_liter_units()
+create_molar_mass_unit()
+create_mol_per_gram_units()
+create_mol_per_liter_units()
+create_mol_per_liter_per_time_units()
+create_mol_per_time_per_allometric_mass_units()
+create_mol_per_time_per_gram_units()
+create_mol_per_time_per_mol_units()
+create_mol_per_time_per_volume_units()
+create_mol_per_time_units()
+create_mol_units()
+create_per_time_units()
+create_per_time_per_allometric_mass_units()
+create_time_units()
+create_pressure_units()
+create_temperature_units()

@@ -11,7 +11,9 @@ from .unit_definitions import (
     set_unit_definition,
     get_unit_type,
     get_ucum_unit_string,
-    create_unit_string
+    create_unit_string,
+    _si_prefix_string,
+    _id_prefix_lookup
 )
 from .pbk_ontology_checker import PbkOntologyChecker
 from .pbk_model_infos_extractor import PbkModelInfosExtractor
