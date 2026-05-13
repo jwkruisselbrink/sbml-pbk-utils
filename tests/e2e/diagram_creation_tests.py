@@ -20,6 +20,7 @@ class DiagramCreationTests(unittest.TestCase):
         ("simple/simple.annotated.sbml", False, False),
         ("simple/simple.annotated.sbml", True, True),
         ("euromix/euromix.annotated.sbml", True, True),
+        ("simple_metab/simple_metab.annotated.sbml", True, True),
     ])
     def test_generate_report(
         self,

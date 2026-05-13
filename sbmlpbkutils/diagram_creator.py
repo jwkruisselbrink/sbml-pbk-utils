@@ -15,7 +15,36 @@ class NamesDisplay(IntEnum):
     ELEMENT_NAMES_AND_ONTO_IDS = 4
     ONTO_LABELS_AND_IDS = 5
 
+SPECIES_CHEBI_COLORS = [
+    'gold',
+    'mediumspringgreen',
+    'lightcoral',
+    'lightskyblue',
+    'plum',
+    'khaki',
+    'lightsalmon',
+    'paleturquoise',
+    'mediumaquamarine',
+    'thistle',
+]
+
 class DiagramCreator:
+
+    @staticmethod
+    def _get_species_chebi_color_map(species):
+        chebi_to_color = {}
+        color_index = 0
+        for sp_info in species.values():
+            chebi_class = sp_info.chebi_bqb_is_class
+            if chebi_class not in chebi_to_color:
+                if chebi_class is None:
+                    chebi_to_color[chebi_class] = 'gold'
+                else:
+                    chebi_to_color[chebi_class] = SPECIES_CHEBI_COLORS[
+                        color_index % len(SPECIES_CHEBI_COLORS)
+                    ]
+                    color_index += 1
+        return chebi_to_color
 
     def create_diagram(
         self,
@@ -31,6 +60,8 @@ class DiagramCreator:
             document,
             draw_compartment_edges
         )
+
+        chebi_color_map = self._get_species_chebi_color_map(species)
 
         dot = Digraph(
             format="svg",
@@ -59,12 +90,13 @@ class DiagramCreator:
                     for sp_id, species_info in species.items():
                         if species_info.compartment_id == comp_id:
                             sp_label = self.get_element_label(names_display, sp_id, species_info)
+                            sp_color = chebi_color_map[species_info.chebi_bqb_is_class]
                             subgraph.node(
                                 sp_id,
                                 label=sp_label,
                                 shape='box',
                                 style='filled,rounded',
-                                fillcolor='gold',
+                                fillcolor=sp_color,
                                 color='black',
                                 href=f'#species-{sp_id}'
                             )
