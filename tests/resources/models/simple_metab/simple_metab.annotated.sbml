@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2">
   <model metaid="simple_metab" id="simple_metab" substanceUnits="MicroGM" timeUnits="HR" volumeUnits="L" extentUnits="MicroGM">
+    <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+        <rdf:Description rdf:about="#simple_metab">
+          <bqbiol:hasProperty>
+            <rdf:Bag>
+              <rdf:li rdf:resource="http://purl.obolibrary.org/obo/CHEBI_59999"/>
+            </rdf:Bag>
+          </bqbiol:hasProperty>
+          <bqbiol:hasTaxon>
+            <rdf:Bag>
+              <rdf:li rdf:resource="http://purl.obolibrary.org/obo/NCBITaxon_9606"/>
+            </rdf:Bag>
+          </bqbiol:hasTaxon>
+        </rdf:Description>
+      </rdf:RDF>
+    </annotation>
     <listOfUnitDefinitions>
       <unitDefinition id="MicroGM">
         <listOfUnits>
@@ -28,7 +44,7 @@
           <unit kind="gram" exponent="-1" scale="3" multiplier="1"/>
         </listOfUnits>
       </unitDefinition>
-      <unitDefinition id="L_PER_KiloGM_HR">
+      <unitDefinition id="L_PER_KiloGM_PER_HR">
         <listOfUnits>
           <unit kind="litre" exponent="1" scale="0" multiplier="1"/>
           <unit kind="gram" exponent="-1" scale="3" multiplier="1"/>
@@ -46,7 +62,7 @@
           <unit kind="second" exponent="-1" scale="0" multiplier="3600"/>
         </listOfUnits>
       </unitDefinition>
-      <unitDefinition id="PER_H">
+      <unitDefinition id="PER_HR">
         <listOfUnits>
           <unit kind="second" exponent="-1" scale="0" multiplier="3600"/>
         </listOfUnits>
@@ -70,6 +86,11 @@
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
             <rdf:Description rdf:about="#meta_Liver">
+              <bqmodel:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://purl.obolibrary.org/obo/PBPKO_00558"/>
+                </rdf:Bag>
+              </bqmodel:is>
               <bqbiol:is>
                 <rdf:Bag>
                   <rdf:li rdf:resource="http://purl.obolibrary.org/obo/UBERON_0002107"/>
@@ -114,6 +135,11 @@
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
             <rdf:Description rdf:about="#meta_Urine">
+              <bqmodel:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://purl.obolibrary.org/obo/PBPKO_00556"/>
+                </rdf:Bag>
+              </bqmodel:is>
               <bqbiol:is>
                 <rdf:Bag>
                   <rdf:li rdf:resource="http://purl.obolibrary.org/obo/UBERON_0001088"/>
@@ -125,16 +151,186 @@
       </compartment>
     </listOfCompartments>
     <listOfSpecies>
-      <species id="AGut_P" name="amount in gut parent" compartment="Gut" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="ALiver_P" name="amount in liver parent" compartment="Liver" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="ABlood_P" name="amount in blood parent" compartment="Blood" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="ARest_P" name="amount in rest-of-body parent" compartment="Rest" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="AUrine_P" name="amount in urine parent" compartment="Urine" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="AGut_M" name="amount in gut metabolite" compartment="Gut" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="ALiver_M" name="amount in liver metabolite" compartment="Liver" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="ABlood_M" name="amount in blood metabolite" compartment="Blood" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="ARest_M" name="amount in rest-of-body metabolite" compartment="Rest" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
-      <species id="AUrine_M" name="amount in urine metabolite" compartment="Urine" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
+      <species metaid="meta_AGut_P" id="AGut_P" name="amount in gut parent" compartment="Gut" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#meta_AGut_P">
+              <bqmodel:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://purl.obolibrary.org/obo/PBPKO_00496"/>
+                </rdf:Bag>
+              </bqmodel:is>
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://purl.obolibrary.org/obo/CHEBI_59999"/>
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species metaid="meta_ALiver_P" id="ALiver_P" name="amount in liver parent" compartment="Liver" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#meta_ALiver_P">
+              <bqmodel:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://purl.obolibrary.org/obo/PBPKO_00497"/>
+                </rdf:Bag>
+              </bqmodel:is>
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://purl.obolibrary.org/obo/CHEBI_59999"/>
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species metaid="meta_ABlood_P" id="ABlood_P" name="amount in blood parent" compartment="Blood" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#meta_ABlood_P">
+              <bqmodel:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://purl.obolibrary.org/obo/PBPKO_00623"/>
+                </rdf:Bag>
+              </bqmodel:is>
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://purl.obolibrary.org/obo/CHEBI_59999"/>
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species metaid="meta_ARest_P" id="ARest_P" name="amount in rest-of-body parent" compartment="Rest" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#meta_ARest_P">
+              <bqmodel:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://purl.obolibrary.org/obo/PBPKO_00501"/>
+                </rdf:Bag>
+              </bqmodel:is>
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://purl.obolibrary.org/obo/CHEBI_59999"/>
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species metaid="meta_AUrine_P" id="AUrine_P" name="amount in urine parent" compartment="Urine" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#meta_AUrine_P">
+              <bqmodel:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://purl.obolibrary.org/obo/PBPKO_00272"/>
+                </rdf:Bag>
+              </bqmodel:is>
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://purl.obolibrary.org/obo/CHEBI_59999"/>
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species metaid="meta_AGut_M" id="AGut_M" name="amount in gut metabolite" compartment="Gut" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#meta_AGut_M">
+              <bqmodel:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://purl.obolibrary.org/obo/PBPKO_00496"/>
+                </rdf:Bag>
+              </bqmodel:is>
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://purl.obolibrary.org/obo/CHEBI_25212"/>
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species metaid="meta_ALiver_M" id="ALiver_M" name="amount in liver metabolite" compartment="Liver" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#meta_ALiver_M">
+              <bqmodel:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://purl.obolibrary.org/obo/PBPKO_00497"/>
+                </rdf:Bag>
+              </bqmodel:is>
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://purl.obolibrary.org/obo/CHEBI_25212"/>
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species metaid="meta_ABlood_M" id="ABlood_M" name="amount in blood metabolite" compartment="Blood" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#meta_ABlood_M">
+              <bqmodel:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://purl.obolibrary.org/obo/PBPKO_00623"/>
+                </rdf:Bag>
+              </bqmodel:is>
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://purl.obolibrary.org/obo/CHEBI_25212"/>
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species metaid="meta_ARest_M" id="ARest_M" name="amount in rest-of-body metabolite" compartment="Rest" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#meta_ARest_M">
+              <bqmodel:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://purl.obolibrary.org/obo/PBPKO_00501"/>
+                </rdf:Bag>
+              </bqmodel:is>
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://purl.obolibrary.org/obo/CHEBI_25212"/>
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species metaid="meta_AUrine_M" id="AUrine_M" name="amount in urine metabolite" compartment="Urine" initialAmount="0" substanceUnits="MicroGM" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#meta_AUrine_M">
+              <bqmodel:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://purl.obolibrary.org/obo/PBPKO_00272"/>
+                </rdf:Bag>
+              </bqmodel:is>
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://purl.obolibrary.org/obo/CHEBI_25212"/>
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
     </listOfSpecies>
     <listOfParameters>
       <parameter metaid="meta_BW" id="BW" name="body weight" value="70" units="KiloGM" constant="true">
@@ -155,16 +351,52 @@
           </rdf:RDF>
         </annotation>
       </parameter>
-      <parameter id="scVRest" name="rest-of-body volume as fraction of body weight" value="0.9003" units="L_PER_KiloGM" constant="true"/>
-      <parameter id="scVLiver" name="liver volume as fraction of body weight" value="0.0257" units="L_PER_KiloGM" constant="true"/>
-      <parameter id="scVBlood" name="blood volume as fraction of body weight" value="0.074" units="L_PER_KiloGM" constant="true"/>
-      <parameter id="scQRest" name="rest-of-body perfusion" value="0.773" units="L_PER_KiloGM_HR" constant="true"/>
-      <parameter id="scQLiver" name="liver perfusion" value="0.227" units="L_PER_KiloGM_HR" constant="true"/>
+      <parameter metaid="meta_scVRest" id="scVRest" name="rest-of-body volume as fraction of body weight" value="0.9003" units="L_PER_KiloGM" constant="true">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#meta_scVRest">
+              <bqmodel:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://purl.obolibrary.org/obo/PBPKO_00106"/>
+                </rdf:Bag>
+              </bqmodel:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </parameter>
+      <parameter metaid="meta_scVLiver" id="scVLiver" name="liver volume as fraction of body weight" value="0.0257" units="L_PER_KiloGM" constant="true">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#meta_scVLiver">
+              <bqmodel:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://purl.obolibrary.org/obo/PBPKO_00078"/>
+                </rdf:Bag>
+              </bqmodel:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </parameter>
+      <parameter metaid="meta_scVBlood" id="scVBlood" name="blood volume as fraction of body weight" value="0.074" units="L_PER_KiloGM" constant="true">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#meta_scVBlood">
+              <bqmodel:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://purl.obolibrary.org/obo/PBPKO_04057"/>
+                </rdf:Bag>
+              </bqmodel:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </parameter>
+      <parameter id="scQRest" name="rest-of-body perfusion" value="0.773" units="L_PER_KiloGM_PER_HR" constant="true"/>
+      <parameter id="scQLiver" name="liver perfusion" value="0.227" units="L_PER_KiloGM_PER_HR" constant="true"/>
       <parameter id="PCLiver_P" name="partition coefficient liver over blood  parent" value="2" units="UNITLESS" constant="true"/>
       <parameter id="PCRest_P" name="partition coefficient rest-of-body over blood  parent" value="1.2" units="UNITLESS" constant="true"/>
       <parameter id="CLmet_P" value="50" units="L_PER_HR" constant="true"/>
       <parameter id="CLurine_P" name="urinary excretion rate parent" value="0" units="L_PER_HR" constant="true"/>
-      <parameter id="Ka_P" name="absorption rate from gut to liver parent" value="0.05" units="PER_H" constant="true"/>
+      <parameter id="Ka_P" name="absorption rate from gut to liver parent" value="0.05" units="PER_HR" constant="true"/>
       <parameter id="PCLiver_M" name="partition coefficient liver over blood metabolite" value="1.4" units="UNITLESS" constant="true"/>
       <parameter id="PCRest_M" name="partition coefficient rest-of-body over blood" value="0.5" units="UNITLESS" constant="true"/>
       <parameter id="CLurine_M" name="urinary excretion rate metabolite" value="20" units="L_PER_HR" constant="true"/>
