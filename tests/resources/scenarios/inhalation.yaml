@@ -33,18 +33,18 @@ scenarios:
         output: ALiver
   - id: inhalation_repeated
     label: Inhalation repeated dose
-    time_unit: DAY
+    time_unit: HOUR
     amount_unit: MICROGRAMS
-    duration: 10
-    evaluation_resolution: 24
+    duration: 120
+    evaluation_resolution: 1
     dosing_events:
       - type: repeated_continuous
         target: AAir
         amount: 1
-        time: 1
-        duration: 0.5
-        interval: 1
-        until: 6
+        time: 8
+        duration: 8
+        interval: 24
+        until: 96
     outputs:
       - id: AAir
         label: Amount in air

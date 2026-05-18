@@ -727,16 +727,16 @@ def repeated_continuous(
         EventSpec(
             target = target,
             trigger = (
-                f"time >= {time_start} && time % {interval} > 0 && time < {until}"
-                if until else f"time >= {time_start} && time % {interval} > 0"
+                f"time >= {time_start} && time % {interval} > {time_start} && time < {until}"
+                if until else f"time >= {time_start} && time % {interval} > {time_start}"
             ),
             assignment = assignment
         ),
         EventSpec(
             target = target,
             trigger = (
-                f"time > {time_stop} && time % {interval} > {duration} && time <= {until + duration}"
-                if until else f"time > {time_stop} && time % {interval} > {duration}"
+                f"time > {time_stop} && time % {interval} > {time_stop} && time <= {until + duration}"
+                if until else f"time > {time_stop} && time % {interval} > {time_stop}"
             ),
             assignment = "0"
         )
