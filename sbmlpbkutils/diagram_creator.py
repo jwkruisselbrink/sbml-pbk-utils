@@ -52,7 +52,8 @@ class DiagramCreator:
         output_file: typing.Union[os.PathLike, str, None],
         names_display: NamesDisplay = NamesDisplay.ELEMENT_IDS,
         draw_species: bool = True,
-        draw_reaction_ids: bool = True
+        draw_reaction_ids: bool = True,
+        draw_species_names: bool = True,
     ):
         # Parse the SBML file
         draw_compartment_edges = not draw_species
@@ -89,7 +90,10 @@ class DiagramCreator:
                     )
                     for sp_id, species_info in species.items():
                         if species_info.compartment_id == comp_id:
-                            sp_label = self.get_element_label(names_display, sp_id, species_info)
+                            if draw_species_names:
+                                sp_label = self.get_element_label(names_display, sp_id, species_info)
+                            else:
+                                sp_label = ' '
                             sp_color = chebi_color_map[species_info.chebi_bqb_is_class]
                             subgraph.node(
                                 sp_id,

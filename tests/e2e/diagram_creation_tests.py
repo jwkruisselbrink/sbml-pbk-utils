@@ -15,17 +15,22 @@ class DiagramCreationTests(unittest.TestCase):
         os.makedirs(self.out_path, exist_ok=True)
 
     @parameterized.expand([
-        ("simple/simple.annotated.sbml", False, False),
-        ("simple/simple.annotated.sbml", True, False),
-        ("simple/simple.annotated.sbml", False, False),
-        ("simple/simple.annotated.sbml", True, True),
-        ("euromix/euromix.annotated.sbml", True, True),
-        ("simple_metab/simple_metab.annotated.sbml", True, True),
+        ("simple/simple.annotated.sbml", False, False, False),
+        ("simple/simple.annotated.sbml", True, False, False),
+        ("simple/simple.annotated.sbml", True, True, False),
+        ("simple/simple.annotated.sbml", False, False, False),
+        ("simple/simple.annotated.sbml", True, False, True),
+        ("simple/simple.annotated.sbml", True, True, True),
+        ("euromix/euromix.annotated.sbml", True, False, True),
+        ("euromix/euromix.annotated.sbml", True, True, True),
+        ("simple_metab/simple_metab.annotated.sbml", True, False, True),
+        ("simple_metab/simple_metab.annotated.sbml", True, True, True),
     ])
     def test_generate_report(
         self,
         file,
         draw_species,
+        draw_species_names,
         draw_reaction_ids
     ):
         # Load SBML file
@@ -35,7 +40,7 @@ class DiagramCreationTests(unittest.TestCase):
         # Iterate over rendering options
         sbml_basename = os.path.basename(sbml_file)
         for names_display in NamesDisplay:
-            param_str = f"_names-{int(names_display)}_sp-{int(draw_species)}_rc-{int(draw_reaction_ids)}"
+            param_str = f"_names-{int(names_display)}_sp-{int(draw_species)}_{int(draw_species_names)}_rc-{int(draw_reaction_ids)}"
             output_filename = f'{Path(sbml_basename).stem}_{param_str}.diagram.svg'
             output_file = os.path.join(self.out_path, output_filename)
             generator = DiagramCreator()
@@ -44,6 +49,7 @@ class DiagramCreationTests(unittest.TestCase):
                 output_file,
                 names_display=names_display,
                 draw_species=draw_species,
+                draw_species_names=draw_species_names,
                 draw_reaction_ids=draw_reaction_ids
             )
 
