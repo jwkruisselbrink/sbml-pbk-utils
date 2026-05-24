@@ -125,7 +125,7 @@ class ModelInstance:
     label: str
     model_path: str
     param_file: str | None = None
-    target_mappings: Dict[str, str] | None = None
+    target_mappings: Dict[str, str | None] | None = None
 
 @dataclass
 class SimulationConfig:

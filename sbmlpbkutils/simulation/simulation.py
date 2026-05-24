@@ -212,19 +212,24 @@ def run_scenario(
     # Set/override parameters defined by scenario
     if scenario.parameters:
         for param, value in scenario.parameters.items():
-            target = (instance.target_mappings[param]
-                if instance.target_mappings is not None
-                    and param in instance.target_mappings.keys()
-                else param
-            )
-            rr_model[param] = value
+            if instance.target_mappings is not None and param in instance.target_mappings.keys():
+                target = instance.target_mappings[param]
+                if target is None:
+                    continue
+            else:
+                target = param
+            rr_model[target] = value
 
     # Define the output selections
-    output_selections = [
-        instance.target_mappings.get(output.id, output.id)
-            if instance.target_mappings is not None else output.id
-        for output in scenario.outputs
-    ]
+    output_selections = []
+    for output in scenario.outputs:
+        if instance.target_mappings is not None and output.id in instance.target_mappings.keys():
+            mapped = instance.target_mappings[output.id]
+            if mapped is None:
+                continue
+            output_selections.append(mapped)
+        else:
+            output_selections.append(output.id)
     selections = ['time'] + output_selections
 
     # Determine duration and steps
@@ -250,6 +255,14 @@ def run_scenario(
     for output in output_selections:
         df[output] = df[output].apply(lambda v: v / amount_unit_multiplier)
     df.to_csv(out_file, index=False)
+
+def _resolve_output_mapping(target_mappings: Dict[str, str | None] | None, output_id: str) -> str | None:
+    """Resolve output ID through target mappings, returning None if mapped to None."""
+    if target_mappings is not None and output_id in target_mappings.keys():
+        mapped = target_mappings[output_id]
+        return mapped if mapped is not None else None
+    return output_id
+
 
 def load_parametrisation(model, filename):
     """Load parameter values from a CSV file into a roadrunner model.
@@ -316,9 +329,11 @@ def plot_scenario_results(
             output_df = pd.read_csv(out_file, skipinitialspace=True)
 
             # Extract time and output variable from output
+            output_id = _resolve_output_mapping(instance.target_mappings, output.id)
+            if output_id is None:
+                continue
+
             times = output_df['time'].to_numpy(dtype=float)
-            output_id = instance.target_mappings.get(output.id, output.id) \
-                if instance.target_mappings is not None else output.id
             values = output_df[output_id].to_numpy(dtype=float)
 
             # Plot time series
@@ -430,9 +445,10 @@ def plot_scenario_differences(
         for idx, instance in enumerate(instances):
             out_file = os.path.join(out_path, f"{scenario.id}_{instance.id}.csv")
             output_df = pd.read_csv(out_file, skipinitialspace=True)
+            output_id = _resolve_output_mapping(instance.target_mappings, output.id)
+            if output_id is None:
+                continue
             times = output_df['time'].to_numpy(dtype=float)
-            output_id = (instance.target_mappings.get(output.id, output.id)
-                if instance.target_mappings is not None else output.id)
             values = output_df[output_id].to_numpy(dtype=float)
             linestyle = linestyles[idx % len(linestyles)]
             ax_series.plot(times, values, linestyle=linestyle, linewidth=1, label=instance.label)
@@ -474,7 +490,10 @@ def plot_scenario_differences(
                 out_file = os.path.join(out_path, f"{scenario.id}_{instance.id}.csv")
                 output_df = pd.read_csv(out_file, skipinitialspace=True)
                 model_times = output_df['time'].to_numpy(dtype=float)
-                model_values = output_df[instance.target_mappings.get(output.id, output.id) if instance.target_mappings is not None else output.id].to_numpy(dtype=float)
+                output_id = _resolve_output_mapping(instance.target_mappings, output.id)
+                if output_id is None:
+                    continue
+                model_values = output_df[output_id].to_numpy(dtype=float)
 
                 # interpolate model to reference times
                 interp_vals = np.interp(ref_times, model_times, model_values)

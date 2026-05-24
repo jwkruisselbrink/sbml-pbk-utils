@@ -42,7 +42,7 @@ A simulation configuration YAML file follows a simple hierarchical layout. The s
     - **label** *[string | required]*
     - **model_path** *[string | required]* - Path to the SBML model file.
     - **param_file** *[string | optional]* - Path to a CSV with parameter values.
-    - **target_mappings** *[mapping | optional]* - Map scenario output ids to model variable ids (e.g. `AGut: AGut`). Useful when a scenario output id differs from the actual variable id in the SBML model.
+    - **target_mappings** *[mapping | optional]* - Map scenario output/parameter ids to model variable ids (e.g. `AGut: AGut`). Useful when a scenario id differs from the actual variable id in the SBML model. Map to `null` (`~` in YAML) to skip a parameter or output for this instance. Useful when a scenario defines a parameter or output that does not exist in a particular model instance.
 - **scenarios** *[list]*
   - List of scenarios to execute. Each scenario is an object with:
     - **id** *[string | required]*
