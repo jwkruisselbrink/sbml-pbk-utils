@@ -42,8 +42,8 @@ scenarios:
         target: ASkin
         amount: 1
         time: 1
-        duration: 0.5
-        interval: 1
+        duration: 1
+        interval: 2
         until: 6
     outputs:
       - id: ASkin

@@ -52,7 +52,9 @@ A simulation configuration YAML file follows a simple hierarchical layout. The s
     - **duration** *[number | required]* - Duration of the scenario in `time_unit`.
     - **evaluation_resolution** *[number | required]* - Sampling resolution (higher values produce finer time sampling). Controls output resolution; for example, `evaluation_resolution: 24` with `duration: 10` (and `time_unit: DAY`) produces hourly samples over 10 days.
     - **initial_states** *[list | optional]* - List of `{ target, amount }` objects to set initial amounts.
-    - **parameters** *[mapping | optional]* - List of parameter mappings specific for the scenario (overrides model instance parametrisations). For example, the mapping `BW: 75` could be used to set model parameter `BW` to a value of 75 for specific scenarios.
+    - **parameters** *[mapping | optional]* - List of parameter mappings specific for the scenario (overrides model instance parametrisations). For example, the mapping `BW: 75` could be used to set model parameter `BW` to a value of 75 for specific scenarios. Parameters can be specified as fixed values or as probability distributions (see [distribution parameters](#distribution-parameters) below).
+    - **n_simulations** *[int | optional, default=1]* - Number of repeated (stochastic) simulation iterations. When greater than 1, the scenario is executed multiple times and distribution-based parameters are freshly sampled each iteration. The output CSV includes an `iteration` column to distinguish runs.
+    - **use_distributions** *[bool | optional, default=false]* - Enables sampling from distribution-based parameter definitions. When `true` and `n_simulations > 1`, each iteration samples parameter values from their specified distributions.
     - **dosing_events** *[list | optional]* - List of dosing event objects. Each dosing event commonly includes:
       - **type** *[enum | required]* - Type of dosing event. Options are `single_bolus`, `repeated_bolus`, `single_continuous`, `repeated_continuous`.
       - **target** *[string | required]* - Model variable to dose.
@@ -70,6 +72,39 @@ A simulation configuration YAML file follows a simple hierarchical layout. The s
       - **series_type** *[enum | required]* - Type of reference data. Options are `CHECKPOINTS` for sparse datapoints, or `TIMELINE` for (high resolution) timeseries. Controls whether data is plotted as scatter plot (for checkpoints) or line plot (for timeline).
       - **time_unit** *[enum | required]* - Time unit of the reference file.
       - **mappings** *[mapping | optional]* - Map scenario output ids to colums of the reference CSV file. For example, the mapping `ALiver: QLiver` maps the reference column `QLiver` to output `ALiver`.
+
+### Distribution parameters
+
+When `use_distributions: true` is set on a scenario, parameter values can be defined as probability distributions instead of fixed numbers. The following distribution types are supported:
+
+- `uniform`: requires `min` and `max`
+- `lognormal`: requires `mu` and `sigma`
+- `normal`: requires `mu` and `sigma`
+
+Example YAML syntax:
+
+```yaml
+parameters:
+  BW:
+    distribution: uniform
+    min: 60
+    max: 80
+  CLUrine:
+    distribution: lognormal
+    mu: 0.0
+    sigma: 0.2
+```
+
+### Repeated stochastic simulations
+
+When a scenario has `n_simulations > 1` the scenario is executed as a Monte Carlo ensemble:
+
+- The simulation is run `n_simulations` times, each time re-sampling any distribution-based parameters from their specified probability distributions.
+- If `use_distributions: true` is also set, scenario and CSV parametrisation parameters with a `Distribution` column are sampled each iteration.
+- The output CSV contains an `iteration` column (1-indexed) identifying each replicate.
+- When plotting results via `plot_simulation_results`, outputs with an `iteration` column are summarised as a **median trace with a 5th–95th percentile band** instead of showing raw individual traces.
+
+A `random_seed` can be passed to `run_config` and `run_scenario` for reproducible sampling.
 
 ## Example YAML simulation configuration
 
@@ -128,6 +163,51 @@ scenarios:
           ALiver: QLiver
 ```
 
+### Example with repeated stochastic simulations
+
+This example runs a single scenario `oral_single` for one model instance (`simple`). The scenario uses distribution-based parameters (`BW` uniformly distributed between 60–80 and `CLUrine` lognormally distributed with `μ=0.0, σ=0.2`) and executes `n_simulations: 10` iterations. A single bolus dose is applied at time `1` day.
+
+```yaml
+id: distribution
+label: distribution
+model_instances:
+  - id: simple
+    label: simple
+    model_path: models/simple.sbml
+    param_file: models/simple.params.csv
+
+scenarios:
+  - id: oral_single
+    label: Oral single dose with distribution parameters
+    time_unit: DAY
+    amount_unit: MICROGRAMS
+    duration: 4
+    evaluation_resolution: 24
+    n_simulations: 10
+    use_distributions: True
+    parameters:
+      BW:
+        distribution: uniform
+        min: 60
+        max: 80
+      CLUrine:
+        distribution: lognormal
+        mu: 0.0
+        sigma: 0.2
+    dosing_events:
+      - type: single_bolus
+        target: AGut
+        amount: 1
+        time: 1
+    outputs:
+      - id: ABlood
+        label: Amount in blood
+        output: ABlood
+      - id: ALiver
+        label: Amount in liver
+        output: ALiver
+```
+
 ## Parametrisation CSV files
 
 Model parametrisations can be provided as CSV files containing the following fields:
@@ -135,6 +215,7 @@ Model parametrisations can be provided as CSV files containing the following fie
 - **IdModelInstance** *[string | optional]* - Identification code of the model parametrisation. Required when the file contains multiple parametrisations.
 - **Parameter** *[string | required]* - Identifier of the model parameter.
 - **Value** *[number | required]* - Value of the model parameter.
+- **Distribution** *[string | optional]* - Distribution specification in Stan notation (e.g. `uniform(60,80)`, `lognormal(0.0,0.2)`, `normal(0.0,0.1)`, `constant(0.05)`). When `use_distributions: true` is set on the scenario and `n_simulations > 1`, these distributions are sampled each iteration instead of using the fixed `Value` column.
 
 These CSV files can be created manually, but you can also generate parametrisation templates (instances and parameter tables) from an SBML model using `ParametrisationsTemplateGenerator`. The generator returns a tuple `(instances_df, params_df)` which you can export to CSV. The resulting parameter CSV can be used as `param_file` in a `model_instances` entry of your simulation YAML.
 

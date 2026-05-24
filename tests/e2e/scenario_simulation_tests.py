@@ -17,7 +17,8 @@ class ScenarioSimulationTests(unittest.TestCase):
         ("inhalation.yaml"),
         ("lifetime.yaml"),
         ("liver.yaml"),
-        ("oral.yaml")
+        ("oral.yaml"),
+        ("distribution.yaml")
     ])
     def test_simulation_scenarios(self, filename):
         # Get file path from filename

@@ -6,7 +6,7 @@ scenarios.
 """
 
 from enum import Enum
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Dict, List
 
 from .units import (
@@ -90,6 +90,37 @@ class ReferenceData:
     mappings: Dict[str, str]
 
 @dataclass
+class DistributionParameter:
+    """A parameter defined by a probability distribution.
+
+    Supports ``uniform``, ``lognormal``, ``normal`` and ``constant``
+    distribution types.
+
+    Examples for YAML usage::
+
+        BW:
+          distribution: uniform
+          min: 60
+          max: 80
+
+        CLUrine:
+          distribution: lognormal
+          mu: 0.0
+          sigma: 0.2
+
+        Ka:
+          distribution: constant
+          value: 0.05
+    """
+    distribution: str
+    min: float | None = None
+    max: float | None = None
+    mu: float | None = None
+    sigma: float | None = None
+    value: float | None = None
+
+
+@dataclass
 class Scenario:
     """Defines a simulation scenario.
 
@@ -101,12 +132,14 @@ class Scenario:
     duration: int
     evaluation_resolution: int
     initial_states: List[InitialState] | None
-    parameters: Dict[str,float] | None
+    parameters: Dict[str, float | DistributionParameter] | None
     dosing_events: List[DosingEvent] | None
     outputs: List[Output]
     reference_data: List[ReferenceData] | None
     time_unit: TimeUnit
     amount_unit: AmountUnit
+    n_simulations: int = 1
+    use_distributions: bool = False
     molar_mass: float | None = None
 
 

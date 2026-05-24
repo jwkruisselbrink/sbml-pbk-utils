@@ -7,6 +7,7 @@ reference series.
 
 from logging import Logger
 import os
+import re
 from typing import Dict, List
 import libsbml as ls
 import matplotlib.pyplot as plt
@@ -26,6 +27,7 @@ from .units import (
 from .definitions import (
     SeriesType,
     DosingEvent,
+    DistributionParameter,
     InitialState,
     Output,
     ReferenceData,
@@ -34,6 +36,73 @@ from .definitions import (
     SimulationConfig,
     EventSpec
 )
+
+def _parse_param_value(value) -> float | DistributionParameter:
+    """Convert a raw YAML parameter value into a float or DistributionParameter."""
+    if isinstance(value, (int, float)):
+        return float(value)
+    if isinstance(value, dict):
+        return DistributionParameter(
+            distribution=value["distribution"],
+            min=value.get("min", None),
+            max=value.get("max", None),
+            mu=value.get("mu", None),
+            sigma=value.get("sigma", None),
+            value=value.get("value", None),
+        )
+    raise TypeError(f"Unexpected parameter type: {type(value).__name__}")
+
+
+def _parse_stan_distribution(dist_str: str) -> DistributionParameter:
+    """Parse a Stan-notation distribution string.
+
+    Accepted formats::
+
+        uniform(min, max)
+        lognormal(mu, sigma)
+        normal(mu, sigma)
+        constant(value)
+
+    """
+    dist_str = dist_str.strip()
+    match = re.match(r'(\w+)\s*\(([^)]+)\)', dist_str)
+    if not match:
+        raise ValueError(f"Invalid Stan distribution string: {dist_str!r}")
+    dist_name = match.group(1)
+    try:
+        args = [float(a.strip()) for a in match.group(2).split(',')]
+    except ValueError as e:
+        raise ValueError(
+            f"Could not parse arguments in {dist_str!r}: {e}"
+        ) from e
+
+    if dist_name == "uniform":
+        if len(args) != 2:
+            raise ValueError(
+                f"uniform requires 2 arguments, got {len(args)} in {dist_str!r}"
+            )
+        return DistributionParameter(distribution="uniform", min=args[0], max=args[1])
+    elif dist_name == "lognormal":
+        if len(args) != 2:
+            raise ValueError(
+                f"lognormal requires 2 arguments, got {len(args)} in {dist_str!r}"
+            )
+        return DistributionParameter(distribution="lognormal", mu=args[0], sigma=args[1])
+    elif dist_name == "normal":
+        if len(args) != 2:
+            raise ValueError(
+                f"normal requires 2 arguments, got {len(args)} in {dist_str!r}"
+            )
+        return DistributionParameter(distribution="normal", mu=args[0], sigma=args[1])
+    elif dist_name == "constant":
+        if len(args) != 1:
+            raise ValueError(
+                f"constant requires 1 argument, got {len(args)} in {dist_str!r}"
+            )
+        return DistributionParameter(distribution="constant", value=args[0])
+    else:
+        raise ValueError(f"Unknown distribution in {dist_str!r}: {dist_name}")
+
 
 def load_config(path: str) -> SimulationConfig:
     """Load a YAML simulation configuration and return a SimulationConfig.
@@ -69,6 +138,11 @@ def load_config(path: str) -> SimulationConfig:
                 )
                 reference_data.append(reference_series)
 
+        raw_params = s['parameters'] if 'parameters' in s.keys() else None
+        parameters = None
+        if raw_params:
+            parameters = {k: _parse_param_value(v) for k, v in raw_params.items()}
+
         scenarios.append(
             Scenario(
                 id=s['id'],
@@ -76,13 +150,15 @@ def load_config(path: str) -> SimulationConfig:
                 duration=s['duration'],
                 evaluation_resolution=s['evaluation_resolution'],
                 initial_states=initial_states,
-                parameters=s['parameters'] if 'parameters' in s.keys() else None,
+                parameters=parameters,
                 dosing_events=dosing_events,
                 outputs=outputs,
                 reference_data=reference_data,
                 time_unit=TimeUnit[s['time_unit']],
                 amount_unit=AmountUnit[s['amount_unit']],
-                molar_mass=s['molar_mass'] if 'molar_mass' in s.keys() else None
+                molar_mass=s['molar_mass'] if 'molar_mass' in s.keys() else None,
+                n_simulations=s.get('n_simulations', 1),
+                use_distributions=s.get('use_distributions', False),
             )
         )
 
@@ -93,16 +169,38 @@ def load_config(path: str) -> SimulationConfig:
         scenarios=scenarios
     )
 
+def _sample_parameter(
+    param_def: DistributionParameter,
+    rng: np.random.Generator,
+) -> float:
+    """Sample a concrete value from a ``DistributionParameter``."""
+    # Sample from variability distribution
+    if param_def.distribution == "uniform":
+        return rng.uniform(param_def.min, param_def.max)
+    elif param_def.distribution == "lognormal":
+        return rng.lognormal(param_def.mu, param_def.sigma)
+    elif param_def.distribution == "normal":
+        return rng.normal(param_def.mu, param_def.sigma)
+    elif param_def.distribution == "constant":
+        return param_def.value
+    else:
+        raise ValueError(f"Unknown distribution: {param_def.distribution}")
+
+
 def run_config(
     config: SimulationConfig,
     out_path: str,
     force_recompute: bool,
-    logger: Logger
+    logger: Logger,
+    random_seed: int | None = None,
 ):
     """Run all scenarios in a configuration for all model instances.
 
     For each scenario-instance pair a CSV output file named
-    `{scenario.id}_{instance.id}.csv` is written into `out_path`.
+    `{scenario.id}_{instance.id}.csv` is written into ``out_path``.
+
+    When *random_seed* is provided, distribution-based parameters are
+    sampled deterministically from that seed, ensuring reproducible runs.
     """
     for scenario in config.scenarios:
         for instance in config.model_instances:
@@ -114,7 +212,8 @@ def run_config(
                 scenario,
                 out_file,
                 force_recompute,
-                logger
+                logger,
+                random_seed=random_seed,
             )
 
 def plot_simulation_results(
@@ -150,13 +249,21 @@ def run_scenario(
     scenario: Scenario,
     out_file: str,
     force_recompute: bool,
-    logger: Logger
+    logger: Logger,
+    random_seed: int | None = None,
 ):
     """Execute a single scenario for a model instance and save results.
 
     Loads the SBML model, applies initial states, dosing events and any
     parameter file, runs the simulation and writes a CSV with time and
     selected outputs.
+
+    When *random_seed* is provided, distribution-based parameters are
+    sampled deterministically from that seed.
+
+    When ``scenario.n_simulations > 1`` the simulation is run multiple
+    times with fresh samples from distribution-based parameters.  The
+    output CSV contains an ``iteration`` column.
     """
     # Skip if output already available and no forced recalculation
     if os.path.exists(out_file) and not force_recompute:
@@ -173,7 +280,7 @@ def run_scenario(
     time_unit_multiplier = get_model_time_unit_alignment_factor(ls_model, scenario.time_unit)
     amount_unit_multiplier = get_amount_unit_alignment_factor(ls_model, scenario.amount_unit, scenario.molar_mass)
 
-    # Set initial amounts according to scenario
+    # Set initial amounts according to scenario (persists through reset)
     if scenario.initial_states is not None:
         for item in scenario.initial_states:
             target = (instance.target_mappings[item.target]
@@ -185,7 +292,7 @@ def run_scenario(
             logger.info(f"- Initial amount in {target}: {amount}")
             rr_model.setInitAmount(target, amount)
 
-    # If the scenario has dosing event definitions
+    # If the scenario has dosing event definitions (set once, persist through reset)
     if scenario.dosing_events is not None:
 
         # Get events from scenario
@@ -204,21 +311,6 @@ def run_scenario(
             rr_model.addEvent(eid, False, ev.trigger, False)
             rr_model.addEventAssignment(eid, ev.target, ev.assignment, False)
         rr_model.regenerateModel(True, True)
-
-    # Set instance parametrisation
-    if instance.param_file is not None:
-        load_parametrisation(rr_model, instance.param_file)
-
-    # Set/override parameters defined by scenario
-    if scenario.parameters:
-        for param, value in scenario.parameters.items():
-            if instance.target_mappings is not None and param in instance.target_mappings.keys():
-                target = instance.target_mappings[param]
-                if target is None:
-                    continue
-            else:
-                target = param
-            rr_model[target] = value
 
     # Define the output selections
     output_selections = []
@@ -241,20 +333,72 @@ def run_scenario(
     logger.info("- Duration: %s", duration)
     logger.info("- Steps: %s", evaluation_steps)
 
-    # Simulate the PBPK model
-    results = rr_model.simulate(0, duration, evaluation_steps, selections)
+    n_sim = scenario.n_simulations
+    use_stochastic = scenario.use_distributions and n_sim > 1
+    rng = np.random.default_rng(random_seed)
+
+    def _run_one(reset_first: bool = False) -> pd.DataFrame:
+        """Run a single simulation and return a DataFrame with time + outputs."""
+        if reset_first:
+            rr_model.reset()
+
+        # Apply instance parametrisation (re-samples distributions each iteration)
+        if instance.param_file is not None:
+            load_parametrisation(
+                rr_model,
+                instance.param_file,
+                sample_distributions=use_stochastic,
+                rng=rng,
+            )
+
+        # Apply scenario parameters
+        if scenario.parameters:
+            for param, value in scenario.parameters.items():
+                if isinstance(value, DistributionParameter):
+                    if use_stochastic:
+                        value = _sample_parameter(value, rng)
+                    else:
+                        if value.value is None:
+                            raise ValueError(
+                                f"Distribution parameter '{param}' has no 'value' field. "
+                                "Set a fixed 'value' for deterministic mode, or enable "
+                                "distribution sampling (use_distributions=True) with "
+                                "n_simulations > 1."
+                            )
+                        value = value.value
+                if instance.target_mappings is not None and param in instance.target_mappings.keys():
+                    target = instance.target_mappings[param]
+                    if target is None:
+                        continue
+                else:
+                    target = param
+                rr_model[target] = value
+
+        # Simulate
+        results = rr_model.simulate(0, duration, evaluation_steps, selections)
+        df = pd.DataFrame(results, columns=selections)
+        df['time'] = df['time'].apply(lambda v: v / time_unit_multiplier)
+        for col in output_selections:
+            df[col] = df[col].apply(lambda v: v / amount_unit_multiplier)
+        return df
 
     # Create output folder if not exists
     os.makedirs(os.path.dirname(out_file), exist_ok=True)
 
-    # Write results file
-    df = pd.DataFrame(results, columns=selections)
-
-    # Align output times and amounts to target units
-    df['time'] = df['time'].apply(lambda v: v / time_unit_multiplier)
-    for output in output_selections:
-        df[output] = df[output].apply(lambda v: v / amount_unit_multiplier)
-    df.to_csv(out_file, index=False)
+    if n_sim <= 1:
+        # Single run (no reset needed — model was just loaded)
+        df = _run_one(reset_first=False)
+        df.to_csv(out_file, index=False)
+    else:
+        # Multi-iteration Monte Carlo
+        all_dfs = []
+        for iter_idx in range(n_sim):
+            df = _run_one(reset_first=(iter_idx > 0))
+            df['iteration'] = iter_idx
+            all_dfs.append(df)
+        combined = pd.concat(all_dfs, ignore_index=True)
+        cols = ['iteration'] + [c for c in combined.columns if c != 'iteration']
+        combined.to_csv(out_file, index=False, columns=cols)
 
 def _resolve_output_mapping(target_mappings: Dict[str, str | None] | None, output_id: str) -> str | None:
     """Resolve output ID through target mappings, returning None if mapped to None."""
@@ -264,15 +408,36 @@ def _resolve_output_mapping(target_mappings: Dict[str, str | None] | None, outpu
     return output_id
 
 
-def load_parametrisation(model, filename):
+def load_parametrisation(model, filename, sample_distributions=False, rng=None):
     """Load parameter values from a CSV file into a roadrunner model.
 
-    The CSV is expected to have columns `Parameter` and `Value`.
+    The CSV is expected to have columns ``Parameter`` and ``Value``.
+    When ``sample_distributions=True`` and an optional ``Distribution``
+    column is present with Stan notation (e.g. ``uniform(60, 80)``,
+    ``lognormal(0.0, 0.2)``, ``constant(0.05)``), the parameter is sampled
+    from that distribution.  Requires *rng* when sampling distributions.
+    Otherwise the ``Value`` column is used as a fixed constant.
     """
     df = pd.read_csv(filename, skipinitialspace=True)
-    df['Value'] = df['Value'].astype(float)
+    has_dist = "Distribution" in df.columns
     for (_, row) in df.iterrows():
-        model[str(row['Parameter'])] = row['Value']
+        param_name = str(row["Parameter"])
+        use_dist = (
+            sample_distributions
+            and has_dist
+            and pd.notna(row.get("Distribution"))
+            and str(row["Distribution"]).strip()
+        )
+        if use_dist:
+            dist_spec = _parse_stan_distribution(str(row["Distribution"]))
+            if rng is None:
+                raise ValueError(
+                    "rng argument required when sampling distributions"
+                )
+            value = _sample_parameter(dist_spec, rng)
+        else:
+            value = float(row["Value"])
+        model[param_name] = value
 
 def plot_scenario_results(
     instances: list[ModelInstance],
@@ -333,12 +498,23 @@ def plot_scenario_results(
             if output_id is None:
                 continue
 
-            times = output_df['time'].to_numpy(dtype=float)
-            values = output_df[output_id].to_numpy(dtype=float)
+            color = f'C{idx}'
 
-            # Plot time series
-            linestyle = linestyles[idx % len(linestyles)]
-            ax.plot(times, values, linewidth=1, linestyle=linestyle, label=instance.label)
+            if 'iteration' in output_df.columns:
+                # Multi-iteration: plot median + 5th-95th percentile band
+                grouped = output_df.groupby('time')[output_id]
+                times = grouped.mean().index.to_numpy(dtype=float)
+                median_vals = grouped.median().to_numpy(dtype=float)
+                lower_vals = grouped.quantile(0.05).to_numpy(dtype=float)
+                upper_vals = grouped.quantile(0.95).to_numpy(dtype=float)
+                ax.plot(times, median_vals, linewidth=1.5, color=color, label=instance.label)
+                ax.fill_between(times, lower_vals, upper_vals, alpha=0.2, color=color)
+            else:
+                # Single run: plot the raw trace
+                times = output_df['time'].to_numpy(dtype=float)
+                values = output_df[output_id].to_numpy(dtype=float)
+                linestyle = linestyles[idx % len(linestyles)]
+                ax.plot(times, values, linewidth=1, linestyle=linestyle, label=instance.label)
 
         # Plot reference data/series
         if scenario.reference_data:
@@ -448,10 +624,22 @@ def plot_scenario_differences(
             output_id = _resolve_output_mapping(instance.target_mappings, output.id)
             if output_id is None:
                 continue
-            times = output_df['time'].to_numpy(dtype=float)
-            values = output_df[output_id].to_numpy(dtype=float)
-            linestyle = linestyles[idx % len(linestyles)]
-            ax_series.plot(times, values, linestyle=linestyle, linewidth=1, label=instance.label)
+
+            color = f'C{idx}'
+
+            if 'iteration' in output_df.columns:
+                grouped = output_df.groupby('time')[output_id]
+                times = grouped.mean().index.to_numpy(dtype=float)
+                median_vals = grouped.median().to_numpy(dtype=float)
+                lower_vals = grouped.quantile(0.05).to_numpy(dtype=float)
+                upper_vals = grouped.quantile(0.95).to_numpy(dtype=float)
+                ax_series.plot(times, median_vals, linewidth=1.5, color=color, label=instance.label)
+                ax_series.fill_between(times, lower_vals, upper_vals, alpha=0.2, color=color)
+            else:
+                times = output_df['time'].to_numpy(dtype=float)
+                values = output_df[output_id].to_numpy(dtype=float)
+                linestyle = linestyles[idx % len(linestyles)]
+                ax_series.plot(times, values, linestyle=linestyle, linewidth=1, label=instance.label)
 
         # For each reference item, compute stats and plot reference points
         diffs_rows = []
@@ -489,11 +677,17 @@ def plot_scenario_differences(
             for idx, instance in enumerate(instances):
                 out_file = os.path.join(out_path, f"{scenario.id}_{instance.id}.csv")
                 output_df = pd.read_csv(out_file, skipinitialspace=True)
-                model_times = output_df['time'].to_numpy(dtype=float)
                 output_id = _resolve_output_mapping(instance.target_mappings, output.id)
                 if output_id is None:
                     continue
-                model_values = output_df[output_id].to_numpy(dtype=float)
+
+                if 'iteration' in output_df.columns:
+                    # Use median across iterations as the representative model value
+                    model_values = output_df.groupby('time')[output_id].median().to_numpy(dtype=float)
+                    model_times = output_df.groupby('time')['time'].first().to_numpy(dtype=float)
+                else:
+                    model_times = output_df['time'].to_numpy(dtype=float)
+                    model_values = output_df[output_id].to_numpy(dtype=float)
 
                 # interpolate model to reference times
                 interp_vals = np.interp(ref_times, model_times, model_values)
