@@ -221,7 +221,8 @@ def plot_simulation_results(
     out_path: str,
     plot_reference_comparison: bool = True,
     combine_outputs: bool = False,
-    ncols_combined: int = 4
+    ncols_combined: int = 4,
+    show_legend: bool = True
 ):
     """Generate plots for all scenarios in a configuration.
 
@@ -234,7 +235,8 @@ def plot_simulation_results(
             scenario,
             out_path,
             combine_outputs,
-            ncols_combined
+            ncols_combined,
+            show_legend
         )
 
         if plot_reference_comparison and scenario.reference_data:
@@ -444,7 +446,8 @@ def plot_scenario_results(
     scenario: Scenario,
     out_path: str,
     combine_outputs: bool = False,
-    ncols_combined: int = 4
+    ncols_combined: int = 4,
+    show_legend: bool = True
 ) -> None:
     """Plot time series results for a scenario across model instances.
 
@@ -567,6 +570,8 @@ def plot_scenario_results(
             plt.close()
         else:
             ax.set_title(f'{output_label}', fontsize=14)
+            if show_legend:
+                ax.legend()
 
     # Clean up empty axes and save combined figure
     if combine_outputs and fig is not None and axes is not None:
