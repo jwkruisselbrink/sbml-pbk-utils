@@ -1,10 +1,11 @@
 import unittest
 import os
+import pandas as pd
 from parameterized import parameterized
 
 from tests.helpers import create_console_logger
 from tests.conf import TEST_OUTPUT_PATH, TEST_SCENARIOS_PATH
-from sbmlpbkutils import run_config, load_config, plot_simulation_results
+from sbmlpbkutils import run_config, load_config, plot_simulation_results, compute_statistics
 
 class ScenarioSimulationTests(unittest.TestCase):
 
@@ -37,13 +38,15 @@ class ScenarioSimulationTests(unittest.TestCase):
             config = config,
             out_path = out_path,
             force_recompute = True,
-            logger = logger
+            logger = logger,
+            compute_stats=True,
         )
 
         # Plot results
         plot_simulation_results(
             config = config,
-            out_path = out_path
+            out_path = out_path,
+            plot_stats=True,
         )
 
         # Plot results with combined outputs
@@ -52,5 +55,6 @@ class ScenarioSimulationTests(unittest.TestCase):
             out_path = out_path,
             plot_reference_comparison = False,
             combine_outputs = True,
-            ncols_combined = 2
+            ncols_combined = 2,
+            plot_stats=True,
         )

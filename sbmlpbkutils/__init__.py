@@ -37,5 +37,6 @@ from .simulation.simulation import (
     load_config,
     load_parametrisation,
     run_config,
-    plot_simulation_results
+    plot_simulation_results,
+    compute_statistics,
 )

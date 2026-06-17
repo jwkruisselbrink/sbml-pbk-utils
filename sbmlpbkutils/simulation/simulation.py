@@ -193,6 +193,7 @@ def run_config(
     force_recompute: bool,
     logger: Logger,
     random_seed: int | None = None,
+    compute_stats: bool = False,
 ):
     """Run all scenarios in a configuration for all model instances.
 
@@ -214,6 +215,7 @@ def run_config(
                 force_recompute,
                 logger,
                 random_seed=random_seed,
+                compute_stats=compute_stats,
             )
 
 def plot_simulation_results(
@@ -222,7 +224,8 @@ def plot_simulation_results(
     plot_reference_comparison: bool = True,
     combine_outputs: bool = False,
     ncols_combined: int = 4,
-    show_legend: bool = True
+    show_legend: bool = True,
+    plot_stats: bool = False,
 ):
     """Generate plots for all scenarios in a configuration.
 
@@ -236,7 +239,8 @@ def plot_simulation_results(
             out_path,
             combine_outputs,
             ncols_combined,
-            show_legend
+            show_legend,
+            plot_stats=plot_stats,
         )
 
         if plot_reference_comparison and scenario.reference_data:
@@ -253,6 +257,7 @@ def run_scenario(
     force_recompute: bool,
     logger: Logger,
     random_seed: int | None = None,
+    compute_stats: bool = False,
 ):
     """Execute a single scenario for a model instance and save results.
 
@@ -391,6 +396,7 @@ def run_scenario(
         # Single run (no reset needed — model was just loaded)
         df = _run_one(reset_first=False)
         df.to_csv(out_file, index=False)
+        result_df = df
     else:
         # Multi-iteration Monte Carlo
         all_dfs = []
@@ -401,6 +407,13 @@ def run_scenario(
         combined = pd.concat(all_dfs, ignore_index=True)
         cols = ['iteration'] + [c for c in combined.columns if c != 'iteration']
         combined.to_csv(out_file, index=False, columns=cols)
+        result_df = combined
+
+    if compute_stats:
+        stats_df = compute_statistics(result_df, output_selections)
+        stats_file = out_file.replace('.csv', '_stats.csv')
+        stats_df.to_csv(stats_file, index=False)
+        logger.info("Statistics saved to %s", stats_file)
 
 def _resolve_output_mapping(target_mappings: Dict[str, str | None] | None, output_id: str) -> str | None:
     """Resolve output ID through target mappings, returning None if mapped to None."""
@@ -441,13 +454,59 @@ def load_parametrisation(model, filename, sample_distributions=False, rng=None):
             value = float(row["Value"])
         model[param_name] = value
 
+def compute_statistics(
+    df: pd.DataFrame,
+    output_cols: List[str],
+) -> pd.DataFrame:
+    """Compute Cmax and Tmax for each output variable.
+
+    For DataFrames with an ``iteration`` column (multi-run Monte Carlo),
+    statistics are computed per iteration.  Otherwise a single row per
+    output is returned.
+
+    Parameters
+    ----------
+    df:
+        Simulation results with a ``time`` column and the columns listed
+        in *output_cols*.
+    output_cols:
+        Names of the output value columns to compute statistics for.
+
+    Returns
+    -------
+    pd.DataFrame
+        Columns: ``output``, ``cmax``, ``tmax`` and (when applicable) ``iteration``.
+    """
+    stats_rows = []
+    if "iteration" in df.columns:
+        for iteration, group in df.groupby("iteration"):
+            for col in output_cols:
+                idx = group[col].idxmax()
+                stats_rows.append({
+                    "output": col,
+                    "iteration": iteration,
+                    "cmax": group[col].loc[idx],
+                    "tmax": group["time"].loc[idx],
+                })
+    else:
+        for col in output_cols:
+            idx = df[col].idxmax()
+            stats_rows.append({
+                "output": col,
+                "cmax": df[col].loc[idx],
+                "tmax": df["time"].loc[idx],
+            })
+    return pd.DataFrame(stats_rows)
+
+
 def plot_scenario_results(
     instances: list[ModelInstance],
     scenario: Scenario,
     out_path: str,
     combine_outputs: bool = False,
     ncols_combined: int = 4,
-    show_legend: bool = True
+    show_legend: bool = True,
+    plot_stats: bool = False,
 ) -> None:
     """Plot time series results for a scenario across model instances.
 
@@ -518,6 +577,24 @@ def plot_scenario_results(
                 values = output_df[output_id].to_numpy(dtype=float)
                 linestyle = linestyles[idx % len(linestyles)]
                 ax.plot(times, values, linewidth=1, linestyle=linestyle, label=instance.label)
+
+            # Plot Cmax/Tmax annotation lines from statistics file
+            if plot_stats:
+                stats_file = out_file.replace('.csv', '_stats.csv')
+                if os.path.exists(stats_file):
+                    stats_df = pd.read_csv(stats_file)
+                    row = stats_df[stats_df['output'] == output_id]
+                    if not row.empty:
+                        if 'iteration' in stats_df.columns:
+                            cmax_val = row.groupby('output')['cmax'].median().iloc[0]
+                            tmax_val = row.groupby('output')['tmax'].median().iloc[0]
+                        else:
+                            cmax_val = row['cmax'].iloc[0]
+                            tmax_val = row['tmax'].iloc[0]
+                        ax.plot([0, tmax_val], [cmax_val, cmax_val], linestyle='--',
+                                color='black', linewidth=0.8, alpha=0.6)
+                        ax.plot([tmax_val, tmax_val], [0, cmax_val], linestyle='--',
+                                color='black', linewidth=0.8, alpha=0.6)
 
         # Plot reference data/series
         if scenario.reference_data:
