@@ -1018,21 +1018,23 @@ def repeated_continuous(
         else:
             adjustment = event.adjustment
     assignment = f"{target} + {adjustment} * {amount}" if adjustment else f"{target} + {amount}"
+    trigger_start = (
+        f"time >= {time_start} && time % {interval} > {time_start} && time < {until}"
+        if until else f"time >= {time_start} && time % {interval} > {time_start}"
+    )
+    trigger_stop = (
+        f"time > {time_stop} && time % {interval} > {time_stop} && time <= {until + duration}"
+        if until else f"time > {time_stop} && time % {interval} > {time_stop}"
+    )
     return [
         EventSpec(
             target = target,
-            trigger = (
-                f"time >= {time_start} && time % {interval} > {time_start} && time < {until}"
-                if until else f"time >= {time_start} && time % {interval} > {time_start}"
-            ),
+            trigger = trigger_start,
             assignment = assignment
         ),
         EventSpec(
             target = target,
-            trigger = (
-                f"time > {time_stop} && time % {interval} > {time_stop} && time <= {until + duration}"
-                if until else f"time > {time_stop} && time % {interval} > {time_stop}"
-            ),
+            trigger = trigger_stop,
             assignment = "0"
         )
     ]
