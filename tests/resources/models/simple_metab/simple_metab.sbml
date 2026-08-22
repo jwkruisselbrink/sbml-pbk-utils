@@ -2,11 +2,11 @@
 <sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2">
   <model metaid="simple_metab" id="simple_metab">
     <listOfCompartments>
+      <compartment id="Gut" spatialDimensions="3" size="1" constant="true"/>
       <compartment id="Blood" spatialDimensions="3" constant="false"/>
       <compartment id="Liver" spatialDimensions="3" constant="false"/>
       <compartment id="Rest" spatialDimensions="3" constant="false"/>
-      <compartment id="Gut" spatialDimensions="3" constant="true"/>
-      <compartment id="Urine" spatialDimensions="3" constant="true"/>
+      <compartment id="Urine" spatialDimensions="3" size="1" constant="true"/>
     </listOfCompartments>
     <listOfSpecies>
       <species id="AGut_P" compartment="Gut" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>
@@ -25,8 +25,9 @@
       <parameter id="scVRest" value="0.9003" constant="true"/>
       <parameter id="scVLiver" value="0.0257" constant="true"/>
       <parameter id="scVBlood" value="0.074" constant="true"/>
-      <parameter id="scQRest" value="0.773" constant="true"/>
-      <parameter id="scQLiver" value="0.227" constant="true"/>
+      <parameter id="QCC" value="15" constant="true"/>
+      <parameter id="QRc" value="0.773" constant="true"/>
+      <parameter id="QLc" value="0.227" constant="true"/>
       <parameter id="PCLiver_P" value="2" constant="true"/>
       <parameter id="PCRest_P" value="1.2" constant="true"/>
       <parameter id="CLmet_P" value="50" constant="true"/>
@@ -71,11 +72,11 @@
         <math xmlns="http://www.w3.org/1998/Math/MathML">
           <apply>
             <times/>
-            <cn type="integer"> 15 </cn>
+            <ci> QCC </ci>
             <apply>
               <power/>
               <ci> BW </ci>
-              <cn> 0.74 </cn>
+              <cn> 0.75 </cn>
             </apply>
           </apply>
         </math>
@@ -85,7 +86,7 @@
           <apply>
             <times/>
             <ci> QBlood </ci>
-            <ci> scQLiver </ci>
+            <ci> QLc </ci>
           </apply>
         </math>
       </assignmentRule>
@@ -94,7 +95,7 @@
           <apply>
             <times/>
             <ci> QBlood </ci>
-            <ci> scQRest </ci>
+            <ci> QRc </ci>
           </apply>
         </math>
       </assignmentRule>

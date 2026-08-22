@@ -67,11 +67,11 @@
       </functionDefinition>
     </listOfFunctionDefinitions>
     <listOfCompartments>
-      <compartment id="Gut" spatialDimensions="3" constant="true"/>
+      <compartment id="Gut" spatialDimensions="3" size="1" constant="true"/>
       <compartment id="Blood" spatialDimensions="3" constant="false"/>
       <compartment id="Liver" spatialDimensions="3" constant="false"/>
       <compartment id="Rest" spatialDimensions="3" constant="false"/>
-      <compartment id="Urine" spatialDimensions="3" constant="true"/>
+      <compartment id="Urine" spatialDimensions="3" size="1" constant="true"/>
     </listOfCompartments>
     <listOfSpecies>
       <species id="AGut" compartment="Gut" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="false" constant="false"/>

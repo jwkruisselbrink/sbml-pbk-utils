@@ -37,11 +37,11 @@ model simple()
   QR := QC * QRc     # blood flow to rest-of-body [L/h]
 
   # Compartments
+  compartment Gut = 1
   compartment Blood := BW * VBc
   compartment Liver := BW * VLc
   compartment Rest := BW * VRc
-  compartment Gut
-  compartment Urine
+  compartment Urine = 1
 
   # Species
   substanceOnly species ABlood in Blood

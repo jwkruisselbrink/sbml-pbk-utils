@@ -61,11 +61,11 @@ model simple_lifetime()
   QR := QC * QRc      # blood flow to rest-of-body [L/h]
 
   # Compartments
-  compartment Gut
+  compartment Gut = 1
   compartment Blood := BW * VBc
   compartment Liver := BW * VLc
   compartment Rest := BW * VRc
-  compartment Urine
+  compartment Urine = 1
 
   # Species
   substanceOnly species AGut in Gut

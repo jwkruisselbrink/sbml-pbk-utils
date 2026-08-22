@@ -1,4 +1,4 @@
-model simple()
+model simple_inhalation()
 
   # Parameters
 
@@ -43,7 +43,7 @@ model simple()
   compartment Blood := BW * VBc
   compartment Liver := BW * VLc
   compartment Rest := BW * VRc
-  compartment Urine
+  compartment Urine = 1
 
   # Species
   const substanceOnly species AAlv in Alveolar

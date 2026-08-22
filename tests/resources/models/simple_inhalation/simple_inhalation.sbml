@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sbml xmlns="http://www.sbml.org/sbml/level3/version2/core" level="3" version="2">
-  <model metaid="simple" id="simple">
+  <model metaid="simple_inhalation" id="simple_inhalation">
     <listOfCompartments>
       <compartment id="Alveolar" spatialDimensions="3" constant="false"/>
       <compartment id="Blood" spatialDimensions="3" constant="false"/>
       <compartment id="Liver" spatialDimensions="3" constant="false"/>
       <compartment id="Rest" spatialDimensions="3" constant="false"/>
-      <compartment id="Urine" spatialDimensions="3" constant="true"/>
+      <compartment id="Urine" spatialDimensions="3" size="1" constant="true"/>
     </listOfCompartments>
     <listOfSpecies>
       <species id="AAlv" compartment="Alveolar" initialAmount="0" hasOnlySubstanceUnits="true" boundaryCondition="true" constant="false"/>

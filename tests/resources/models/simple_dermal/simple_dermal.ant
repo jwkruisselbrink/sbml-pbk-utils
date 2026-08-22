@@ -46,7 +46,7 @@ model simple_dermal()
   compartment Blood := BW * VBc
   compartment Liver := BW * VLc
   compartment Rest := BW * VBody - Blood - Liver - Skin
-  compartment Urine
+  compartment Urine = 1
 
   # Species
   substanceOnly species ASkin in Skin
