@@ -12,7 +12,8 @@ class PbkModelInfosExtractorTests(unittest.TestCase):
 
     @parameterized.expand([
         ("simple/simple.annotated.sbml", ['Gut']),
-        ("euromix/euromix.annotated.sbml", ['Air', 'Gut', 'Skin_sc_e'])
+        ("simple_dermal/simple_dermal.annotated.sbml", ['Skin']),
+        ("simple_inhalation/simple_inhalation.annotated.sbml", ['Alveolar'])
     ])
     def test_get_input_compartments(self, model_file: str, expected: List[str]):
         sbml_file = os.path.join(TEST_MODELS_PATH, model_file)
