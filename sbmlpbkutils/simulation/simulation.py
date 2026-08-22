@@ -226,11 +226,16 @@ def plot_simulation_results(
     ncols_combined: int = 4,
     show_legend: bool = True,
     plot_stats: bool = False,
+    output_format: str = "png",
 ):
     """Generate plots for all scenarios in a configuration.
 
-    Writes PNG files for each scenario and output variable into `out_path`.
+    Writes files in the selected format for each scenario and output variable
+    into `out_path`.
     """
+    if output_format not in {"png", "svg"}:
+        raise ValueError("output_format must be either 'png' or 'svg'")
+
     for scenario in config.scenarios:
         # Plot combined instances scenario results
         plot_scenario_results(
@@ -241,13 +246,15 @@ def plot_simulation_results(
             ncols_combined,
             show_legend,
             plot_stats=plot_stats,
+            output_format=output_format,
         )
 
         if plot_reference_comparison and scenario.reference_data:
             plot_scenario_differences(
                 config.model_instances,
                 scenario,
-                out_path
+                out_path,
+                output_format=output_format,
             )
 
 def run_scenario(
@@ -507,6 +514,7 @@ def plot_scenario_results(
     ncols_combined: int = 4,
     show_legend: bool = True,
     plot_stats: bool = False,
+    output_format: str = "png",
 ) -> None:
     """Plot time series results for a scenario across model instances.
 
@@ -640,7 +648,9 @@ def plot_scenario_results(
 
         if not combine_outputs:
             ax.set_title(f'{scenario_label} - {output_label}', fontsize=14)
-            out_file = os.path.join(out_path, f"{scenario.id}_{output.id}.png")
+            out_file = os.path.join(
+                out_path, f"{scenario.id}_{output.id}.{output_format}"
+            )
             ax.legend()
             plt.tight_layout()
             plt.savefig(out_file)
@@ -657,13 +667,18 @@ def plot_scenario_results(
 
         fig.suptitle(scenario_label, fontsize=14)
         fig.tight_layout(rect=(0, 0, 1, 0.96))
-        fig.savefig(os.path.join(out_path, f"{scenario.id}_combined_results.png"))
+        fig.savefig(
+            os.path.join(
+                out_path, f"{scenario.id}_combined_results.{output_format}"
+            )
+        )
         plt.close(fig)
 
 def plot_scenario_differences(
     instances: list[ModelInstance],
     scenario: Scenario,
-    out_path: str
+    out_path: str,
+    output_format: str = "png",
 ) -> None:
     """Compare instance results with reference data and plot differences.
 
@@ -830,7 +845,9 @@ def plot_scenario_differences(
         ax_resid.grid(True, alpha=0.3, linestyle='--')
         ax_resid.legend()
 
-        out_file = os.path.join(out_path, f"{scenario.id}_{output.id}_diff.png")
+        out_file = os.path.join(
+            out_path, f"{scenario.id}_{output.id}_diff.{output_format}"
+        )
         plt.tight_layout()
         plt.savefig(out_file)
         plt.close()

@@ -46,7 +46,8 @@ class ScenarioSimulationTests(unittest.TestCase):
         plot_simulation_results(
             config = config,
             out_path = out_path,
-            plot_stats=True,
+            plot_stats = True,
+            output_format = 'svg'
         )
 
         # Plot results with combined outputs
@@ -56,5 +57,17 @@ class ScenarioSimulationTests(unittest.TestCase):
             plot_reference_comparison = False,
             combine_outputs = True,
             ncols_combined = 2,
-            plot_stats=True,
+            plot_stats = True,
+            output_format = 'png'
+        )
+
+        # Plot results with combined outputs
+        plot_simulation_results(
+            config = config,
+            out_path = out_path,
+            plot_reference_comparison = False,
+            combine_outputs = True,
+            ncols_combined = 2,
+            plot_stats = True,
+            output_format = 'svg'
         )
