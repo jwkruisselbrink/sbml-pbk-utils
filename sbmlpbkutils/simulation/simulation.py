@@ -687,7 +687,7 @@ def plot_scenario_differences(
     - aligns reference times to the scenario time unit,
     - interpolates model results to reference time points,
     - plots model series, reference points and a residual subplot, and
-    - writes a PNG file named ``{scenario.id}_{output.id}_diff.png`` in ``out_path``.
+    - writes an image file named ``{scenario.id}_{output.id}_diff.{output_format}`` in ``out_path``.
     """
 
     linestyles = ['-', '--', '-.', ':']
@@ -799,7 +799,7 @@ def plot_scenario_differences(
                         residuals,
                         marker=marker,
                         s=20,
-                        label=f"{instance.label}"
+                        label=f"{instance.label}-{item.label}"
                     )
                 else:
                     # Plot lines
@@ -811,13 +811,13 @@ def plot_scenario_differences(
                         linewidth=1,
                         marker=marker,
                         linestyle=linestyle,
-                        label=f"{instance.label}"
+                        label=f"{instance.label}-{item.label}"
                     )
 
                 # Append detailed diffs for CSV
-                for t, mval, rval, res in zip(ref_times, interp_vals, ref_values, residuals):
-                    abs_diff = abs(res)
-                    rel_diff = (res / rval) if rval != 0 else float('nan')
+                for t, mval, rval, diff in zip(ref_times, interp_vals, ref_values, residuals):
+                    abs_diff = abs(diff)
+                    rel_diff = (diff / rval) if rval != 0 else float('nan')
                     diffs_rows.append({
                         'scenario': scenario.id,
                         'output': output.id,
@@ -828,7 +828,7 @@ def plot_scenario_differences(
                         'instance_label': instance.label,
                         'model_value': mval,
                         'ref_value': rval,
-                        'residual': res,
+                        'diff': diff,
                         'abs_diff': abs_diff,
                         'rel_diff': rel_diff
                     })
@@ -841,7 +841,7 @@ def plot_scenario_differences(
         ax_series.legend()
 
         ax_resid.set_xlabel(f'Time ({str(scenario.time_unit)})')
-        ax_resid.set_ylabel('Residual (model - ref)')
+        ax_resid.set_ylabel('Diff (model - ref)')
         ax_resid.grid(True, alpha=0.3, linestyle='--')
         ax_resid.legend()
 

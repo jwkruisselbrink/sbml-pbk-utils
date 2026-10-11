@@ -1,11 +1,10 @@
 import unittest
 import os
-import pandas as pd
 from parameterized import parameterized
 
 from tests.helpers import create_console_logger
 from tests.conf import TEST_OUTPUT_PATH, TEST_SCENARIOS_PATH
-from sbmlpbkutils import run_config, load_config, plot_simulation_results, compute_statistics
+from sbmlpbkutils import run_config, load_config, plot_simulation_results
 
 class ScenarioSimulationTests(unittest.TestCase):
 
