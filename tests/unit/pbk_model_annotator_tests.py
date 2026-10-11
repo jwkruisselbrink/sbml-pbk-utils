@@ -192,7 +192,7 @@ class PbkModelAnnotatorTests(unittest.TestCase):
         # Assert
         model = document.getModel()
         cv_terms = PbkModelAnnotator.get_cv_terms(model, ls.BIOLOGICAL_QUALIFIER, ls.BQB_HAS_TAXON)
-        self.assertEqual(cv_terms[0]['uri'], "https://identifiers.org/taxonomy/40674")
+        self.assertEqual(cv_terms[0]['uri'], "https://identifiers.org/taxonomy:40674")
 
     def test_set_element_rdf_annotation(self):
         # Arrange
