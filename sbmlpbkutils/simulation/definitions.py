@@ -63,7 +63,7 @@ class Output:
 
     Attributes:
         id: unique identifier used in files and plots.
-        output: model variable id to extract values from.
+        output: model variable expression to evaluate for this output.
         label: optional human-readable label for plots.
     """
     id: str
@@ -152,7 +152,7 @@ class ModelInstance:
         label: display label for plots and legends.
         model_path: path to SBML model file.
         param_file: optional CSV with parameter values to load.
-        target_mappings: optional mapping from scenario outputs to model ids.
+        target_mappings: optional mapping from scenario identifiers to model ids or output expressions.
     """
     id: str
     label: str

@@ -1,5 +1,6 @@
 import unittest
 import os
+import pandas as pd
 from parameterized import parameterized
 
 from tests.helpers import create_console_logger
@@ -18,6 +19,7 @@ class ScenarioSimulationTests(unittest.TestCase):
         ("lifetime.yaml"),
         ("liver.yaml"),
         ("oral.yaml"),
+        ("custom_outputs.yaml"),
         ("distribution.yaml")
     ])
     def test_simulation_scenarios(self, filename):
@@ -40,6 +42,13 @@ class ScenarioSimulationTests(unittest.TestCase):
             logger = logger,
             compute_stats=True,
         )
+
+        if filename == "custom_outputs.yaml":
+            results = pd.read_csv(
+                os.path.join(out_path, f"{config.scenarios[0].id}_simple.csv")
+            )
+            self.assertIn("ATotal", results.columns)
+            self.assertTrue((results["ATotal"] + 1e-9 >= results["ABlood"]).all())
 
         # Plot results
         plot_simulation_results(

@@ -1,7 +1,21 @@
+import logging
+import os
+import tempfile
 import unittest
 
-from sbmlpbkutils.simulation.definitions import DosingEvent, EventSpec
+import pandas as pd
+
+from tests.conf import TEST_MODELS_PATH
+from sbmlpbkutils.simulation.definitions import (
+    DosingEvent,
+    EventSpec,
+    ModelInstance,
+    Output,
+    Scenario,
+)
+from sbmlpbkutils.simulation.units import AmountUnit, TimeUnit
 from sbmlpbkutils.simulation.simulation import (
+    run_scenario,
     repeated_continuous,
     events_single_bolus,
     events_repeated_bolus,
@@ -303,6 +317,101 @@ class CreateRREventsTests(unittest.TestCase):
     def test_empty_events(self):
         specs = create_rr_events([], 1.0, 1.0, None)
         self.assertEqual(specs, [])
+
+
+class RunScenarioCustomOutputTests(unittest.TestCase):
+
+    def _run(self, target_mappings, outputs, compute_stats=False):
+        instance = ModelInstance(
+            id="simple",
+            label="simple",
+            model_path=os.path.join(TEST_MODELS_PATH, "simple", "simple.annotated.sbml"),
+            param_file=os.path.join(TEST_MODELS_PATH, "simple", "simple.params.csv"),
+            target_mappings=target_mappings,
+        )
+        scenario = Scenario(
+            id="custom",
+            label="custom",
+            duration=2,
+            evaluation_resolution=4,
+            initial_states=None,
+            parameters=None,
+            dosing_events=[
+                DosingEvent(type="single_bolus", target="AGut", amount=1.0, time=0.0)
+            ],
+            outputs=[Output(id=o, output=o) for o in outputs],
+            reference_data=None,
+            time_unit=TimeUnit.DAY,
+            amount_unit=AmountUnit.MICROGRAMS,
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            out_file = os.path.join(tmp, "out.csv")
+            run_scenario(
+                instance, scenario, out_file, True, logging.getLogger(),
+                compute_stats=compute_stats,
+            )
+            results = pd.read_csv(out_file)
+            stats = (
+                pd.read_csv(out_file.replace(".csv", "_stats.csv"))
+                if compute_stats else None
+            )
+        return results, stats
+
+    def test_expression_output_is_computed(self):
+        results, _ = self._run(
+            {"ATotal": "ABlood + ALiver + ARest + AGut + AUrine"},
+            ["ABlood", "ALiver", "ARest", "AGut", "AUrine", "ATotal"],
+        )
+        expected = results[["ABlood", "ALiver", "ARest", "AGut", "AUrine"]].sum(axis=1)
+        pd.testing.assert_series_equal(
+            results["ATotal"], expected, check_names=False, atol=1e-9
+        )
+
+    def test_expression_operators(self):
+        results, _ = self._run(
+            {
+                "Diff": "AGut - ABlood",
+                "Prod": "2 * ABlood",
+                "Ratio": "ABlood / (ABlood + ALiver + 1)",
+            },
+            ["AGut", "ABlood", "ALiver", "Diff", "Prod", "Ratio"],
+        )
+        pd.testing.assert_series_equal(
+            results["Diff"], results["AGut"] - results["ABlood"],
+            check_names=False, atol=1e-9,
+        )
+        pd.testing.assert_series_equal(
+            results["Prod"], 2 * results["ABlood"], check_names=False, atol=1e-9
+        )
+        pd.testing.assert_series_equal(
+            results["Ratio"],
+            results["ABlood"] / (results["ABlood"] + results["ALiver"] + 1),
+            check_names=False, atol=1e-9,
+        )
+
+    def test_plain_and_bracketed_mappings_still_selected(self):
+        results, _ = self._run(
+            {"CBlood": "[ABlood]"},
+            ["ABlood", "CBlood"],
+        )
+        self.assertIn("[ABlood]", results.columns)
+        self.assertNotIn("CBlood", results.columns)
+        self.assertTrue((results["[ABlood]"] >= 0).all())
+        self.assertGreater(results["[ABlood]"].max(), 0)
+
+    def test_expression_output_included_in_stats(self):
+        _, stats = self._run(
+            {"ATotal": "ABlood + ALiver + ARest + AGut + AUrine"},
+            ["ATotal"],
+            compute_stats=True,
+        )
+        self.assertEqual(stats["output"].tolist(), ["ATotal"])
+        self.assertAlmostEqual(stats["cmax"].iloc[0], 1.0, places=6)
+
+    def test_null_mapping_is_skipped(self):
+        results, _ = self._run({"Skipped": None}, ["ABlood", "Skipped"])
+        self.assertIn("ABlood", results.columns)
+        self.assertNotIn("Skipped", results.columns)
 
 
 class EventSpecDataclassTests(unittest.TestCase):

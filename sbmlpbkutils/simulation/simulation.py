@@ -326,14 +326,20 @@ def run_scenario(
             rr_model.addEventAssignment(eid, ev.target, ev.assignment, False)
         rr_model.regenerateModel(True, True)
 
-    # Define the output selections
+    # Define the output selections. Mapped expressions that are not a plain
+    # symbol (e.g. 'ABlood + ALiver') are added to the model as assignment rules.
     output_selections = []
     for output in scenario.outputs:
         if instance.target_mappings is not None and output.id in instance.target_mappings.keys():
             mapped = instance.target_mappings[output.id]
             if mapped is None:
                 continue
-            output_selections.append(mapped)
+            if re.fullmatch(r"\w+|\[\w+\]", mapped):
+                output_selections.append(mapped)
+            else:
+                rr_model.addParameter(output.id, 0.0, False)
+                rr_model.addAssignmentRule(output.id, mapped, True)
+                output_selections.append(output.id)
         else:
             output_selections.append(output.id)
     selections = ['time'] + output_selections
@@ -561,18 +567,17 @@ def plot_scenario_results(
         for idx, instance in enumerate(instances):
             # Get instance scenario output file
             out_file = os.path.join(out_path, f"{scenario.id}_{instance.id}.csv")
-            output_df = pd.read_csv(out_file, skipinitialspace=True)
-
-            # Extract time and output variable from output
             output_id = _resolve_output_mapping(instance.target_mappings, output.id)
             if output_id is None:
                 continue
+            output_df = pd.read_csv(out_file, skipinitialspace=True)
+            result_id = output.id if output.id in output_df.columns else output_id
 
             color = f'C{idx}'
 
             if 'iteration' in output_df.columns:
                 # Multi-iteration: plot median + 5th-95th percentile band
-                grouped = output_df.groupby('time')[output_id]
+                grouped = output_df.groupby('time')[result_id]
                 times = grouped.mean().index.to_numpy(dtype=float)
                 median_vals = grouped.median().to_numpy(dtype=float)
                 lower_vals = grouped.quantile(0.05).to_numpy(dtype=float)
@@ -582,7 +587,7 @@ def plot_scenario_results(
             else:
                 # Single run: plot the raw trace
                 times = output_df['time'].to_numpy(dtype=float)
-                values = output_df[output_id].to_numpy(dtype=float)
+                values = output_df[result_id].to_numpy(dtype=float)
                 linestyle = linestyles[idx % len(linestyles)]
                 ax.plot(times, values, linewidth=1, linestyle=linestyle, label=instance.label)
 
@@ -591,7 +596,12 @@ def plot_scenario_results(
                 stats_file = out_file.replace('.csv', '_stats.csv')
                 if os.path.exists(stats_file):
                     stats_df = pd.read_csv(stats_file)
-                    row = stats_df[stats_df['output'] == output_id]
+                    stats_output_id = (
+                        output.id
+                        if output.id in stats_df['output'].values
+                        else output_id
+                    )
+                    row = stats_df[stats_df['output'] == stats_output_id]
                     if not row.empty:
                         if 'iteration' in stats_df.columns:
                             cmax_val = row.groupby('output')['cmax'].median().iloc[0]
@@ -717,15 +727,16 @@ def plot_scenario_differences(
         # Plot model instance series
         for idx, instance in enumerate(instances):
             out_file = os.path.join(out_path, f"{scenario.id}_{instance.id}.csv")
-            output_df = pd.read_csv(out_file, skipinitialspace=True)
             output_id = _resolve_output_mapping(instance.target_mappings, output.id)
             if output_id is None:
                 continue
+            output_df = pd.read_csv(out_file, skipinitialspace=True)
+            result_id = output.id if output.id in output_df.columns else output_id
 
             color = f'C{idx}'
 
             if 'iteration' in output_df.columns:
-                grouped = output_df.groupby('time')[output_id]
+                grouped = output_df.groupby('time')[result_id]
                 times = grouped.mean().index.to_numpy(dtype=float)
                 median_vals = grouped.median().to_numpy(dtype=float)
                 lower_vals = grouped.quantile(0.05).to_numpy(dtype=float)
@@ -734,7 +745,7 @@ def plot_scenario_differences(
                 ax_series.fill_between(times, lower_vals, upper_vals, alpha=0.2, color=color)
             else:
                 times = output_df['time'].to_numpy(dtype=float)
-                values = output_df[output_id].to_numpy(dtype=float)
+                values = output_df[result_id].to_numpy(dtype=float)
                 linestyle = linestyles[idx % len(linestyles)]
                 ax_series.plot(times, values, linestyle=linestyle, linewidth=1, label=instance.label)
 
@@ -773,18 +784,19 @@ def plot_scenario_differences(
             # Compute per-instance statistics at reference points
             for idx, instance in enumerate(instances):
                 out_file = os.path.join(out_path, f"{scenario.id}_{instance.id}.csv")
-                output_df = pd.read_csv(out_file, skipinitialspace=True)
                 output_id = _resolve_output_mapping(instance.target_mappings, output.id)
                 if output_id is None:
                     continue
+                output_df = pd.read_csv(out_file, skipinitialspace=True)
+                result_id = output.id if output.id in output_df.columns else output_id
 
                 if 'iteration' in output_df.columns:
                     # Use median across iterations as the representative model value
-                    model_values = output_df.groupby('time')[output_id].median().to_numpy(dtype=float)
+                    model_values = output_df.groupby('time')[result_id].median().to_numpy(dtype=float)
                     model_times = output_df.groupby('time')['time'].first().to_numpy(dtype=float)
                 else:
                     model_times = output_df['time'].to_numpy(dtype=float)
-                    model_values = output_df[output_id].to_numpy(dtype=float)
+                    model_values = output_df[result_id].to_numpy(dtype=float)
 
                 # interpolate model to reference times
                 interp_vals = np.interp(ref_times, model_times, model_values)

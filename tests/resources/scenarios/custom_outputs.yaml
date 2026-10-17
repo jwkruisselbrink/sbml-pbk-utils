@@ -1,0 +1,45 @@
+id: custom_outputs
+label: custom outputs
+model_instances:
+  - id: simple
+    label: simple
+    model_path: tests/resources/models/simple/simple.annotated.sbml
+    param_file: tests/resources/models/simple/simple.params.csv
+    target_mappings:
+      ATotal: 'ABlood + ALiver + ARest + AGut + AUrine'
+      CBlood: '[ABlood]'
+      CBloodComputed: 'ABlood / (BW * VBc)'
+
+scenarios:
+  - id: oral_repeated_custom_outputs
+    label: Oral repeated dose
+    time_unit: DAY
+    amount_unit: MICROGRAMS
+    duration: 6
+    evaluation_resolution: 24
+    dosing_events:
+      - type: repeated_bolus
+        target: AGut
+        amount: 1
+        time: 0
+        interval: 1
+        until: 5
+    outputs:
+      - id: AGut
+        label: Amount in gut
+        output: AGut
+      - id: ABlood
+        label: Amount in blood
+        output: ABlood
+      - id: AUrine
+        label: Amount in urine
+        output: AUrine
+      - id: ATotal
+        label: Total amount
+        output: ATotal
+      - id: CBlood
+        label: Concentration in blood
+        output: CBlood
+      - id: CBloodComputed
+        label: Concentration in blood (computed)
+        output: CBloodComputed

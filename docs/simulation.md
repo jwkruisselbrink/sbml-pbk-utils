@@ -42,7 +42,7 @@ A simulation configuration YAML file follows a simple hierarchical layout. The s
     - **label** *[string | required]*
     - **model_path** *[string | required]* - Path to the SBML model file.
     - **param_file** *[string | optional]* - Path to a CSV with parameter values.
-    - **target_mappings** *[mapping | optional]* - Map scenario output/parameter ids to model variable ids (e.g. `AGut: AGut`). Useful when a scenario id differs from the actual variable id in the SBML model. Map to `null` (`~` in YAML) to skip a parameter or output for this instance. Useful when a scenario defines a parameter or output that does not exist in a particular model instance.
+    - **target_mappings** *[mapping | optional]* - Map scenario output/parameter ids to model variable ids (e.g. `AGut: AGut`). Output mappings may also be arithmetic expressions over model variables (using `+`, `-`, `*`, `/` and parentheses, e.g. `ABlood + ALiver`), allowing an output to combine multiple model values. Inside expressions, write concentrations as amount over compartment volume (e.g. `ABlood / Blood`); the `[X]` notation is only supported as a whole mapping. Useful when a scenario id differs from the actual variable id in the SBML model. Map to `null` (`~` in YAML) to skip a parameter or output for this instance. Useful when a scenario defines a parameter or output that does not exist in a particular model instance.
 - **scenarios** *[list]*
   - List of scenarios to execute. Each scenario is an object with:
     - **id** *[string | required]*
@@ -64,7 +64,7 @@ A simulation configuration YAML file follows a simple hierarchical layout. The s
       - **duration** *[number | optional]* - For continuous dosing, duration of dosing events (in scenario time unit).
       - **interval** *[number | optional]* - For repeated dosing, time interval between dosing events (in scenario time unit).
       - **until** *[number | optional]* - For repeated dosing: end time for repetition.
-    - **outputs** *[list | required]* - List of `{ id, label, output }` objects that specify which model variables to record and their display labels.
+    - **outputs** *[list | required]* - List of `{ id, label, output }` objects that specify model variable expressions to record and their display labels. Expressions may combine model variables with arithmetic operators.
     - **reference_data** *[list | optional]* - List of reference series to compare against. Each item includes:
       - **id** *[string | required]*
       - **label** *[string | required]*
