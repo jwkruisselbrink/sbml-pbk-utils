@@ -393,7 +393,9 @@ def run_scenario(
                         continue
                 else:
                     target = param
-                rr_model[target] = value
+
+                # Set initial value of the parameter
+                rr_model.setValue(f'init({target})', value)
 
         # Simulate
         results = rr_model.simulate(0, duration, evaluation_steps, selections)
@@ -466,7 +468,7 @@ def load_parametrisation(model, filename, sample_distributions=False, rng=None):
             value = _sample_parameter(dist_spec, rng)
         else:
             value = float(row["Value"])
-        model[param_name] = value
+        model.setValue(f'init({param_name})', value)
 
 def compute_statistics(
     df: pd.DataFrame,

@@ -89,7 +89,7 @@
       <parameter id="BWBirth" value="3.5" constant="true"/>
       <parameter id="BWAdult" value="70" constant="true"/>
       <parameter id="kGrowth" value="0.2" constant="true"/>
-      <parameter id="deltaBW" constant="false"/>
+      <parameter id="deltaBW" constant="true"/>
       <parameter id="BW" constant="false"/>
       <parameter id="VRc" value="0.9003" constant="true"/>
       <parameter id="VLc" value="0.0257" constant="true"/>
@@ -109,6 +109,21 @@
       <initialAssignment symbol="Age">
         <math xmlns="http://www.w3.org/1998/Math/MathML">
           <ci> AgeInit </ci>
+        </math>
+      </initialAssignment>
+      <initialAssignment symbol="deltaBW">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <divide/>
+            <ci> BWRef </ci>
+            <apply>
+              <ci> f_BW </ci>
+              <ci> AgeRef </ci>
+              <ci> BWBirth </ci>
+              <ci> BWAdult </ci>
+              <ci> kGrowth </ci>
+            </apply>
+          </apply>
         </math>
       </initialAssignment>
     </listOfInitialAssignments>
@@ -153,21 +168,6 @@
           </apply>
         </math>
       </rateRule>
-      <assignmentRule variable="deltaBW">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
-          <apply>
-            <divide/>
-            <ci> BWRef </ci>
-            <apply>
-              <ci> f_BW </ci>
-              <ci> AgeRef </ci>
-              <ci> BWBirth </ci>
-              <ci> BWAdult </ci>
-              <ci> kGrowth </ci>
-            </apply>
-          </apply>
-        </math>
-      </assignmentRule>
       <assignmentRule variable="BW">
         <math xmlns="http://www.w3.org/1998/Math/MathML">
           <apply>

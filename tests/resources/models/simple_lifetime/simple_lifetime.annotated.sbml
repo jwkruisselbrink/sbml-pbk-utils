@@ -321,7 +321,7 @@
       <parameter id="BWBirth" name="population nominal body weight at birth" value="3.5" units="KiloGM" constant="true"/>
       <parameter id="BWAdult" name="population nominal asymptotic/mature body weight" value="70" units="KiloGM" constant="true"/>
       <parameter id="kGrowth" name="bodyweight growth-rate constant" value="0.2" units="PER_HR" constant="true"/>
-      <parameter id="deltaBW" name="relative body weight of reference individual compared to population nominal body weight" units="UNITLESS" constant="false"/>
+      <parameter id="deltaBW" name="relative body weight of reference individual compared to population nominal body weight" units="UNITLESS" constant="true"/>
       <parameter metaid="meta_BW" id="BW" name="body weight during simulation" units="KiloGM" constant="false">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
@@ -531,6 +531,21 @@
           <ci> AgeInit </ci>
         </math>
       </initialAssignment>
+      <initialAssignment symbol="deltaBW">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <divide/>
+            <ci> BWRef </ci>
+            <apply>
+              <ci> f_BW </ci>
+              <ci> AgeRef </ci>
+              <ci> BWBirth </ci>
+              <ci> BWAdult </ci>
+              <ci> kGrowth </ci>
+            </apply>
+          </apply>
+        </math>
+      </initialAssignment>
     </listOfInitialAssignments>
     <listOfRules>
       <assignmentRule variable="Blood">
@@ -573,21 +588,6 @@
           </apply>
         </math>
       </rateRule>
-      <assignmentRule variable="deltaBW">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
-          <apply>
-            <divide/>
-            <ci> BWRef </ci>
-            <apply>
-              <ci> f_BW </ci>
-              <ci> AgeRef </ci>
-              <ci> BWBirth </ci>
-              <ci> BWAdult </ci>
-              <ci> kGrowth </ci>
-            </apply>
-          </apply>
-        </math>
-      </assignmentRule>
       <assignmentRule variable="BW">
         <math xmlns="http://www.w3.org/1998/Math/MathML">
           <apply>
