@@ -206,7 +206,7 @@ def run_config(
     for scenario in config.scenarios:
         for instance in config.model_instances:
             # Simulation output csv file
-            logger.info("Running scenario %s for instance %s", scenario.id, instance.id)
+            logger.info("Running scenario [%s] for instance [%s]", scenario.id, instance.id)
             out_file = os.path.join(out_path, f"{scenario.id}_{instance.id}.csv")
             run_scenario(
                 instance,
@@ -281,7 +281,7 @@ def run_scenario(
     """
     # Skip if output already available and no forced recalculation
     if os.path.exists(out_file) and not force_recompute:
-        logger.info("Skipping scenario %s: results already available", scenario.id)
+        logger.info("Skipping scenario [%s]: results already available", scenario.id)
         return
 
     # Load the model
@@ -432,7 +432,7 @@ def run_scenario(
         stats_df = compute_statistics(result_df, output_selections)
         stats_file = out_file.replace('.csv', '_stats.csv')
         stats_df.to_csv(stats_file, index=False)
-        logger.info("Statistics saved to %s", stats_file)
+        logger.info("Statistics saved to [%s]", stats_file)
 
 def _resolve_output_mapping(target_mappings: Dict[str, str | None] | None, output_id: str) -> str | None:
     """Resolve output ID through target mappings, returning None if mapped to None."""
