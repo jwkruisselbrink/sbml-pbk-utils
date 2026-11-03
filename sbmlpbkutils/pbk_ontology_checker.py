@@ -44,6 +44,14 @@ class PbkOntologyChecker():
             "replacement": "http://purl.obolibrary.org/obo/NCBITaxon_"
         },
         {
+            "pattern": "http://identifiers.org/taxonomy:",
+            "replacement": "http://purl.obolibrary.org/obo/NCBITaxon_"
+        },
+        {
+            "pattern": "https://identifiers.org/taxonomy:",
+            "replacement": "http://purl.obolibrary.org/obo/NCBITaxon_"
+        },
+        {
             "pattern": "http://identifiers.org/taxonomy/",
             "replacement": "http://purl.obolibrary.org/obo/NCBITaxon_"
         },

@@ -75,6 +75,17 @@ class PbkOntologyCheckerTests(unittest.TestCase):
             self.assertEqual(result.iri, iri_expected)
             self.assertEqual(result.label[0], label_exp)
 
+    def test_get_ncbitaxon_class_from_identifiers_org_colon_iri(self):
+        checker = PbkOntologyChecker()
+
+        result = checker.get_ncbitaxon_class(
+            "https://identifiers.org/taxonomy:40674"
+        )
+
+        self.assertIsNotNone(result)
+        self.assertEqual(result.iri, "http://purl.obolibrary.org/obo/NCBITaxon_40674")
+        self.assertEqual(result.label[0], "Mammalia")
+
     @parameterized.expand([
         ("24431", "chemical entity"),
         ("25212", "metabolite"),
