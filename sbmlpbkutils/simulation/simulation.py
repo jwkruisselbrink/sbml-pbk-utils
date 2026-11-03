@@ -632,10 +632,12 @@ def plot_scenario_results(
                     ref_id = item.mappings[output.id]
 
                     # Get instance scenario output file
-                    reference_df = pd.read_csv(item.file_path, skipinitialspace=True)
+                    reference_df = pd.read_csv(
+                        item.file_path, skipinitialspace=True, dtype=np.float64
+                    )
 
                     # Extract time and output variable from output
-                    times = reference_df['time'].apply(lambda v: v / time_unit_multiplier)
+                    times = reference_df['time'] / time_unit_multiplier
                     values = reference_df[ref_id].to_numpy(dtype=float)
 
                     if item.series_type == SeriesType.CHECKPOINTS:
@@ -758,11 +760,15 @@ def plot_scenario_differences(
         # For each reference item, compute stats and plot reference points
         diffs_rows = []
         for r_idx, (item, series_id) in enumerate(ref_items):
-            reference_df = pd.read_csv(item.file_path, skipinitialspace=True)
+            reference_df = pd.read_csv(
+                item.file_path, skipinitialspace=True, dtype=np.float64
+            )
 
             # Align times using same approach as existing plotting
             time_unit_multiplier = get_time_unit_alignment_factor(item.time_unit, scenario.time_unit)
-            ref_times = reference_df['time'].apply(lambda v: v / time_unit_multiplier).to_numpy(dtype=float)
+            ref_times = (
+                reference_df['time'] / time_unit_multiplier
+            ).to_numpy(dtype=float)
 
             # Get reference series values
             ref_values = reference_df[series_id].to_numpy(dtype=float)
