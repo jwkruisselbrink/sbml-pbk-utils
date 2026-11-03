@@ -325,7 +325,10 @@ def run_scenario(
             eid = f"ev_{event_count}"
             rr_model.addEvent(eid, False, ev.trigger, False)
             rr_model.addEventAssignment(eid, ev.target, ev.assignment, False)
-        rr_model.regenerateModel(True, True)
+
+        rr_model.regenerateModel(True, False)
+
+    rr_model.resetAll()
 
     # Define the output selections. Mapped expressions that are not a plain
     # symbol (e.g. 'ABlood + ALiver') are added to the model as assignment rules.

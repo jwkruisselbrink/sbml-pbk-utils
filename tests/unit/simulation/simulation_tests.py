@@ -427,8 +427,7 @@ class SimpleLifetimeSimulationTests(unittest.TestCase):
             ),
             param_file=os.path.join(
                 TEST_MODELS_PATH, "simple_lifetime", "simple_lifetime.params.csv"
-            ),
-            target_mappings={"BW": "BW", "Age": "Age"},
+            )
         )
         scenario = Scenario(
             id="lifetime",
