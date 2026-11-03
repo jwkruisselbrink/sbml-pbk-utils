@@ -11,7 +11,7 @@
           </bqbiol:hasProperty>
           <bqbiol:hasTaxon>
             <rdf:Bag>
-              <rdf:li rdf:resource="https://identifiers.org/taxonomy/40674"/>
+              <rdf:li rdf:resource="https://identifiers.org/taxonomy:40674"/>
             </rdf:Bag>
           </bqbiol:hasTaxon>
         </rdf:Description>

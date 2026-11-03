@@ -13,7 +13,7 @@ import libsbml as ls
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import tellurium as te
+import roadrunner
 import yaml
 
 from .units import (
@@ -288,7 +288,8 @@ def run_scenario(
     sbml_file = instance.model_path
     ls_document = ls.readSBML(sbml_file)
     ls_model = ls_document.getModel()
-    rr_model = te.loadSBMLModel(sbml_file)
+    with open(sbml_file, "r", encoding="utf-8") as f:
+        rr_model = roadrunner.RoadRunner(f.read())
 
     # Simulation time and amount unit alignment
     time_unit_multiplier = get_model_time_unit_alignment_factor(ls_model, scenario.time_unit)

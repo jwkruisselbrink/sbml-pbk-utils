@@ -4,7 +4,7 @@ import logging
 from pathlib import Path
 import uuid
 import sys
-import tellurium as te
+import antimony
 import libsbml as ls
 
 sys.path.append("./")
@@ -59,8 +59,13 @@ def compile_model(file: str):
             os.path.basename(sbml_file),
             filename
         )
-        r = te.loada(file)
-        r.exportToSBML(sbml_file, current = False)
+        if antimony.loadAntimonyFile(file) < 0:
+            raise ValueError(antimony.getLastError())
+        module_name = antimony.getMainModuleName()
+        sbml = antimony.getSBMLString(module_name)
+        if not sbml:
+            raise ValueError(f"Could not convert Antimony file [{filename}] to SBML.")
+        sbml_file.write_text(sbml, encoding='utf-8')
 
         # Annotate SBML model
         document = ls.readSBML(sbml_file)

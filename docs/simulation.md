@@ -239,5 +239,5 @@ params_df.to_csv('parameters.csv', index=False)
 
 ## Notes and dependencies
 
-- Requires `tellurium` (RoadRunner) to run SBML simulations, `matplotlib` for plotting, `pandas` for CSV I/O and `pyyaml` for YAML parsing.
+- Requires `libroadrunner` to run SBML simulations, `matplotlib` for plotting, `pandas` for CSV I/O and `pyyaml` for YAML parsing.
 - Large simulations or many instances will write multiple CSV and PNG files. Using `force_recompute=False` to reuse previously generated results, or `force_recompute=True` to regenerate results.
