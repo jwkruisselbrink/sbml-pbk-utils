@@ -26,7 +26,7 @@ model simple_lifetime()
   BWAdult = 70.0     # asymptotic/mature body weight [kg]
   kGrowth = 0.2      # growth-rate constant [1/h]
 
-  deltaBW := BWRef / f_BW(AgeRef, BWBirth, BWAdult, kGrowth)  # individual deviation of nominal BW [-]
+  deltaBW = BWRef / f_BW(AgeRef, BWBirth, BWAdult, kGrowth)   # individual deviation of nominal BW [-]
   BW := deltaBW * f_BW(Age, BWBirth, BWAdult, kGrowth)        # body weight during simulation [kg]
 
   ### Compartment sizes

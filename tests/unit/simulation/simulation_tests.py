@@ -1,4 +1,5 @@
 import logging
+import math
 import os
 import tempfile
 import unittest
@@ -412,6 +413,49 @@ class RunScenarioCustomOutputTests(unittest.TestCase):
         results, _ = self._run({"Skipped": None}, ["ABlood", "Skipped"])
         self.assertIn("ABlood", results.columns)
         self.assertNotIn("Skipped", results.columns)
+
+
+class SimpleLifetimeSimulationTests(unittest.TestCase):
+
+    def test_bw_at_reference_age_equals_reference_bw(self):
+        age_start, age_ref, bw_ref = 2.0, 12.0, 40.0
+        instance = ModelInstance(
+            id="lifetime",
+            label="lifetime",
+            model_path=os.path.join(
+                TEST_MODELS_PATH, "simple_lifetime", "simple_lifetime.annotated.sbml"
+            ),
+            param_file=os.path.join(
+                TEST_MODELS_PATH, "simple_lifetime", "simple_lifetime.params.csv"
+            ),
+            target_mappings={"BW": "BW", "Age": "Age"},
+        )
+        scenario = Scenario(
+            id="lifetime",
+            label="lifetime",
+            duration=(age_ref - age_start) * 365.25,
+            evaluation_resolution=365,
+            initial_states=None,
+            parameters={
+                "Age": age_start,
+                "AgeRef": age_ref,
+                "BWRef": bw_ref
+            },
+            dosing_events=[
+                DosingEvent(type="single_bolus", target="AGut", amount=1.0, time=0.0)
+            ],
+            outputs=[Output(id="Age", output="Age"), Output(id="BW", output="BW")],
+            reference_data=None,
+            time_unit=TimeUnit.DAY,
+            amount_unit=AmountUnit.MICROGRAMS,
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            out_file = os.path.join(tmp, "out.csv")
+            run_scenario(instance, scenario, out_file, True, logging.getLogger())
+            results = pd.read_csv(out_file)
+
+        self.assertAlmostEqual(results["Age"].iloc[-1], age_ref, places=3)
+        self.assertAlmostEqual(results["BW"].iloc[-1], bw_ref, places=3)
 
 
 class EventSpecDataclassTests(unittest.TestCase):
