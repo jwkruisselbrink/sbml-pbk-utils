@@ -13,7 +13,7 @@ import libsbml as ls
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import roadrunner
+import roadrunner as rr
 import yaml
 
 from .units import (
@@ -289,7 +289,7 @@ def run_scenario(
     ls_document = ls.readSBML(sbml_file)
     ls_model = ls_document.getModel()
     with open(sbml_file, "r", encoding="utf-8") as f:
-        rr_model = roadrunner.RoadRunner(f.read())
+        rr_model = rr.RoadRunner(f.read())
 
     # Simulation time and amount unit alignment
     time_unit_multiplier = get_model_time_unit_alignment_factor(ls_model, scenario.time_unit)
@@ -442,7 +442,7 @@ def _resolve_output_mapping(target_mappings: Dict[str, str | None] | None, outpu
     return output_id
 
 
-def load_parametrisation(model, filename, sample_distributions=False, rng=None):
+def load_parametrisation(model: rr.RoadRunner, filename, sample_distributions=False, rng=None):
     """Load parameter values from a CSV file into a roadrunner model.
 
     The CSV is expected to have columns ``Parameter`` and ``Value``.
