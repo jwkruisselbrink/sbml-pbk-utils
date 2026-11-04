@@ -9,6 +9,7 @@ model_instances:
       ABlood: ABlood
       CBlood: '[ABlood]'
       CLiver: '[ALiver]'
+      BWFixed: BW
       AgeRef: ~
       BWRef: ~
       Age: ~
@@ -21,7 +22,7 @@ model_instances:
       ABlood: ABlood
       CBlood: '[ABlood]'
       CLiver: '[ALiver]'
-      BW: ~
+      BWFixed: ~
 
 scenarios:
   - id: oral_repeated
@@ -33,7 +34,7 @@ scenarios:
     parameters:
         Age: 2
         AgeRef: 10
-        BW: 3
+        BWFixed: 40
         BWRef: 50
     dosing_events:
       - type: repeated_bolus
