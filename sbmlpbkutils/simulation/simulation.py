@@ -288,8 +288,7 @@ def run_scenario(
     sbml_file = instance.model_path
     ls_document = ls.readSBML(sbml_file)
     ls_model = ls_document.getModel()
-    with open(sbml_file, "r", encoding="utf-8") as f:
-        rr_model = rr.RoadRunner(f.read())
+    rr_model = rr.RoadRunner(sbml_file)
 
     # Simulation time and amount unit alignment
     time_unit_multiplier = get_model_time_unit_alignment_factor(ls_model, scenario.time_unit)
@@ -374,6 +373,7 @@ def run_scenario(
                 sample_distributions=use_stochastic,
                 rng=rng,
             )
+            rr_model.resetAll()
 
         # Apply scenario parameters
         if scenario.parameters:
@@ -398,7 +398,9 @@ def run_scenario(
                     target = param
 
                 # Set initial value of the parameter
-                rr_model.setValue(f'init({target})', value)
+                rr_model.model.setValue(f'init({target})', value)
+                #rr_model[target] = value
+            rr_model.resetAll()
 
         # Simulate
         results = rr_model.simulate(0, duration, evaluation_steps, selections)
@@ -471,7 +473,8 @@ def load_parametrisation(model: rr.RoadRunner, filename, sample_distributions=Fa
             value = _sample_parameter(dist_spec, rng)
         else:
             value = float(row["Value"])
-        model.setValue(f'init({param_name})', value)
+        model.model.setValue(f'init({param_name})', value)
+        #model[param_name] = value
 
 def compute_statistics(
     df: pd.DataFrame,
