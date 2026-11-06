@@ -1,5 +1,4 @@
 import logging
-import math
 import os
 import tempfile
 import unittest
@@ -10,6 +9,7 @@ from tests.conf import TEST_MODELS_PATH
 from sbmlpbkutils.simulation.definitions import (
     DosingEvent,
     EventSpec,
+    InitialState,
     ModelInstance,
     Output,
     Scenario,
@@ -413,6 +413,79 @@ class RunScenarioCustomOutputTests(unittest.TestCase):
         results, _ = self._run({"Skipped": None}, ["ABlood", "Skipped"])
         self.assertIn("ABlood", results.columns)
         self.assertNotIn("Skipped", results.columns)
+
+
+class ScenarioInitialStateTests(unittest.TestCase):
+
+    def test_initial_amount_is_first_output_value(self):
+        initial_amount = 100.0
+        instance = ModelInstance(
+            id="simple",
+            label="simple",
+            model_path=os.path.join(TEST_MODELS_PATH, "simple", "simple.annotated.sbml"),
+            param_file=os.path.join(TEST_MODELS_PATH, "simple", "simple.params.csv"),
+        )
+        scenario = Scenario(
+            id="initial_state",
+            label="initial state",
+            duration=1,
+            evaluation_resolution=4,
+            initial_states=[InitialState(target="ALiver", amount=initial_amount)],
+            parameters=None,
+            dosing_events=None,
+            outputs=[Output(id="ALiver", output="ALiver")],
+            reference_data=None,
+            time_unit=TimeUnit.DAY,
+            amount_unit=AmountUnit.MICROGRAMS,
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            out_file = os.path.join(tmp, "out.csv")
+            run_scenario(instance, scenario, out_file, True, logging.getLogger())
+            results = pd.read_csv(out_file)
+
+        self.assertAlmostEqual(results["ALiver"].iloc[0], initial_amount)
+
+
+class ScenarioDosingTests(unittest.TestCase):
+
+    def test_single_bolus_uses_scenario_body_weight_adjustment(self):
+        body_weight = 85.0
+        dose_amount = 2.5
+        dose_time = 0.5
+        instance = ModelInstance(
+            id="simple",
+            label="simple",
+            model_path=os.path.join(TEST_MODELS_PATH, "simple", "simple.annotated.sbml"),
+            param_file=os.path.join(TEST_MODELS_PATH, "simple", "simple.params.csv"),
+        )
+        scenario = Scenario(
+            id="adjusted_bolus",
+            label="adjusted bolus",
+            duration=1,
+            evaluation_resolution=4,
+            initial_states=None,
+            parameters={"BW": body_weight},
+            dosing_events=[
+                DosingEvent(
+                    type="single_bolus",
+                    target="AGut",
+                    amount=dose_amount,
+                    time=dose_time,
+                    adjustment="BW",
+                )
+            ],
+            outputs=[Output(id="AGut", output="AGut")],
+            reference_data=None,
+            time_unit=TimeUnit.DAY,
+            amount_unit=AmountUnit.MICROGRAMS,
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            out_file = os.path.join(tmp, "out.csv")
+            run_scenario(instance, scenario, out_file, True, logging.getLogger())
+            results = pd.read_csv(out_file)
+
+        amount_at_dosing = results.loc[results["time"] == dose_time, "AGut"].iloc[0]
+        self.assertAlmostEqual(amount_at_dosing, body_weight * dose_amount)
 
 
 class SimpleLifetimeSimulationTests(unittest.TestCase):

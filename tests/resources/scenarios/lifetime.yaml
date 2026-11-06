@@ -13,6 +13,7 @@ model_instances:
       AgeRef: ~
       BWRef: ~
       Age: ~
+      AgeInit: ~
   - id: lifetime
     label: lifetime
     model_path: tests/resources/models/simple_lifetime/simple_lifetime.annotated.sbml
@@ -32,7 +33,7 @@ scenarios:
     duration: 10000
     evaluation_resolution: 1
     parameters:
-        Age: 2
+        AgeInit: 2
         AgeRef: 10
         BWFixed: 40
         BWRef: 50

@@ -276,7 +276,7 @@ def run_scenario(
     sampled deterministically from that seed.
 
     When ``scenario.n_simulations > 1`` the simulation is run multiple
-    times with fresh samples from distribution-based parameters.  The
+    times with fresh samples from distribution-based parameters. The
     output CSV contains an ``iteration`` column.
     """
     # Skip if output already available and no forced recalculation
@@ -288,12 +288,14 @@ def run_scenario(
     sbml_file = instance.model_path
     ls_document = ls.readSBML(sbml_file)
     ls_model = ls_document.getModel()
-    with open(sbml_file, "r", encoding="utf-8") as f:
-        rr_model = rr.RoadRunner(f.read())
+    rr_model = rr.RoadRunner(sbml_file)
 
     # Simulation time and amount unit alignment
     time_unit_multiplier = get_model_time_unit_alignment_factor(ls_model, scenario.time_unit)
     amount_unit_multiplier = get_amount_unit_alignment_factor(ls_model, scenario.amount_unit, scenario.molar_mass)
+
+    # Flag to regenerate model
+    regenerate = False
 
     # Set initial amounts according to scenario (persists through reset)
     if scenario.initial_states is not None:
@@ -304,7 +306,7 @@ def run_scenario(
                 else item.target
             )
             amount = amount_unit_multiplier * item.amount
-            logger.info(f"- Initial amount in {target}: {amount}")
+            logger.debug(f"- Initial amount in {target}: {amount}")
             rr_model.setInitAmount(target, amount)
 
     # If the scenario has dosing event definitions (set once, persist through reset)
@@ -326,9 +328,8 @@ def run_scenario(
             rr_model.addEvent(eid, False, ev.trigger, False)
             rr_model.addEventAssignment(eid, ev.target, ev.assignment, False)
 
-        rr_model.regenerateModel(True, False)
-
-    rr_model.resetAll()
+        # Set flag to regenerate model
+        regenerate = True
 
     # Define the output selections. Mapped expressions that are not a plain
     # symbol (e.g. 'ABlood + ALiver') are added to the model as assignment rules.
@@ -342,20 +343,29 @@ def run_scenario(
                 output_selections.append(mapped)
             else:
                 rr_model.addParameter(output.id, 0.0, False)
-                rr_model.addAssignmentRule(output.id, mapped, True)
+                rr_model.addAssignmentRule(output.id, mapped, False)
                 output_selections.append(output.id)
+                # Set flag to regenerate model
+                regenerate = True
         else:
             output_selections.append(output.id)
+
+    # If required, regenerate model
+    if regenerate:
+        rr_model.regenerateModel(True, False)
+
+    rr_model.resetAll()
+
     selections = ['time'] + output_selections
 
     # Determine duration and steps
     duration = int(scenario.duration * time_unit_multiplier)
     evaluation_steps = int(scenario.evaluation_resolution * duration / time_unit_multiplier) + 1
 
-    logger.info("- Time unit multiplier: %s", time_unit_multiplier)
-    logger.info("- Amount unit multiplier: %s", amount_unit_multiplier)
-    logger.info("- Duration: %s", duration)
-    logger.info("- Steps: %s", evaluation_steps)
+    logger.debug("- Time unit multiplier: %s", time_unit_multiplier)
+    logger.debug("- Amount unit multiplier: %s", amount_unit_multiplier)
+    logger.debug("- Duration: %s", duration)
+    logger.debug("- Steps: %s", evaluation_steps)
 
     n_sim = scenario.n_simulations
     use_stochastic = scenario.use_distributions and n_sim > 1
@@ -374,6 +384,7 @@ def run_scenario(
                 sample_distributions=use_stochastic,
                 rng=rng,
             )
+            rr_model.resetAll()
 
         # Apply scenario parameters
         if scenario.parameters:
@@ -398,7 +409,9 @@ def run_scenario(
                     target = param
 
                 # Set initial value of the parameter
-                rr_model.setValue(f'init({target})', value)
+                rr_model.model.setValue(f'init({target})', value)
+                #rr_model[target] = value
+            rr_model.resetAll()
 
         # Simulate
         results = rr_model.simulate(0, duration, evaluation_steps, selections)
@@ -471,7 +484,8 @@ def load_parametrisation(model: rr.RoadRunner, filename, sample_distributions=Fa
             value = _sample_parameter(dist_spec, rng)
         else:
             value = float(row["Value"])
-        model.setValue(f'init({param_name})', value)
+        model.model.setValue(f'init({param_name})', value)
+        #model[param_name] = value
 
 def compute_statistics(
     df: pd.DataFrame,
