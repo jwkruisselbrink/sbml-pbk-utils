@@ -1,5 +1,6 @@
 import typing
 import os
+import shutil
 from pathlib import Path
 from enum import IntEnum
 import libsbml as ls
@@ -124,7 +125,8 @@ class DiagramCreator:
             )
 
         # Save and render the diagram
-        dot = dot.unflatten(stagger=3)
+        if shutil.which('unflatten'):
+            dot = dot.unflatten(stagger=3)
         dot.render(
             outfile=output_file,
             engine='dot',

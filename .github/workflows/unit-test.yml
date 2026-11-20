@@ -19,6 +19,13 @@ jobs:
         run: python -m pip install --upgrade pip
       - name: Install graphviz
         run: sudo apt-get install graphviz
+      - name: Verify Graphviz
+        run: |
+          command -v dot
+          dot -V
+          if command -v unflatten >/dev/null 2>&1; then
+            unflatten -V || true
+          fi
       - name: Install dependencies
         run: pip install -e .[dev,test]
       - name: Run tests
