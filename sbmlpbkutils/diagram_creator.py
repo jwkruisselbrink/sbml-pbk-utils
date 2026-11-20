@@ -124,7 +124,7 @@ class DiagramCreator:
             )
 
         # Save and render the diagram
-        dot = dot.unflatten(stagger=3)
+        #dot = dot.unflatten(stagger=3)
         dot.render(
             outfile=output_file,
             engine='dot',
