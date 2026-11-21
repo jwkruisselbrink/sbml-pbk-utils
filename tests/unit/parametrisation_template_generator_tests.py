@@ -7,9 +7,9 @@ from sbmlpbkutils import ParametrisationsTemplateGenerator
 
 class ParametrisationTemplateGeneratorTests(unittest.TestCase):
 
-    def test_generate_parameterisation_template_simple(self):
+    def test_generate_parameterisation_template_simple_oral(self):
         generator = ParametrisationsTemplateGenerator()
-        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple/simple.sbml')
+        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple_oral/simple_oral.sbml')
         document = ls.readSBML(sbml_file)
         model = document.getModel()
         df = generator.generate_parameters_df(model)

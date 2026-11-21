@@ -11,7 +11,7 @@ from sbmlpbkutils import PbkModelInfosExtractor
 class PbkModelInfosExtractorTests(unittest.TestCase):
 
     @parameterized.expand([
-        ("simple/simple.annotated.sbml", ['Gut']),
+        ("simple_oral/simple_oral.annotated.sbml", ['Gut']),
         ("simple_dermal/simple_dermal.annotated.sbml", ['Skin']),
         ("simple_inhalation/simple_inhalation.annotated.sbml", ['Alveolar'])
     ])
@@ -24,7 +24,7 @@ class PbkModelInfosExtractorTests(unittest.TestCase):
         self.assertListEqual(expected, sorted(result.keys()))
 
     @parameterized.expand([
-        ("simple/simple.annotated.sbml", ['Mammalia'])
+        ("simple_oral/simple_oral.annotated.sbml", ['Mammalia'])
     ])
     def test_get_model_animal_species(self, model_file: str, expected: List[str]):
         sbml_file = os.path.join(TEST_MODELS_PATH, model_file)
@@ -35,7 +35,7 @@ class PbkModelInfosExtractorTests(unittest.TestCase):
         self.assertListEqual(expected, sorted([r.label[0] for r in result]))
 
     @parameterized.expand([
-        ("simple/simple.annotated.sbml", ['AGut']),
+        ("simple_oral/simple_oral.annotated.sbml", ['AGut']),
         ("euromix/euromix.annotated.sbml", ['QAir', 'QGut', 'QSkin_sc_e'])
     ])
     def test_get_input_species(self, model_file: str, expected: List[str]):

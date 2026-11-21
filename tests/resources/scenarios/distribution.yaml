@@ -1,10 +1,10 @@
 id: distribution
 label: distribution
 model_instances:
-  - id: simple
-    label: simple
-    model_path: tests/resources/models/simple/simple.annotated.sbml
-    param_file: tests/resources/models/simple/simple.params.csv
+  - id: simple_oral
+    label: simple oral
+    model_path: tests/resources/models/simple_oral/simple_oral.annotated.sbml
+    param_file: tests/resources/models/simple_oral/simple_oral.params.csv
 
 scenarios:
   - id: oral_single

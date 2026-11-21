@@ -9,7 +9,7 @@ class AnnotationsTemplateGeneratorTests(unittest.TestCase):
 
     def test_get_annotations_template(self):
         # Load SBML file
-        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple/simple.sbml')
+        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple_oral/simple_oral.sbml')
         document = ls.readSBML(sbml_file)
         model = document.getModel()
 

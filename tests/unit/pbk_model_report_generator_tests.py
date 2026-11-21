@@ -17,7 +17,7 @@ class PbkModelReportGeneratorTests(unittest.TestCase):
         (RenderMode.LATEX)
     ])
     def test_generate_report(self, render_mode: RenderMode):
-        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple/simple.annotated.sbml')
+        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple_oral/simple_oral.annotated.sbml')
         document = ls.readSBML(sbml_file)
         generator = PbkModelReportGenerator(document)
         report_filename = f"simple_{render_mode}.md"
@@ -29,7 +29,7 @@ class PbkModelReportGeneratorTests(unittest.TestCase):
         (RenderMode.LATEX)
     ])
     def test_get_odes_as_str(self, render_mode: RenderMode):
-        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple/simple.annotated.sbml')
+        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple_oral/simple_oral.annotated.sbml')
         document = ls.readSBML(sbml_file)
         generator = PbkModelReportGenerator(document)
         result = generator.get_odes_as_str(render_mode)
@@ -42,7 +42,7 @@ class PbkModelReportGeneratorTests(unittest.TestCase):
         (RenderMode.LATEX)
     ])
     def test_get_transfer_equations_as_str(self, render_mode: RenderMode):
-        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple/simple.annotated.sbml')
+        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple_oral/simple_oral.annotated.sbml')
         document = ls.readSBML(sbml_file)
         generator = PbkModelReportGenerator(document)
         result = generator.get_transfer_equations_as_str(render_mode)
@@ -55,7 +55,7 @@ class PbkModelReportGeneratorTests(unittest.TestCase):
         (RenderMode.LATEX)
     ])
     def test_get_assignment_rules_as_str(self, render_mode: RenderMode):
-        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple/simple.annotated.sbml')
+        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple_oral/simple_oral.annotated.sbml')
         document = ls.readSBML(sbml_file)
         generator = PbkModelReportGenerator(document)
         result = generator.get_assignment_rules_as_str(render_mode)

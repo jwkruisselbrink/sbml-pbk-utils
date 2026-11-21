@@ -324,10 +324,10 @@ class RunScenarioCustomOutputTests(unittest.TestCase):
 
     def _run(self, target_mappings, outputs, compute_stats=False):
         instance = ModelInstance(
-            id="simple",
-            label="simple",
-            model_path=os.path.join(TEST_MODELS_PATH, "simple", "simple.annotated.sbml"),
-            param_file=os.path.join(TEST_MODELS_PATH, "simple", "simple.params.csv"),
+            id="simple_oral",
+            label="simple_oral",
+            model_path=os.path.join(TEST_MODELS_PATH, "simple_oral", "simple_oral.annotated.sbml"),
+            param_file=os.path.join(TEST_MODELS_PATH, "simple_oral", "simple_oral.params.csv"),
             target_mappings=target_mappings,
         )
         scenario = Scenario(
@@ -420,10 +420,10 @@ class ScenarioInitialStateTests(unittest.TestCase):
     def test_initial_amount_is_first_output_value(self):
         initial_amount = 100.0
         instance = ModelInstance(
-            id="simple",
-            label="simple",
-            model_path=os.path.join(TEST_MODELS_PATH, "simple", "simple.annotated.sbml"),
-            param_file=os.path.join(TEST_MODELS_PATH, "simple", "simple.params.csv"),
+            id="simple_oral",
+            label="simple_oral",
+            model_path=os.path.join(TEST_MODELS_PATH, "simple_oral", "simple_oral.annotated.sbml"),
+            param_file=os.path.join(TEST_MODELS_PATH, "simple_oral", "simple_oral.params.csv"),
         )
         scenario = Scenario(
             id="initial_state",
@@ -453,10 +453,10 @@ class ScenarioDosingTests(unittest.TestCase):
         dose_amount = 2.5
         dose_time = 0.5
         instance = ModelInstance(
-            id="simple",
-            label="simple",
-            model_path=os.path.join(TEST_MODELS_PATH, "simple", "simple.annotated.sbml"),
-            param_file=os.path.join(TEST_MODELS_PATH, "simple", "simple.params.csv"),
+            id="simple_oral",
+            label="simple_oral",
+            model_path=os.path.join(TEST_MODELS_PATH, "simple_oral", "simple_oral.annotated.sbml"),
+            param_file=os.path.join(TEST_MODELS_PATH, "simple_oral", "simple_oral.params.csv"),
         )
         scenario = Scenario(
             id="adjusted_bolus",

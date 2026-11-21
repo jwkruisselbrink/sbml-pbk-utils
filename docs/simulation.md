@@ -165,16 +165,16 @@ scenarios:
 
 ### Example with repeated stochastic simulations
 
-This example runs a single scenario `oral_single` for one model instance (`simple`). The scenario uses distribution-based parameters (`BW` uniformly distributed between 60–80 and `CLUrine` lognormally distributed with `μ=0.0, σ=0.2`) and executes `n_simulations: 10` iterations. A single bolus dose is applied at time `1` day.
+This example runs a single scenario `oral_single` for one model instance (`simple_oral`). The scenario uses distribution-based parameters (`BW` uniformly distributed between 60–80 and `CLUrine` lognormally distributed with `μ=0.0, σ=0.2`) and executes `n_simulations: 10` iterations. A single bolus dose is applied at time `1` day.
 
 ```yaml
 id: distribution
 label: distribution
 model_instances:
-  - id: simple
-    label: simple
-    model_path: models/simple.sbml
-    param_file: models/simple.params.csv
+  - id: simple_oral
+    label: simple_oral
+    model_path: models/simple_oral.sbml
+    param_file: models/simple_oral.params.csv
 
 scenarios:
   - id: oral_single

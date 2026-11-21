@@ -15,12 +15,12 @@ class DiagramCreationTests(unittest.TestCase):
         os.makedirs(self.out_path, exist_ok=True)
 
     @parameterized.expand([
-        ("simple/simple.annotated.sbml", False, False, False),
-        ("simple/simple.annotated.sbml", True, False, False),
-        ("simple/simple.annotated.sbml", True, True, False),
-        ("simple/simple.annotated.sbml", False, False, False),
-        ("simple/simple.annotated.sbml", True, False, True),
-        ("simple/simple.annotated.sbml", True, True, True),
+        ("simple_oral/simple_oral.annotated.sbml", False, False, False),
+        ("simple_oral/simple_oral.annotated.sbml", True, False, False),
+        ("simple_oral/simple_oral.annotated.sbml", True, True, False),
+        ("simple_oral/simple_oral.annotated.sbml", False, False, False),
+        ("simple_oral/simple_oral.annotated.sbml", True, False, True),
+        ("simple_oral/simple_oral.annotated.sbml", True, True, True),
         ("euromix/euromix.annotated.sbml", True, False, True),
         ("euromix/euromix.annotated.sbml", True, True, True),
         ("simple_metab/simple_metab.annotated.sbml", True, False, True),

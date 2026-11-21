@@ -45,7 +45,7 @@ class ScenarioSimulationTests(unittest.TestCase):
 
         if filename == "custom_outputs.yaml":
             results = pd.read_csv(
-                os.path.join(out_path, f"{config.scenarios[0].id}_simple.csv")
+                os.path.join(out_path, f"{config.scenarios[0].id}_simple_oral.csv")
             )
             self.assertIn("ATotal", results.columns)
             self.assertTrue((results["ATotal"] + 1e-9 >= results["ABlood"]).all())

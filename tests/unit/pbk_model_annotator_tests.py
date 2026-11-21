@@ -18,7 +18,7 @@ class PbkModelAnnotatorTests(unittest.TestCase):
 
     def test_annotate_cff_file(self):
         # Arrange
-        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple/simple.sbml')
+        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple_oral/simple_oral.sbml')
         document = ls.readSBML(sbml_file)
         cff_file = './CITATION.cff'
         annotator = PbkModelAnnotator()
@@ -47,13 +47,13 @@ class PbkModelAnnotatorTests(unittest.TestCase):
             'yyy': [20, 21, 19, 18]
         })
         with self.assertRaises(ValueError):
-            _ = self._annotate_model('simple.sbml', annotations_df, 'annotation_invalid_doc')
+            _ = self._annotate_model('simple_oral.sbml', annotations_df, 'annotation_invalid_doc')
 
     def test_annotate_document_set_unit(self):
         annotations_df = self._fake_single_annotation_record()
         annotations_df.at[0, 'element_id'] = 'Blood'
         annotations_df.at[0, 'unit'] = 'mL'
-        document = self._annotate_model('simple.sbml', annotations_df, 'annotation_set_unit')
+        document = self._annotate_model('simple_oral.sbml', annotations_df, 'annotation_set_unit')
         self.assertIsNotNone(document)
         model = document.getModel()
         for i in range(0, model.getNumUnitDefinitions()):
@@ -67,24 +67,24 @@ class PbkModelAnnotatorTests(unittest.TestCase):
     def test_annotate_document_invalid_rdf(self):
         annotations_df = self._fake_single_annotation_record()
         annotations_df.at[0, 'annotation_type'] = 'xxx'
-        document = self._annotate_model('simple.sbml', annotations_df, 'annotation_invalid_rdf')
+        document = self._annotate_model('simple_oral.sbml', annotations_df, 'annotation_invalid_rdf')
         self.assertIsNotNone(document)
 
     def test_annotate_document_invalid_qualifier(self):
         annotations_df = self._fake_single_annotation_record()
         annotations_df.at[0, 'qualifier'] = 'BQB_IS_RELATED_TO'
-        document = self._annotate_model('simple.sbml', annotations_df, 'annotation_invalid_qualifier')
+        document = self._annotate_model('simple_oral.sbml', annotations_df, 'annotation_invalid_qualifier')
         self.assertIsNotNone(document)
 
     def test_annotate_document_invalid_uri(self):
         annotations_df = self._fake_single_annotation_record()
         annotations_df.at[0, 'URI'] = 'UBERON_0000111'
-        document = self._annotate_model('simple.sbml', annotations_df, 'annotation_invalid_uri')
+        document = self._annotate_model('simple_oral.sbml', annotations_df, 'annotation_invalid_uri')
         self.assertIsNotNone(document)
 
     def test_set_element_name(self):
         # Arrange
-        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple/simple.sbml')
+        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple_oral/simple_oral.sbml')
         annotator = PbkModelAnnotator()
         document = ls.readSBML(sbml_file)
         element_id = 'Gut'
@@ -101,7 +101,7 @@ class PbkModelAnnotatorTests(unittest.TestCase):
 
     def test_set_element_unit(self):
         # Arrange
-        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple/simple.sbml')
+        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple_oral/simple_oral.sbml')
         annotator = PbkModelAnnotator()
         document = ls.readSBML(sbml_file)
         logger = logging.getLogger(__name__)
@@ -123,7 +123,7 @@ class PbkModelAnnotatorTests(unittest.TestCase):
     ])
     def test_remove_element_rdf_annotation(self, element_id):
         # Arrange
-        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple/simple.annotated.sbml')
+        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple_oral/simple_oral.annotated.sbml')
         annotator = PbkModelAnnotator()
         document = ls.readSBML(sbml_file)
         logger = logging.getLogger(__name__)
@@ -154,7 +154,7 @@ class PbkModelAnnotatorTests(unittest.TestCase):
 
     def test_remove_element_rdf_annotation_already_empty(self):
         # Arrange
-        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple/simple.sbml')
+        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple_oral/simple_oral.sbml')
         annotator = PbkModelAnnotator()
         document = ls.readSBML(sbml_file)
         logger = logging.getLogger(__name__)
@@ -176,7 +176,7 @@ class PbkModelAnnotatorTests(unittest.TestCase):
 
     def test_set_model_rdf_annotation(self):
         # Arrange
-        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple/simple.sbml')
+        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple_oral/simple_oral.sbml')
         annotator = PbkModelAnnotator()
         document = ls.readSBML(sbml_file)
         logger = logging.getLogger(__name__)
@@ -196,7 +196,7 @@ class PbkModelAnnotatorTests(unittest.TestCase):
 
     def test_set_element_rdf_annotation(self):
         # Arrange
-        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple/simple.sbml')
+        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple_oral/simple_oral.sbml')
         annotator = PbkModelAnnotator()
         document = ls.readSBML(sbml_file)
         logger = logging.getLogger(__name__)
@@ -219,7 +219,7 @@ class PbkModelAnnotatorTests(unittest.TestCase):
 
     def test_set_element_rdf_annotation_overwrite(self):
         # Arrange
-        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple/simple.sbml')
+        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple_oral/simple_oral.sbml')
         annotator = PbkModelAnnotator()
         document = ls.readSBML(sbml_file)
         logger = logging.getLogger(__name__)
@@ -258,7 +258,7 @@ class PbkModelAnnotatorTests(unittest.TestCase):
                 'email': 'john.doe@acme-pbk.org'
             }
         ]
-        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple/simple.sbml')
+        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple_oral/simple_oral.sbml')
         document = ls.readSBML(sbml_file)
         annotator = PbkModelAnnotator()
 

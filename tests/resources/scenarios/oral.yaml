@@ -1,9 +1,9 @@
 id: oral
 label: oral
 model_instances:
-  - id: simple
-    label: simple
-    model_path: tests/resources/models/simple/simple.annotated.sbml
+  - id: simple_oral
+    label: simple oral
+    model_path: tests/resources/models/simple_oral/simple_oral.annotated.sbml
     target_mappings:
       AGut: AGut
       ABlood: ABlood

@@ -17,7 +17,7 @@ class PbkModelValidatorTests(unittest.TestCase):
             'BQM_IS',
             'http://purl.obolibrary.org/obo/PBPKO_00477'
         )
-        document = self._annotate_model('simple/simple.sbml', annotations_df)
+        document = self._annotate_model('simple_oral/simple_oral.sbml', annotations_df)
         validator = PbkModelValidator()
         element = document.getElementBySId('Gut')
         result = validator.check_element_annotation(element)
@@ -30,7 +30,7 @@ class PbkModelValidatorTests(unittest.TestCase):
             'BQB_IS',
             'http://purl.obolibrary.org/obo/PBPKO_00477'
         )
-        document = self._annotate_model('simple/simple.sbml', annotations_df)
+        document = self._annotate_model('simple_oral/simple_oral.sbml', annotations_df)
         validator = PbkModelValidator()
         element = document.getElementBySId('Gut')
         result = validator.check_element_annotation(element)
@@ -44,7 +44,7 @@ class PbkModelValidatorTests(unittest.TestCase):
             'BQM_IS',
             'http://purl.obolibrary.org/obo/PBPKO_00165'
         )
-        document = self._annotate_model('simple/simple.sbml', annotations_df)
+        document = self._annotate_model('simple_oral/simple_oral.sbml', annotations_df)
         validator = PbkModelValidator()
         element = document.getElementBySId('PCLiver')
         result = validator.check_element_annotation(element)
@@ -66,7 +66,7 @@ class PbkModelValidatorTests(unittest.TestCase):
                 'http://purl.obolibrary.org/obo/CHEBI_25212'
             )
         ])
-        document = self._annotate_model('simple/simple.sbml', annotations_df)
+        document = self._annotate_model('simple_oral/simple_oral.sbml', annotations_df)
         validator = PbkModelValidator()
         element = document.getElementBySId('PCLiver')
         result = validator.check_element_annotation(element)
@@ -79,7 +79,7 @@ class PbkModelValidatorTests(unittest.TestCase):
             'BQB_IS',
             'http://purl.obolibrary.org/obo/PBPKO_00165'
         )
-        document = self._annotate_model('simple/simple.sbml', annotations_df)
+        document = self._annotate_model('simple_oral/simple_oral.sbml', annotations_df)
         validator = PbkModelValidator()
         element = document.getElementBySId('PCLiver')
         result = validator.check_element_annotation(element)
@@ -101,7 +101,7 @@ class PbkModelValidatorTests(unittest.TestCase):
                 'http://purl.obolibrary.org/obo/PBPKO_00106'
             )
         ])
-        document = self._annotate_model('simple/simple.sbml', annotations_df)
+        document = self._annotate_model('simple_oral/simple_oral.sbml', annotations_df)
         validator = PbkModelValidator()
         result = validator.check_parameter_annotations(document)
         self.assertTrue(any(r.level == ValidationStatus.ERROR for r in result))
@@ -157,7 +157,7 @@ class PbkModelValidatorTests(unittest.TestCase):
                 'http://purl.obolibrary.org/obo/PBPKO_00165'
             )
         ])
-        document = self._annotate_model('simple/simple.sbml', annotations_df)
+        document = self._annotate_model('simple_oral/simple_oral.sbml', annotations_df)
         validator = PbkModelValidator()
         result = validator.check_parameter_annotations(document)
         messages = [r for r in result if r.code == ErrorCode.PARAMETER_MULTIPLE_ANNOTATION_USE]
@@ -166,7 +166,7 @@ class PbkModelValidatorTests(unittest.TestCase):
     def test_validate_parameter_warning(self):
         '''Annotation of internal parameters is not mandatory. Validation
         should yield a warning.'''
-        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple/simple.sbml')
+        sbml_file = os.path.join(TEST_MODELS_PATH, 'simple_oral/simple_oral.sbml')
         document = ls.readSBML(sbml_file)
         element = document.getElementBySId('QC')
         validator = PbkModelValidator()
