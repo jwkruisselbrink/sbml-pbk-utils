@@ -1,6 +1,5 @@
 import unittest
 import csv
-import tempfile
 import libsbml as ls
 from parameterized import parameterized
 from tests.conf import TEST_OUTPUT_PATH
@@ -16,7 +15,8 @@ from sbmlpbkutils import (
     create_unit_string,
     set_unit_definition,
     get_unit_definition,
-    get_unit_type
+    get_unit_type,
+    get_ucum_unit_string
 )
 from sbmlpbkutils import (
     get_volume_unit_definitions,
@@ -47,6 +47,18 @@ class UnitDefinitionsTests(unittest.TestCase):
         for definition in unit_definitions:
             if definition['UCUM']:
                 self.assertIn(definition['UCUM'], definition['synonyms'])
+
+    @parameterized.expand([
+        ("gram", "g"),
+        ("mole", "mol"),
+        ("second", "s"),
+        ("kilogram", "kg"),
+        ("litre", "L"),
+        ("dimensionless", "UNITLESS")
+    ])
+    def test_get_ucum_unit_string_built_in_units(self, in_str: str, expected: str):
+        result = get_ucum_unit_string(in_str)
+        self.assertEqual(result, expected)
 
     def test_volume_unit_definition(self):
         volume_unit_defs = get_volume_unit_definitions()

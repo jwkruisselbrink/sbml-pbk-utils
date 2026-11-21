@@ -19,24 +19,24 @@ class ModelAnnotationTests(unittest.TestCase):
         for sbml_file in sbml_files:
             sbml_basename = os.path.basename(sbml_file)
             annotations_file = Path(sbml_file).with_suffix('.annotations.csv')
+            if Path.exists(annotations_file):
+                # Create file logger
+                log_file = os.path.join(self.out_path, Path(sbml_basename).with_suffix('.annotation.log'))
+                logger = create_file_logger(log_file)
 
-            # Create file logger
-            log_file = os.path.join(self.out_path, Path(sbml_basename).with_suffix('.annotation.log'))
-            logger = create_file_logger(log_file)
+                # Load file and annotate
+                document = ls.readSBML(sbml_file)
+                annotator = PbkModelAnnotator()
+                annotator.annotate(
+                    document,
+                    annotations_file = str(annotations_file),
+                    logger=logger
+                )
+                self.assertIsNotNone(document)
 
-            # Load file and annotate
-            document = ls.readSBML(sbml_file)
-            annotator = PbkModelAnnotator()
-            annotator.annotate(
-                document,
-                annotations_file = str(annotations_file),
-                logger=logger
-            )
-            self.assertIsNotNone(document)
-
-            # Write annotated SBML file
-            out_file = os.path.join(self.out_path, Path(sbml_basename).with_suffix('.annotated.sbml'))
-            ls.writeSBML(document, out_file)
+                # Write annotated SBML file
+                out_file = os.path.join(self.out_path, Path(sbml_basename).with_suffix('.annotated.sbml'))
+                ls.writeSBML(document, out_file)
 
     def test_clear_annotations(self):
         models = glob.glob(f'{TEST_MODELS_PATH}/**/*.annotated.sbml', recursive=True)

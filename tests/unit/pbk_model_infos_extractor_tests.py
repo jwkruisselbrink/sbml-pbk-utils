@@ -11,6 +11,25 @@ from sbmlpbkutils import PbkModelInfosExtractor
 class PbkModelInfosExtractorTests(unittest.TestCase):
 
     @parameterized.expand([
+        ("rate", "/s"),
+        ("fraction", "UNITLESS"),
+        ("concentration", "mol"),
+        ("length", "m"),
+    ])
+    def test_get_parameter_infos_with_predefined_and_defined_units(self, parameter_id, expected_unit):
+        sbml_file = os.path.join(TEST_MODELS_PATH, 'default_units/default_units.sbml')
+        document = ls.readSBML(sbml_file)
+        self.assertEqual(document.getNumErrors(), 0, document.getErrorLog().toString())
+        extractor = PbkModelInfosExtractor(document)
+
+        infos = extractor.get_parameter_infos()
+        self.assertEqual({info.id for info in infos}, {"rate", "fraction", "concentration", "length"})
+        info = next(info for info in infos if info.id == parameter_id)
+        self.assertEqual(info.unit, expected_unit)
+        self.assertTrue(info.has_unit())
+        self.assertTrue(info.is_constant)
+
+    @parameterized.expand([
         ("simple_oral/simple_oral.annotated.sbml", ['Gut']),
         ("simple_dermal/simple_dermal.annotated.sbml", ['Skin']),
         ("simple_inhalation/simple_inhalation.annotated.sbml", ['Alveolar'])

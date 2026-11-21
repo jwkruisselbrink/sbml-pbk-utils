@@ -3,7 +3,7 @@ from typing import Dict, List, assert_never, cast
 import libsbml as ls
 
 from . import PbkOntologyChecker
-from . import create_unit_string
+from . import create_unit_string, get_ucum_unit_string
 
 class PbkModelInfosExtractor:
 
@@ -11,11 +11,16 @@ class PbkModelInfosExtractor:
         self,
         document: ls.SBMLDocument
     ):
-        self.document = document
-        self.model = self.document.getModel()
-        self.onto_checker = PbkOntologyChecker()
+        self.document: ls.SBMLDocument | None = document
+        self.model: ls.Model | None = self.document.getModel()
+        self.onto_checker: PbkOntologyChecker | None = PbkOntologyChecker()
 
     def get_model_info(self):
+        if self.document is None:
+            raise ValueError("SBML document has not been loaded.")
+        if self.model is None:
+            raise ValueError("SBML document does not contain a model.")
+
         pbk_model_infos_extractor = PbkModelInfosExtractor(self.document)
         input_compartments = pbk_model_infos_extractor.get_input_compartments()
         input_routes = set(input_compartments.values())
@@ -131,12 +136,23 @@ class PbkModelInfosExtractor:
         unit_id: str
     ):
         """Tries to get the (UCUM) formated unit string of the specified element."""
+
+        if self.model is None:
+            raise ValueError("No SBML model loaded.")
+
         if unit_id is None:
             return ""
-        unit_def = self.model.getUnitDefinition(unit_id)
-        if unit_def is None:
-            return ""
-        return create_unit_string(unit_def)
+        elif ls.UnitKind_isValidUnitKindString(
+            unit_id,
+            self.model.getLevel(),
+            self.model.getVersion()
+        ):
+            return get_ucum_unit_string(unit_id)
+        else:
+            unit_def = self.model.getUnitDefinition(unit_id)
+            if unit_def is None:
+                return ""
+            return create_unit_string(unit_def)
 
     def get_pbko_class(
         self,

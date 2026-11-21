@@ -141,7 +141,10 @@ def create_gram_units() -> None:
             "id" : unit_id,
             "qudt" : "",
             "UCUM" : unit_str,
-            "synonyms" : [unit_str],
+            "synonyms" : [
+                unit_str,
+                f'{_si_prefix_strings_ext[exponent]}gram'
+            ],
             "units": [
                 { "kind": ls.UNIT_KIND_GRAM, "exponent": 1, "multiplier": 1, "scale": exponent }
             ]
@@ -377,19 +380,20 @@ def create_gram_per_time_per_volume_units() -> None:
 
 def create_length_units() -> None:
     numerator_exponents = [0, -1, -2, -3]
-    for numerator_exponent in numerator_exponents:
+    for exponent in numerator_exponents:
         # Construct unit ID
-        numerator_prefix_id = _id_prefix_lookup[numerator_exponent]
+        numerator_prefix_id = _id_prefix_lookup[exponent]
         unit_id = f'{numerator_prefix_id}M'
 
         # Construct unit string
-        numerator_prefix_si = _si_prefix_string[numerator_exponent]
+        numerator_prefix_si = _si_prefix_string[exponent]
         unit_str = f'{numerator_prefix_si}m'
 
         # Construct synonyms
         synonyms = [
             unit_str,
-            f'{numerator_prefix_si}m'
+            f'{numerator_prefix_si}m',
+            f'{_si_prefix_strings_ext[exponent]}metre'
         ]
 
         # Create and add definitions
@@ -399,7 +403,7 @@ def create_length_units() -> None:
             "UCUM" : unit_str,
             "synonyms" : synonyms,
             "units": [
-                { "kind": ls.UNIT_KIND_METRE, "exponent": 1, "multiplier": 1, "scale": numerator_exponent }
+                { "kind": ls.UNIT_KIND_METRE, "exponent": 1, "multiplier": 1, "scale": exponent }
             ]
         }
         unit_definitions.append(definition)
@@ -650,7 +654,10 @@ def create_liter_units() -> None:
             "id" : unit_id,
             "qudt" : "",
             "UCUM" : unit_str,
-            "synonyms" : [unit_str],
+            "synonyms" : [
+                unit_str,
+                f'{_si_prefix_strings_ext[exponent]}litre'
+            ],
             "units": [
                 { "kind": ls.UNIT_KIND_LITRE, "exponent": 1, "multiplier": 1, "scale": exponent }
             ]
@@ -998,7 +1005,10 @@ def create_mol_units() -> None:
             "id" : unit_id,
             "qudt" : "",
             "UCUM" : unit_str,
-            "synonyms" : [unit_str],
+            "synonyms" : [
+                unit_str,
+                f'{_si_prefix_strings_ext[exponent]}mole'
+            ],
             "units": [
                 { "kind": ls.UNIT_KIND_MOLE, "exponent": 1, "multiplier": 1, "scale": exponent }
             ]
@@ -1038,6 +1048,13 @@ def create_per_time_units() -> None:
 def create_time_units() -> None:
     inv_map = {v: k for k, v in _time_unit_multipliers.items()}
     time_units = ['s', 'min', 'h', 'd', 'y']
+    synonyms_map = {
+        's': ['second', 'seconds', 'sec', 'secs'],
+        'min': ['minute', 'minutes', 'mins'],
+        'h': ['hour', 'hours', 'hr', 'hrs'],
+        'd': ['day', 'days'],
+        'y': ['year', 'years', 'yr', 'yrs', 'a', 'annum'],
+    }
     for time_unit in time_units:
         # Construct unit ID
         unit_id = f'{_time_unit_id_lookup[time_unit]}'
@@ -1046,9 +1063,8 @@ def create_time_units() -> None:
         unit_str = f'{time_unit}'
 
         # Construct synonyms
-        synonyms = [
-            unit_str
-        ]
+        synonyms = [unit_str]
+        synonyms.extend(synonyms_map[time_unit])
         time_unit_multiplier = inv_map[time_unit]
 
         # Create and add definitions

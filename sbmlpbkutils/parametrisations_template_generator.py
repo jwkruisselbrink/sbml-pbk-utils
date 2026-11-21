@@ -1,7 +1,7 @@
 import pandas as pd
 import libsbml as ls
 
-from . import create_unit_string
+from . import create_unit_string, get_ucum_unit_string
 
 class ParametrisationsTemplateGenerator:
 
@@ -61,8 +61,11 @@ class ParametrisationsTemplateGenerator:
                 if (element.getConstant()):
                     unit_id = element.getUnits()
                     if unit_id:
-                        unit_definition = model.getUnitDefinition(unit_id)
-                        unit_string = create_unit_string(unit_definition)
+                        if ls.UnitKind_isValidUnitKindString(unit_id, 3, 2):
+                            unit_string = get_ucum_unit_string(unit_id)
+                        else:
+                            unit_definition = model.getUnitDefinition(unit_id)
+                            unit_string = create_unit_string(unit_definition)
                     else:
                         unit_string = ""
                     row = [
